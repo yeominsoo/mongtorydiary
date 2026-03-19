@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local Tooling & Runtime ###
+.m2/
+.tmp_flutter_home/
+.tooling/
+mongtory.db

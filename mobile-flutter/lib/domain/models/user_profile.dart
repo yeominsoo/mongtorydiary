@@ -1,0 +1,11 @@
+class UserProfile {
+  const UserProfile({
+    required this.id,
+    required this.email,
+    required this.nickname,
+  });
+
+  final int id;
+  final String email;
+  final String nickname;
+}
