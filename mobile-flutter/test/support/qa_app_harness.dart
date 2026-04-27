@@ -94,7 +94,12 @@ class QaAuthRepository implements AuthRepository {
 }
 
 class QaDiaryRepository implements DiaryRepository {
-  QaDiaryRepository({required this.summaries, required this.detail});
+  QaDiaryRepository({
+    required List<DiarySummary> summaries,
+    required DiaryDetail detail,
+  }) : summaries = List.of(summaries),
+       _details = {detail.id: detail},
+       _nextId = detail.id + 1;
 
   factory QaDiaryRepository.withData() {
     final now = DateTime(2026, 3, 20, 12);
@@ -123,44 +128,73 @@ class QaDiaryRepository implements DiaryRepository {
   }
 
   final List<DiarySummary> summaries;
-  final DiaryDetail detail;
+  final Map<int, DiaryDetail> _details;
+  int _nextId;
 
   @override
-  Future<DiaryDetail> getDiaryDetail(int diaryId) async => detail;
+  Future<DiaryDetail> getDiaryDetail(int diaryId) async => _details[diaryId]!;
 
   @override
   Future<List<DiarySummary>> getDiarySummaries() async => summaries;
 
   @override
   Future<DiaryDetail> createDiary(DiaryUpsert input) async {
-    return DiaryDetail(
-      id: 2,
+    final now = DateTime(2026, 3, 21, 12);
+    final detail = DiaryDetail(
+      id: _nextId++,
       entryDate: input.entryDate,
       title: input.title,
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
-      createdAt: DateTime(2026, 3, 21, 12),
-      updatedAt: DateTime(2026, 3, 21, 12),
+      createdAt: now,
+      updatedAt: now,
     );
+    _details[detail.id] = detail;
+    summaries.insert(0, _summaryFromDetail(detail));
+
+    return detail;
   }
 
   @override
   Future<DiaryDetail> updateDiary(int diaryId, DiaryUpsert input) async {
-    return DiaryDetail(
+    final current = _details[diaryId]!;
+    final updated = DiaryDetail(
       id: diaryId,
       entryDate: input.entryDate,
       title: input.title,
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
-      createdAt: detail.createdAt,
+      createdAt: current.createdAt,
       updatedAt: DateTime(2026, 3, 21, 12),
     );
+    _details[diaryId] = updated;
+
+    final index = summaries.indexWhere((item) => item.id == diaryId);
+    if (index != -1) {
+      summaries[index] = _summaryFromDetail(updated);
+    }
+
+    return updated;
   }
 
   @override
-  Future<void> deleteDiary(int diaryId) async {}
+  Future<void> deleteDiary(int diaryId) async {
+    _details.remove(diaryId);
+    summaries.removeWhere((item) => item.id == diaryId);
+  }
+
+  DiarySummary _summaryFromDetail(DiaryDetail detail) {
+    return DiarySummary(
+      id: detail.id,
+      entryDate: detail.entryDate,
+      title: detail.title,
+      emotionCode: detail.emotionCode,
+      createdAt: detail.createdAt,
+      updatedAt: detail.updatedAt,
+    );
+  }
 }
 
 class QaCalendarRepository implements CalendarRepository {

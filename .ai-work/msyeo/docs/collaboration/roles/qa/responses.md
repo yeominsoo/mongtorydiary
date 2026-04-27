@@ -6,6 +6,7 @@
 | RES-REQ-20260428-02 | REQ-20260428-02 | 완료 | API/DTO 계약 재확인 및 후속 BE 요청 등록 | 2026-04-28 |
 | RES-REQ-20260428-10 | REQ-20260428-10 | 완료 | Flutter QA 자동화 하네스 1차 구축 | 2026-04-28 |
 | RES-REQ-20260428-06 | REQ-20260428-06 | 완료 | 로그인 후 remote 통합 회귀 검증 완료 | 2026-04-28 |
+| RES-REQ-20260428-24 | REQ-20260428-24 | 완료 | 일기 CRUD 회귀 시나리오 및 QA 하네스 확장 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-02
@@ -125,6 +126,44 @@
 - 다음 제안:
   - PM이 공통 인덱스에서 `REQ-20260428-06` 완료 상태를 반영한다.
   - 다음 QA 작업은 PM 공통 인덱스와 QA inbox 동기화 후 선정한다.
+
+### RES-REQ-20260428-24
+- 요청 ID: REQ-20260428-24
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - 일기 생성/수정/삭제 회귀 시나리오를 정리했다.
+  - QA harness fake diary repository를 상태형으로 바꿔 CRUD 결과가 목록과 상세에 반영되도록 했다.
+  - widget smoke test에 작성, 상세 확인, 수정, 삭제, 목록 제외 확인 플로우를 추가했다.
+- 변경 파일:
+  - `mobile-flutter/test/support/qa_app_harness.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 수동/API 회귀 시나리오:
+  - 로그인 후 `POST /api/v1/diaries` 생성 응답 확인
+  - 생성 id로 `GET /api/v1/diaries/{id}` 상세 확인
+  - `PUT /api/v1/diaries/{id}` 수정 후 상세/목록 반영 확인
+  - `DELETE /api/v1/diaries/{id}` 삭제 후 목록 제외 확인
+  - invalid token, 없는 id, 타 사용자 id의 실패 응답 wrapper 확인
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 spring-boot:run`: 8080 기동 확인 후 종료
+  - 실제 서버 API: 로그인 -> 일기 생성 -> 상세 조회 -> 수정 -> 목록 반영 -> 삭제 -> 목록 제외 -> invalid token 401 응답 확인
+- 자동화/통합 중 발생한 오류와 분류:
+  - 없음
+- FE/BE 후속 요청:
+  - 없음
+- 남은 이슈:
+  - malformed JSON, 누락 query parameter, calendar 범위 오류는 기존 `REQ-20260428-22` BE 요청 범위로 남아 있다.
+- 다음 제안:
+  - PM이 공통 인덱스에서 `REQ-20260428-24` 완료 상태를 반영한다.
+  - BE `REQ-20260428-22` 완료 후 오류 계약 중심 회귀 검증을 추가한다.
 
 ## 작성 템플릿
 ```text

@@ -3,16 +3,17 @@
 ## 응답 목록
 | 응답 ID | 요청 ID | 상태 | 요약 | 작성일 |
 | --- | --- | --- | --- | --- |
-| RES-REQ-20260428-03 | REQ-20260428-03 | 검토중 | Flutter 로그인 화면 실제 입력 폼 전환 | 2026-04-28 |
-| RES-REQ-20260428-07 | REQ-20260428-07 | 검토중 | 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 |
-| RES-REQ-20260428-09 | REQ-20260428-09 | 검토중 | 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
-| RES-FE-IMPROVE-20260428-01 | FE-IMPROVE-20260428-01 | 검토중 | 일기 홈/상세 퍼블리싱 품질 보강 | 2026-04-28 |
+| RES-REQ-20260428-03 | REQ-20260428-03 | 완료 | Flutter 로그인 화면 실제 입력 폼 전환 | 2026-04-28 |
+| RES-REQ-20260428-07 | REQ-20260428-07 | 완료 | 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-09 | REQ-20260428-09 | 완료 | 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-26 | REQ-20260428-26 | 완료 | CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 |
+| RES-FE-IMPROVE-20260428-01 | FE-IMPROVE-20260428-01 | 완료 | 일기 홈/상세 퍼블리싱 품질 보강 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-03
 - 요청 ID: REQ-20260428-03
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - 임시 로그인 버튼 중심 화면을 이메일/비밀번호 입력 폼으로 전환했다.
   - mock/remote 모드 표시와 remote API URL 표시는 유지했다.
@@ -35,7 +36,7 @@
 ### RES-REQ-20260428-07
 - 요청 ID: REQ-20260428-07
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - 일기 목록 provider와 같은 repository 계약을 사용하는 `diaryDetailProvider`를 추가했다.
   - 최근 일기 항목을 터치 가능한 항목으로 바꾸고 `DiaryDetailScreen`으로 이동하도록 연결했다.
@@ -67,7 +68,7 @@
 ### RES-FE-IMPROVE-20260428-01
 - 요청 ID: FE-IMPROVE-20260428-01
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - FE 영역을 점검한 결과 작성/사진 첨부 CTA가 실제 동작 없이 노출되고, 홈/상세 화면의 웹 폭 대응이 부족한 점을 개선 대상으로 잡았다.
   - 생성/수정/삭제 API 연결 전까지 작성 기능이 준비 상태임을 명확히 안내하도록 빠른 작성 영역과 FAB 스낵바를 정리했다.
@@ -93,12 +94,12 @@
   - 일기 생성/수정/삭제 플로우는 `REQ-20260428-09` 선행 조건 완료 후 별도 구현해야 한다.
   - remote 상세 API 실기기/웹 검증은 QA 또는 통합 세션에서 확인이 필요하다.
 - 다음 제안:
-  - PM/QA가 현재 검토중인 로그인/상세 진입 요청을 완료 처리하면 `REQ-20260428-09` 착수 가능성을 다시 판단한다.
+  - 로그인/상세 진입 요청은 이후 완료 처리됐고 `REQ-20260428-09`도 구현 완료됐다.
 
 ### RES-REQ-20260428-09
 - 요청 ID: REQ-20260428-09
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - 백엔드 `POST/PUT/DELETE /api/v1/diaries` 계약을 기준으로 Flutter `ApiClient`에 `put`, `delete`를 추가했다.
   - `DiaryRepository`, API/mock repository, remote/mock datasource에 일기 생성/수정/삭제 계약을 추가했다.
@@ -136,7 +137,61 @@
   - 실제 remote 모드에서 생성/수정/삭제를 백엔드 서버와 통합 실행하는 검증은 QA 세션에서 필요하다.
   - 감정 코드는 현재 텍스트 입력으로 받으며, 감정 목록 드롭다운 전환은 후속 UX 개선 후보로 남는다.
 - 다음 제안:
-  - QA가 `REQ-20260428-19` 또는 후속 요청으로 일기 CRUD 회귀 시나리오와 자동화 확장을 진행한다.
+  - QA가 `REQ-20260428-24`로 일기 CRUD 회귀 시나리오와 자동화 확장을 완료했다.
+
+### RES-REQ-20260428-26
+- 요청 ID: REQ-20260428-26
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - CRUD 이후 앱 사용성 개선 후보를 사용자 가치, Flutter 변경 범위, BE 의존성 기준으로 비교했다.
+  - 1순위 구현 후보는 캘린더 날짜 탭에서 해당 날짜 일기 확인 또는 작성으로 이어지는 플로우다.
+  - 이 후보는 이미 캘린더 월 데이터와 일기 작성/상세 화면이 있어 BE 추가 API 없이 Flutter 화면/상태 연결로 1차 구현 가능하다.
+- 후보 비교:
+  - 1순위: 캘린더 날짜 탭 -> 해당 날짜 일기 목록/상세/작성 진입
+    - 사용자 가치: 캘린더에서 기록된 날짜를 보고 바로 확인하거나 빈 날짜에 작성할 수 있어 앱의 핵심 탐색 흐름이 짧아진다.
+    - Flutter 변경 예상 파일/화면: `calendar_screen.dart`, `diary_edit_screen.dart`, 필요 시 날짜별 일기 목록 또는 bottom sheet 컴포넌트, `widget_test.dart`.
+    - BE API 의존성: 1차는 기존 월간 캘린더, 일기 목록, 작성 API로 가능하다. 날짜별 목록 필터 API가 필요하면 BE 후속 요청으로 분리한다.
+  - 2순위: 일기 작성 UX 개선
+    - 사용자 가치: 감정 코드 직접 입력을 줄이고 날짜 선택, 감정 선택, 사진 URL 입력을 더 자연스럽게 만든다.
+    - Flutter 변경 예상 파일/화면: `diary_edit_screen.dart`, 감정 목록 provider 사용, 입력 컴포넌트 분리, 작성 화면 테스트.
+    - BE API 의존성: 없음. 기존 감정 목록 API와 CRUD API로 가능하다.
+  - 3순위: 빈 상태 CTA 개선
+    - 사용자 가치: 일기가 없을 때 사용자가 다음 행동을 바로 알 수 있다.
+    - Flutter 변경 예상 파일/화면: `diary_home_screen.dart`, `calendar_screen.dart`, 빈 상태 위젯 공통화.
+    - BE API 의존성: 없음.
+  - 4순위: 오프라인/로딩/재시도 상태 강화
+    - 사용자 가치: remote 장애나 토큰 오류 상황에서 회복 가능성이 높아진다.
+    - Flutter 변경 예상 파일/화면: error/empty/loading 공통 위젯, `api_client.dart` 오류 분류, 각 화면의 retry 액션.
+    - BE API 의존성: 낮음. 토큰 만료/갱신 전략은 BE/PM 후속 설계와 맞춰야 한다.
+  - 5순위: 작성 중 임시 저장
+    - 사용자 가치: 장문 작성 중 이탈 손실을 줄인다.
+    - Flutter 변경 예상 파일/화면: `diary_edit_screen.dart`, local state persistence, 앱 생명주기 처리.
+    - BE API 의존성: 1차 로컬 임시 저장은 없음. 서버 임시 저장은 별도 API 필요.
+  - 6순위: 감정 기반 필터
+    - 사용자 가치: 감정별 회고가 가능해진다.
+    - Flutter 변경 예상 파일/화면: `diary_home_screen.dart`, 목록 provider query 확장, 필터 UI, 테스트.
+    - BE API 의존성: 현재 백엔드 목록 API에는 `emotion` query가 있으나 Flutter remote datasource가 아직 query를 노출하지 않아 FE 확장이 필요하다.
+- 1순위 구현 요청 후보:
+  - 제목: 캘린더 날짜 탭에서 일기 확인/작성 진입 플로우 구현
+  - 제안 요청 ID: PM이 신규 요청으로 `REQ-20260428-28` 또는 다음 번호를 배정
+  - 완료 기준: 캘린더 날짜 선택 시 기록 있음/없음 상태를 구분하고, 기록 있음은 상세 진입, 기록 없음은 해당 날짜가 채워진 작성 화면으로 이동한다. `flutter analyze`, `flutter test` 통과.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - 설계 문서 작업이라 코드 테스트는 실행하지 않았다.
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 1순위 후보 구현 전 QA CRUD 회귀 검증 결과를 확인하는 것이 안전하다.
+  - 날짜별 일기 목록 UX를 단일 상세 진입으로 제한할지, 같은 날짜 다건 목록을 보여줄지 PM 결정이 필요하다.
+- 다음 제안:
+  - PM은 `REQ-20260428-26`을 검토한 뒤 캘린더 날짜 탭 진입 플로우 구현 요청을 FE에 배정한다.
 
 ## 작성 템플릿
 ```text

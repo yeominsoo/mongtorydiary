@@ -5,6 +5,7 @@
 ## 현재 구성
 - `project-status.md`: 현재 구조, 구현 범위, 미해결 이슈, 다음 우선순위
 - `project-analysis.md`: 바이브코딩용 프로젝트 분석과 추천 작업 순서
+- `delivery-roadmap.md`: 목표 달성을 위한 단계적 업무계획과 역할별 후속 요청
 - `source-doc-audit.md`: 실제 소스와 문서 정합성 점검 결과
 - `session-continuity.md`: 새 세션에서 맥락을 복구하기 위한 상세 인수인계
 - `planning.md`: 제품 비전 및 로드맵
@@ -36,3 +37,4 @@
 - 공통 `collaboration/requests.md`, `status.md`, `responses.md`는 PM이 관리하는 인덱스다.
 - 요청 처리 결과는 수행자 `responses.md`와 요청자 `responses.md` 양쪽에 남긴다.
 - 모든 역할은 작업 블록 종료 시 자기 역할의 `handoff/YYYY-MM-DD.md`를 작성한다.
+- 커밋 메시지는 한글로 작성한다.

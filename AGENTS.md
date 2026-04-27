@@ -38,6 +38,7 @@ PM, QA, FE 개발자, BE 개발자 세션은 `.ai-work/msyeo/docs/collaboration/
 모든 담당자는 매 작업 시작마다 변경된 룰이 없는지 확인해야 한다. 확인 대상은 `AGENTS.md`, `.ai-work/msyeo/docs/collaboration/master-flow.md`, `.ai-work/msyeo/docs/collaboration/roles/README.md`, 자기 역할 `inbox.md`, 자기 역할 `status.md`다. 확인 후 자기 역할 `status.md`에 `룰 확인 기록`을 남긴다.
 요청 처리 결과는 수행자 역할의 `responses.md`와 요청자 역할의 `responses.md` 양쪽에 남긴다. 작업 블록이 끝나면 각 역할은 자기 역할 디렉토리의 `handoff/YYYY-MM-DD.md`에 handoff를 작성한다. PM은 `.ai-work/msyeo/docs/collaboration/roles/pm/monitoring.md` 절차에 따라 모든 역할 디렉토리의 요청, 수신함, 현황, 응답, handoff와 공통 인덱스, 파일 잠금 상태를 모니터링한다. 소통 문제가 발견되면 PM이 원인을 분류하고 협업룰을 조정한다.
 PM은 모니터링 중 완료된 작업에 대해 커밋이 필요하다고 판단하면 요청 ID 단위로 관련 변경을 취합해 직접 커밋한다. 커밋 전 수행자/요청자 responses, 역할별 handoff, 검증 결과 또는 미실행 사유를 확인하고, 진행중 작업 파일은 커밋에 포함하지 않는다.
+커밋 메시지는 한글로 작성한다. 필요한 경우 conventional commit 타입은 사용할 수 있지만 제목과 설명은 담당자가 이해할 수 있는 한글 문장으로 남긴다.
 
 현재 이 대화의 AI 세션은 PM 역할을 맡는다. PM 세션은 협업 프로세스, 요청 배정, 상태 인덱스, 문서/handoff 갱신을 관리한다.
 

@@ -220,5 +220,44 @@ JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 bash ./mvnw -Dmaven.repo.local=/hom
 - 위젯용 데이터 모델과 딥링크 규칙 상세화
 - Android/iOS 위젯 플랫폼 설정 설계
 
+## 2026-04-28 최신 협업 상태
+현재 협업 역할은 PM, QA, FE, BE로 나뉘며 공통 인덱스는 `.ai-work/msyeo/docs/collaboration/requests.md`, `.ai-work/msyeo/docs/collaboration/status.md`, `.ai-work/msyeo/docs/collaboration/responses.md`다. 각 역할은 `.ai-work/msyeo/docs/collaboration/roles/{pm|qa|fe|be}/` 아래 자기 문서를 먼저 확인하고 갱신한다. 모든 역할은 작업 시작 전 `AGENTS.md`, `collaboration/master-flow.md`, `collaboration/roles/README.md`, 자기 `inbox.md`, 자기 `status.md`를 확인하고 자기 `status.md`의 `룰 확인 기록`에 남겨야 한다.
+
+### 완료된 핵심 요청
+- `REQ-20260428-06`: QA가 실제 서버에서 로그인, 일기 목록/상세, 캘린더, 감정 목록, invalid token 응답을 검증했다.
+- `REQ-20260428-09`: FE가 Flutter 일기 생성/수정/삭제 플로우를 구현했고 PM 재검증도 완료됐다.
+- `REQ-20260428-10`: QA가 Flutter widget test 기반 QA 하네스를 구축했다.
+- `REQ-20260428-24`: QA가 일기 CRUD 회귀 자동화를 확장했고 실제 서버 CRUD API도 검증했다.
+- `REQ-20260428-25`: PM이 위젯/딥링크 1차 설계 문서를 작성했다.
+- `REQ-20260428-26`: FE가 CRUD 이후 사용성 개선 후보를 설계했다.
+
+### 최신 검증 결과
+- Flutter:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+- 백엔드 remote CRUD API:
+  - `bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 spring-boot:run`으로 8080 기동 확인 후 종료
+  - 로그인 성공과 access token 발급 확인
+  - `POST /api/v1/diaries` 생성 성공 확인
+  - `GET /api/v1/diaries/{id}` 상세 조회 성공 확인
+  - `PUT /api/v1/diaries/{id}` 수정 성공과 목록 반영 확인
+  - `DELETE /api/v1/diaries/{id}` 삭제 성공과 목록 제외 확인
+  - invalid token 상세 요청은 401, `success=false`, `message=Invalid access token`, `data=null` 확인
+
+### 다음 역할별 시작점
+- QA 역할:
+  - 현재 QA inbox 기준 바로 착수할 신규 요청은 없다.
+  - BE `REQ-20260428-22` 완료 후 오류 계약 회귀 검증 요청이 들어오면 진행한다.
+- BE 역할:
+  - 1순위는 `REQ-20260428-22` API 검증 오류 계약 보강이다.
+  - malformed JSON body, 누락 query parameter, calendar `year/month` 범위 오류, 요청 DTO 검증 실패를 `ApiResponse` 오류 규칙으로 고정한다.
+  - 그 다음 `REQ-20260428-27` 사용성 개선용 API 후보 설계를 진행한다.
+- FE 역할:
+  - `REQ-20260428-09` CRUD 구현과 `REQ-20260428-26` 사용성 개선 후보 설계는 완료 상태다.
+  - 다음 FE 구현 요청은 PM이 `REQ-20260428-25`, `REQ-20260428-26`, BE `REQ-20260428-27` 결과를 보고 분리해야 한다.
+- PM 역할:
+  - BE `REQ-20260428-22`, `REQ-20260428-27` 진행을 모니터링한다.
+  - 완료 요청 단위로 responses, handoff, 검증 결과를 확인하고 커밋 범위를 선별한다.
+
 ## 새 세션에서 바로 쓸 수 있는 요약
-이 저장소는 더 이상 React 웹이 메인이 아니다. 현재 유효한 메인 방향은 `Spring Boot API + Flutter 앱 + 추후 별도 웹 + Android/iOS 위젯`이다. Flutter 앱은 이미 실제 프로젝트로 초기화되어 있고 Riverpod, 도메인 모델, DTO, 매퍼, mock/remote datasource와 repository까지 연결된 상태다. 현재 Flutter remote 구현 범위는 로그인, 일기 목록/상세, 캘린더, 감정 목록이다. 백엔드는 실제 API 계약을 따라가는 컨트롤러/서비스/DTO 구조가 추가되었고, Diary/Calendar와 Auth는 SQLite 영속화 뼈대와 임시 access token 기반 사용자 식별까지 들어간 상태다. 과거 백엔드 Maven 테스트와 Flutter analyze/test 통과 이력이 있으나, 이번 문서 최신화 세션에서는 테스트를 새로 실행하지 않았다. 다음 작업은 실제 원격 연동 검증, Flutter 입력/작성 플로우 구현, 백엔드 인증/오류 응답 고도화 중 하나가 자연스럽다.
+이 저장소는 더 이상 React 웹이 메인이 아니다. 현재 유효한 메인 방향은 `Spring Boot API + Flutter 앱 + 추후 별도 웹 + Android/iOS 위젯`이다. Flutter 앱은 Riverpod, 도메인 모델, DTO, 매퍼, mock/remote datasource와 repository까지 연결되어 있으며, 현재는 로그인, 일기 목록/상세, 일기 생성/수정/삭제, 캘린더, 감정 목록 흐름이 구현되어 있다. QA 하네스는 widget test에서 로그인, 탭 이동, 로그인 실패, 일기 CRUD 회귀를 검증한다. 백엔드는 SQLite와 임시 access token 기반으로 Auth/Diary/Calendar/Emotion API를 제공하고, 주요 오류는 `ApiResponse`로 감싼다. 다음 실질 작업은 BE `REQ-20260428-22` 오류 계약 보강이며, QA는 그 결과를 받아 오류 응답 회귀 검증을 이어가면 된다.

@@ -2,8 +2,8 @@
 
 ## 현재 상태
 - 역할: QA
-- 현재 요청: `REQ-20260428-24` 대기
-- 최근 완료: `REQ-20260428-06`, `REQ-20260428-02`, `REQ-20260428-10`
+- 현재 요청: 없음
+- 최근 완료: `REQ-20260428-24`, `REQ-20260428-06`, `REQ-20260428-02`, `REQ-20260428-10`
 - 담당 문서:
   - `.ai-work/msyeo/docs/api-contract.md`
   - `.ai-work/msyeo/docs/api-spec.md`
@@ -16,7 +16,7 @@
 - QA는 기능 구현보다 API/DTO 계약, 수동 검증 시나리오, 회귀 위험 정리에 집중한다.
 - 테스트 코드 수정이 필요하면 PM에게 담당 파일 범위를 먼저 공유한다.
 - PM이 추가한 최신 룰에 따라 공통 인덱스 문서는 PM이 최종 정리하고, QA는 기본적으로 `roles/qa/` 아래 문서를 먼저 갱신한다.
-- 공통 요청 인덱스에는 `REQ-20260428-10` Flutter QA 자동화 하네스 구축 요청이 등록되어 있으나, 현재 QA `inbox.md`에는 아직 반영되지 않았다. 사용자가 진행을 지시해 QA 역할 문서와 `mobile-flutter/test` 범위에서 먼저 완료했다.
+- `REQ-20260428-10` Flutter QA 자동화 하네스 구축 요청은 QA inbox와 공통 인덱스 모두 완료 상태로 반영됐다.
 
 ## 완료 결과: REQ-20260428-02
 - 목표: 실제 백엔드 컨트롤러/DTO와 Flutter remote datasource/DTO 기준 API 계약 재확인
@@ -80,8 +80,8 @@ HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test
 - 목표: 로그인 완료 후 remote 통합 회귀 검증
 - 선행 조건 확인:
   - `REQ-20260428-02`: QA 완료
-  - `REQ-20260428-03`: FE 응답 검토중, 구현/테스트 통과 기록 있음
-  - `REQ-20260428-04`: BE 응답 검토중, 구현/테스트 통과 기록 있음
+  - `REQ-20260428-03`: FE 완료
+  - `REQ-20260428-04`: BE 완료
 - 검증 범위:
   - 백엔드 서버 실행
   - 로그인 성공으로 access token 획득
@@ -114,11 +114,50 @@ HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test
 - 신규 기능 구상 단계로 넘어가기 전에 이미 `REQ-20260428-09`와 후속 `REQ-20260428-22~25`가 등록되어 있다.
 - 각 역할 분장:
   - BE: `REQ-20260428-22` API 검증 오류 계약 보강, `REQ-20260428-09` Diary CRUD 계약 확인
-  - FE: `REQ-20260428-23` 일기 생성/수정/삭제 Flutter 구현
+  - FE: `REQ-20260428-09` 일기 생성/수정/삭제 Flutter 구현 완료, `REQ-20260428-23`은 보류
   - QA: `REQ-20260428-24` 일기 CRUD 회귀 시나리오 및 자동화 확장
   - PM: `REQ-20260428-25` 위젯/딥링크 1차 설계 요청 준비
-- QA는 `REQ-20260428-24`를 FE `REQ-20260428-23` 착수 또는 완료 후 진행한다.
+- QA는 `REQ-20260428-24`를 바로 착수할 수 있다.
+
+## 사용성 개선 요청 기록
+- 2026-04-28 02:44 사용자 요청에 따라 FE/BE에 CRUD 이후 사용성 개선 후보 설계 요청을 남겼다.
+- FE 요청: `REQ-20260428-26`
+  - 캘린더 날짜 탭 -> 해당 날짜 일기 작성/상세 진입
+  - 일기 작성 UX 개선, 작성 중 임시 저장, 빈 상태 CTA, 오프라인/로딩/재시도 상태, 감정 기반 필터
+- BE 요청: `REQ-20260428-27`
+  - 일기 검색/필터 API, 작성 검증 강화, 이미지 업로드 준비 API, 월간 감정 통계 API, 위젯용 요약 API, 토큰 만료/갱신 전략
+- 두 요청은 즉시 구현이 아니라 다음 구현 후보를 정하기 위한 설계/우선순위 요청이다.
+
+## 완료 결과: REQ-20260428-24
+- 목표: 일기 생성/수정/삭제에 대한 QA 회귀 시나리오 및 자동화 확장
+- 자동화 확장:
+  - `QaDiaryRepository` fake를 상태형으로 변경해 생성/수정/삭제 결과가 목록과 상세 조회에 반영되도록 했다.
+  - QA harness smoke test에 작성 -> 상세 확인 -> 수정 -> 상세 확인 -> 삭제 -> 목록 제외 확인 플로우를 추가했다.
+- 수동/API 회귀 시나리오:
+  - 로그인 성공 후 access token을 획득한다.
+  - `POST /api/v1/diaries`로 새 일기를 생성하고 200 계열 `ApiResponse`와 `data.id/title/content/emotionCode/entryDate`를 확인한다.
+  - `GET /api/v1/diaries/{id}`로 생성된 상세 본문을 확인한다.
+  - `PUT /api/v1/diaries/{id}`로 제목/본문/감정을 수정하고 상세 조회에서 변경값을 확인한다.
+  - `GET /api/v1/diaries` 목록에서 수정된 제목이 반영되는지 확인한다.
+  - `DELETE /api/v1/diaries/{id}` 후 목록에서 제외되는지 확인한다.
+  - 잘못된 access token, 존재하지 않는 id, 타 사용자 id에 대한 실패 응답은 `success=false`, `message`, `data=null` 형태인지 확인한다.
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+- 자동화/통합 중 발생한 오류:
+  - 없음
+- FE/BE 후속 요청:
+  - 없음
+- 남은 이슈:
+  - malformed JSON, 누락 query parameter, calendar 범위 오류는 기존 `REQ-20260428-22` BE 요청 범위로 남아 있다.
+- 후속 remote 검증:
+  - `spring-boot:run`으로 백엔드 서버를 8080에서 기동한 뒤 종료했다.
+  - 로그인 -> 생성 -> 상세 -> 수정 -> 목록 반영 -> 삭제 -> 목록 제외 -> invalid token 실패 응답을 curl로 확인했다.
+  - 생성한 검증 일기는 삭제까지 확인해 테스트 데이터가 남지 않도록 했다.
 
 ## 룰 확인 기록
 - 2026-04-28 02:31: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-06
 - 2026-04-28 02:39: 다음 작업 점검 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: 요청 점검/업무 분장
+- 2026-04-28 02:44: 사용성 개선 요청 작성 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-26/27
+- 2026-04-28 02:52: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-24
+- 2026-04-28 02:57: QA 후속 remote CRUD 검증 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-24

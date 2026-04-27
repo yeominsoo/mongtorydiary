@@ -11,10 +11,43 @@
 | RES-REQ-20260428-14 | REQ-20260428-14 | 완료 | PM 전체 역할 디렉토리 모니터링과 협업룰 조정 절차 추가 | 2026-04-28 |
 | RES-REQ-20260428-15 | REQ-20260428-15 | 완료 | 매 작업 시작 전 변경 룰 확인 강제 | 2026-04-28 |
 | RES-REQ-20260428-21 | REQ-20260428-21 | 완료 | 기준선 확인과 단계적 업무계획 수립 | 2026-04-28 |
-| RES-REQ-20260428-08 | REQ-20260428-08 | 검토중 | BE 전역 예외 응답 ApiResponse 표준화 완료 | 2026-04-28 |
-| RES-REQ-20260428-07 | REQ-20260428-07 | 검토중 | FE 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-08 | REQ-20260428-08 | 완료 | BE 전역 예외 응답 ApiResponse 표준화 완료 | 2026-04-28 |
+| RES-REQ-20260428-07 | REQ-20260428-07 | 완료 | FE 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 |
 | RES-REQ-20260428-06 | REQ-20260428-06 | 완료 | QA remote 통합 회귀 검증 완료 | 2026-04-28 |
-| RES-REQ-20260428-09 | REQ-20260428-09 | 검토중 | FE 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-09 | REQ-20260428-09 | 완료 | FE 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-26 | REQ-20260428-26 | 완료 | FE CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 |
+| RES-REQ-20260428-24 | REQ-20260428-24 | 완료 | QA 일기 CRUD 회귀 자동화 확장 | 2026-04-28 |
+| RES-REQ-20260428-25 | REQ-20260428-25 | 완료 | 위젯/딥링크 1차 설계 문서 작성 | 2026-04-28 |
+
+## RES-REQ-20260428-25
+- 요청 ID: REQ-20260428-25
+- 요청자: PM
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - `.ai-work/msyeo/docs/widget-deeplink-plan.md`에 위젯 데이터 모델 후보, 딥링크 URL/route 후보, FE/BE 후속 요청 후보, 리스크와 보류 범위를 정리했다.
+  - 위젯은 앱이 API 응답을 바탕으로 로컬 공유 저장소에 기록한 요약 데이터를 읽는 조회 전용 진입점으로 우선 설계했다.
+  - 복잡한 작성/수정/삭제는 앱 내부 화면으로 유지하고, 위젯은 오늘 상태 확인과 빠른 진입만 담당하도록 했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/widget-deeplink-plan.md`
+  - `.ai-work/msyeo/docs/delivery-roadmap.md`
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - 문서 설계 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+  - `git diff --check -- .ai-work/msyeo/docs`로 문서 diff 공백 검증을 수행했다.
+- 남은 이슈:
+  - Flutter 딥링크 라우터, Android/iOS 위젯 shell, BE 위젯 요약 API는 아직 구현하지 않았다.
+  - 위젯 요약 API 필요 여부는 BE `REQ-20260428-27` 사용성 개선 API 후보 설계와 함께 판단한다.
+- 다음 제안:
+  - FE `REQ-20260428-26`, BE `REQ-20260428-27` 결과를 모아 딥링크와 위젯 구현 요청을 새 요청 ID로 분리한다.
 
 ## RES-REQ-20260428-21
 - 요청 ID: REQ-20260428-21
@@ -40,11 +73,39 @@
   - 문서/계획 작업이라 코드 테스트는 새로 실행하지 않았다.
   - 기준선 검증 결과는 기존 BE Maven 테스트, Flutter analyze/test, QA remote 검증 기록을 참조했다.
 - 커밋:
-  - `73ae3ea8b4921794df5312771f0b3cbf1e71db8f` (`docs: establish ai collaboration baseline (REQ-20260428-21)`)
+  - `5fc65e5b42cd69e1e827e12cd3a6a5434ed3a6a0` (`docs: AI 협업 기준선 정리 (REQ-20260428-21)`)
 - 남은 이슈:
   - 실제 커밋은 여러 역할 변경이 섞여 있어 요청 ID 단위 선별이 필요하다.
 - 다음 제안:
-  - BE는 `REQ-20260428-22`, FE는 `REQ-20260428-23`, QA는 `REQ-20260428-24`를 순서대로 진행한다.
+  - BE는 `REQ-20260428-22`를 우선 진행하고, `REQ-20260428-23`은 `REQ-20260428-09`에 흡수되어 보류됐으며, `REQ-20260428-24`는 완료됐다.
+
+## RES-REQ-20260428-24
+- 요청 ID: REQ-20260428-24
+- 요청자: PM
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - QA가 일기 생성/수정/삭제 회귀 시나리오를 정리했다.
+  - QA harness fake diary repository를 상태형으로 바꿔 CRUD 결과가 목록과 상세에 반영되도록 했다.
+  - widget smoke test에 작성, 상세 확인, 수정, 삭제, 목록 제외 확인 플로우를 추가했다.
+- 변경 파일:
+  - `mobile-flutter/test/support/qa_app_harness.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 spring-boot:run`: 8080 기동 확인 후 종료
+  - 실제 서버 API: 로그인 -> 일기 생성 -> 상세 조회 -> 수정 -> 목록 반영 -> 삭제 -> 목록 제외 -> invalid token 401 응답 확인
+- 남은 이슈:
+  - 오류 계약 세부 검증은 BE `REQ-20260428-22` 완료 후 추가 확인이 필요하다.
+- 다음 제안:
+  - PM은 공통 인덱스에서 `REQ-20260428-24` 완료 상태를 반영한다.
 
 ## RES-REQ-20260428-11
 - 요청 ID: REQ-20260428-11
@@ -213,7 +274,7 @@
 - 요청 ID: REQ-20260428-08
 - 요청자: PM
 - 담당 역할: BE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - BE가 `ApiResponse.error(message)`와 `GlobalExceptionHandler`를 추가해 오류 응답을 `success=false`, `message`, `data=null` 형태로 표준화했다.
   - Flutter `ApiClient`가 실패 응답에서도 `message`를 안정적으로 읽을 수 있는 응답 형식이다.
@@ -231,16 +292,15 @@
   - `bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`
   - 결과: `BUILD SUCCESS`, tests run 10, failures 0, errors 0, skipped 0
 - 남은 이슈:
-  - PM이 공통 인덱스와 전체 handoff에 반영해야 한다.
-  - QA가 Flutter remote 모드에서 `ApiException.message` 표시를 확인하는 것이 좋다.
+  - QA의 remote 회귀 검증에서 실패 응답 wrapper 확인까지 완료했다.
 - 다음 제안:
-  - PM은 `REQ-20260428-08` 완료 여부를 판단하고, 필요 시 요청 ID 단위 커밋 범위를 선별한다.
+  - 후속 오류 계약 세부 보강은 `REQ-20260428-22`에서 진행한다.
 
 ## RES-REQ-20260428-07
 - 요청 ID: REQ-20260428-07
 - 요청자: PM
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - FE가 일기 목록 항목 탭에서 상세 화면으로 이동하는 플로우를 구현했다.
   - `diaryDetailProvider`와 `DiaryDetailScreen`을 추가하고, 상세 로딩/오류/재시도/빈 사진 상태를 표시했다.
@@ -260,16 +320,15 @@
   - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과
   - `git diff --check`: 통과
 - 남은 이슈:
-  - 공통 PM 인덱스 동기화와 완료 판단은 PM이 처리해야 한다.
-  - remote 백엔드 상세 API 연결 검증은 QA 또는 통합 세션에서 추가 확인이 필요하다.
+  - QA remote 회귀 검증에서 상세 API 연결 확인이 완료됐다.
 - 다음 제안:
-  - PM은 `REQ-20260428-07` 완료 여부를 판단하고, 후속 `REQ-20260428-09` 착수 가능성을 재검토한다.
+  - 후속 CRUD 검증은 `REQ-20260428-24`에서 완료됐다.
 
 ## RES-FE-IMPROVE-20260428-01
 - 요청 ID: FE-IMPROVE-20260428-01
 - 요청자: 사용자/PM
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - FE가 현재 화면을 점검해 생성/수정/삭제 API 전 단계에서 보강 가능한 홈/상세 퍼블리싱 품질 개선을 수행했다.
   - 작성 CTA는 실제 작성 플로우가 연결된 것처럼 보이지 않도록 준비 상태 안내와 스낵바로 정리했다.
@@ -298,7 +357,7 @@
 - 요청 ID: REQ-20260428-09
 - 요청자: PM
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - FE가 백엔드 Diary CRUD API 계약에 맞춰 Flutter 일기 생성/수정/삭제 플로우를 구현했다.
   - `ApiClient`에 `put`, `delete`를 추가하고, repository/remote/mock datasource 계약을 확장했다.
@@ -328,10 +387,44 @@
   - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
 - 검증:
   - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
-  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과
-  - `git diff --check`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 8 tests passed
+  - `git diff --check -- mobile-flutter/lib mobile-flutter/test .ai-work/msyeo/docs/collaboration/roles/fe`: 통과
 - 남은 이슈:
-  - QA가 remote 모드에서 실제 백엔드 생성/수정/삭제 회귀 검증을 수행해야 한다.
+  - QA가 remote 모드에서 실제 백엔드 생성/수정/삭제 회귀 검증을 완료했다.
   - 감정 코드 입력은 현재 텍스트 필드이며, 감정 목록 기반 선택 UI는 후속 UX 개선 후보이다.
 - 다음 제안:
-  - PM은 `REQ-20260428-09` FE 결과를 검토하고 QA CRUD 회귀 요청을 진행 상태로 전환한다.
+  - QA는 `REQ-20260428-24`로 일기 CRUD 회귀 시나리오 및 자동화 확장을 완료했다.
+  - 중복 후속 요청 `REQ-20260428-23`은 `REQ-20260428-09` 결과에 흡수해 보류한다.
+
+## RES-REQ-20260428-26
+- 요청 ID: REQ-20260428-26
+- 요청자: 사용자/PM
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - FE가 CRUD 이후 앱 사용성 개선 후보를 비교했다.
+  - 1순위 후보는 캘린더 날짜 탭에서 해당 날짜 일기 확인 또는 작성으로 이어지는 플로우다.
+  - BE 추가 API 없이 Flutter 화면/상태 연결로 1차 구현 가능하며, 날짜별 다건 처리 UX만 PM 결정이 필요하다.
+- 후보 우선순위:
+  - 1순위: 캘린더 날짜 탭 -> 해당 날짜 일기 목록/상세/작성 진입
+  - 2순위: 일기 작성 UX 개선, 감정 선택 UI와 날짜 선택 개선
+  - 3순위: 빈 상태 CTA 개선
+  - 4순위: 오프라인/로딩/재시도 상태 강화
+  - 5순위: 작성 중 임시 저장
+  - 6순위: 감정 기반 필터
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - 설계 문서 작업이라 코드 테스트는 실행하지 않았다.
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 날짜 선택 시 같은 날짜에 여러 일기가 있을 경우 목록을 보여줄지, 최신 1건으로 바로 진입할지 PM 결정이 필요하다.
+  - QA CRUD 회귀 검증 결과를 확인한 뒤 구현 착수하는 것이 안전하다.
+- 다음 제안:
+  - PM은 캘린더 날짜 탭 진입 플로우 구현 요청을 FE에 신규 배정한다.

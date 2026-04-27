@@ -18,7 +18,7 @@
 | REQ-20260428-06 | P1 | PM | QA | 완료 | 로그인 완료 후 remote 통합 회귀 검증 | 2026-04-28 | 백엔드 실행, Flutter remote, API 시나리오 |
 | REQ-20260428-07 | P1 | PM | FE | 완료 | 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
 | REQ-20260428-08 | P1 | PM | BE | 완료 | 전역 예외 응답을 ApiResponse 규칙에 맞게 표준화 | 2026-04-28 | `src/main/java`, `src/test/java` |
-| REQ-20260428-09 | P1 | PM | FE/BE | 진행중 | 일기 생성/수정/삭제 API와 Flutter 플로우 연결 준비 | 2026-04-28 | Diary API, Flutter diary repository/screen |
+| REQ-20260428-09 | P1 | PM | FE/BE | 완료 | 일기 생성/수정/삭제 API와 Flutter 플로우 연결 준비 | 2026-04-28 | Diary API, Flutter diary repository/screen |
 | REQ-20260428-10 | P1 | 사용자/QA | QA | 완료 | Flutter QA 자동화 하네스 1차 구축과 결함 요청 분류 규칙 적용 | 2026-04-28 | `mobile-flutter/test`, 필요 시 `mobile-flutter/integration_test`, QA 문서 |
 | REQ-20260428-11 | P0 | 사용자/PM | PM | 완료 | 역할별 디렉토리와 요청자별 문서 체계 도입 | 2026-04-28 | `.ai-work/msyeo/docs/collaboration/roles/` |
 | REQ-20260428-12 | P0 | 사용자/PM | PM | 완료 | 역할별 handoff와 요청자 responses 양방향 기록 규칙 추가 | 2026-04-28 | 협업 마스터, 역할별 handoff, PM 모니터링 |
@@ -27,9 +27,11 @@
 | REQ-20260428-15 | P0 | 사용자/PM | PM | 완료 | 매 작업 시작 전 변경 룰 확인 강제 | 2026-04-28 | AGENTS, master-flow, roles status |
 | REQ-20260428-21 | P0 | 사용자/PM | PM | 완료 | 기준선 커밋 및 단계적 업무계획 수립 | 2026-04-28 | delivery-roadmap, collaboration docs |
 | REQ-20260428-22 | P1 | PM | BE | 대기 | API 검증 오류 계약 보강 | 2026-04-28 | `src/main/java`, `src/test/java`, API 문서 |
-| REQ-20260428-23 | P1 | PM | FE | 대기 | 일기 생성/수정/삭제 Flutter 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
-| REQ-20260428-24 | P1 | PM | QA | 대기 | 일기 CRUD 회귀 시나리오 및 자동화 확장 | 2026-04-28 | QA 문서, `mobile-flutter/test` |
-| REQ-20260428-25 | P1 | PM | PM | 대기 | 위젯/딥링크 1차 설계 요청 준비 | 2026-04-28 | delivery-roadmap, widget planning |
+| REQ-20260428-23 | P1 | PM | FE | 보류 | 일기 생성/수정/삭제 Flutter 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
+| REQ-20260428-24 | P1 | PM | QA | 완료 | 일기 CRUD 회귀 시나리오 및 자동화 확장 | 2026-04-28 | QA 문서, `mobile-flutter/test` |
+| REQ-20260428-25 | P1 | PM | PM | 완료 | 위젯/딥링크 1차 설계 요청 준비 | 2026-04-28 | `.ai-work/msyeo/docs/widget-deeplink-plan.md` |
+| REQ-20260428-26 | P2 | 사용자/PM | FE | 완료 | CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 | Flutter UX, calendar/diary flow |
+| REQ-20260428-27 | P2 | 사용자/PM | BE | 대기 | 사용성 개선용 API 후보 설계 | 2026-04-28 | Diary search/filter, stats, widget summary |
 
 ## 요청 상세
 ### REQ-20260428-01
@@ -179,7 +181,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: FE/BE
-- 상태: 진행중
+- 상태: 완료
 - 선행 조건:
   - `REQ-20260428-06` 완료
   - `REQ-20260428-07` 완료
@@ -198,6 +200,10 @@
   - FE: Flutter repository/remote/mock 계약 확장 범위, 작성/수정/삭제 화면 진입, 저장 후 목록 갱신 플로우 산정
   - BE: Diary CRUD API 요청/응답/권한/오류 계약 최종 확인, 생성/수정/삭제 테스트 보강 필요 범위 산정
   - QA: FE/BE 범위 확정 후 `REQ-20260428-24`로 회귀 시나리오와 자동화 확장 준비
+- PM 메모:
+  - 2026-04-28 FE가 Flutter 일기 생성/수정/삭제 repository, remote/mock datasource, 작성/수정/삭제 화면, provider 갱신, 위젯 테스트를 구현했다.
+  - 2026-04-28 PM이 `flutter analyze`, `flutter test`, `git diff --check`를 재실행해 통과를 확인했다.
+  - 중복 후속 요청 `REQ-20260428-23`은 이 구현 결과에 흡수해 보류 처리한다.
 
 ### REQ-20260428-10
 - 우선순위: P1
@@ -327,7 +333,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: FE
-- 상태: 대기
+- 상태: 보류
 - 선행 조건:
   - `REQ-20260428-07`, `REQ-20260428-08` 완료
 - 요청 내용:
@@ -339,14 +345,17 @@
   - `flutter analyze`, `flutter test` 결과
   - mock/remote 동작 범위
   - BE API 변경 요청이 있으면 별도 요청 등록
+- PM 메모:
+  - 2026-04-28 해당 구현 범위는 `REQ-20260428-09` FE 작업으로 이미 완료됐다.
+  - 별도 추가 구현 요청으로 유지하지 않고 `REQ-20260428-09` 결과에 흡수했다.
 
 ### REQ-20260428-24
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: QA
-- 상태: 대기
+- 상태: 완료
 - 선행 조건:
-  - `REQ-20260428-23` 착수 또는 완료
+  - `REQ-20260428-09` 완료
 - 요청 내용:
   - 일기 생성/수정/삭제에 대한 QA 회귀 시나리오를 작성한다.
   - 가능한 범위에서 widget test 하네스를 확장한다.
@@ -356,12 +365,16 @@
   - 자동화 추가/수정 파일 목록
   - `flutter test` 또는 미실행 사유
   - FE/BE 후속 결함 요청 여부
+- QA 메모:
+  - 2026-04-28 QA가 상태형 harness fake repository와 CRUD smoke test를 추가했다.
+  - `flutter test` 9건과 `flutter analyze` 통과를 확인했다.
+  - 실제 서버 remote CRUD API도 로그인 -> 생성 -> 상세 -> 수정 -> 목록 반영 -> 삭제 -> 목록 제외 -> invalid token 실패 응답 순서로 검증했다.
 
 ### REQ-20260428-25
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: PM
-- 상태: 대기
+- 상태: 완료
 - 선행 조건:
   - 일기 CRUD MVP 완료 또는 구현 범위 확정
 - 요청 내용:
@@ -372,3 +385,44 @@
   - 딥링크 URL/route 후보
   - FE/BE 후속 요청 후보
   - 구현 전 리스크와 보류 범위
+- PM 메모:
+  - 2026-04-28 `.ai-work/msyeo/docs/widget-deeplink-plan.md`에 위젯 요약 데이터 모델, 딥링크 URL/route 후보, FE/BE 후속 요청 후보, 리스크와 보류 범위를 정리했다.
+  - 위젯은 앱이 생성한 로컬 공유 요약 데이터를 읽는 조회 전용 진입점으로 우선 설계하고, 서버 위젯 요약 API는 BE `REQ-20260428-27`에서 필요성을 평가하도록 연결한다.
+
+### REQ-20260428-26
+- 우선순위: P2
+- 요청자: 사용자/PM
+- 대상 역할: FE
+- 상태: 완료
+- 선행 조건:
+  - `REQ-20260428-09` 완료
+- 요청 내용:
+  - CRUD 이후 앱 사용성을 높일 Flutter 기능 후보를 설계한다.
+  - 우선 후보는 캘린더 날짜 탭 -> 해당 날짜 일기 작성/상세 진입, 일기 작성 UX 개선, 작성 중 임시 저장, 빈 상태 CTA 개선, 오프라인/로딩/재시도 상태 강화, 감정 기반 필터다.
+  - 구현은 바로 시작하지 말고 UX 영향, 구현 난이도, BE 의존성을 기준으로 우선순위를 제안한다.
+- 완료 기준:
+  - 후보별 사용자 가치
+  - Flutter 변경 예상 파일/화면
+  - BE API 의존성 여부
+  - 1순위 구현 요청 후보
+- PM 메모:
+  - 2026-04-28 FE가 캘린더 날짜 탭에서 해당 날짜 일기 확인/작성으로 이어지는 플로우를 1순위 후보로 제안했다.
+  - 같은 날짜 다건 처리 UX는 PM 결정 후 신규 구현 요청으로 분리한다.
+
+### REQ-20260428-27
+- 우선순위: P2
+- 요청자: 사용자/PM
+- 대상 역할: BE
+- 상태: 대기
+- 선행 조건:
+  - `REQ-20260428-22` 착수 또는 완료
+  - `REQ-20260428-09` CRUD Flutter 구현 범위 확인
+- 요청 내용:
+  - 앱 사용성을 높일 백엔드 API 후보를 설계한다.
+  - 우선 후보는 일기 검색/필터 API, 작성 검증 강화, 이미지 업로드 준비 API, 월간 감정 통계 API, 위젯용 요약 API, 토큰 만료/갱신 전략 정리다.
+  - 구현은 바로 시작하지 말고 API 가치, Flutter 의존성, 테스트 범위, 위젯 확장성과 연결해 우선순위를 제안한다.
+- 완료 기준:
+  - 후보별 API 경로/응답 초안
+  - 기존 모델/DTO 변경 필요 여부
+  - 테스트 보강 범위
+  - 1순위 구현 요청 후보

@@ -25,9 +25,41 @@
 | RES-REQ-20260428-14 | REQ-20260428-14 | PM | 완료 | PM 전체 역할 디렉토리 모니터링과 협업룰 조정 절차 추가 | 2026-04-28 |
 | RES-REQ-20260428-15 | REQ-20260428-15 | PM | 완료 | 매 작업 시작 전 변경 룰 확인 강제 | 2026-04-28 |
 | RES-REQ-20260428-21 | REQ-20260428-21 | PM | 완료 | 기준선 확인과 단계적 업무계획 수립 | 2026-04-28 |
-| RES-REQ-20260428-09 | REQ-20260428-09 | FE | 검토중 | 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-09 | REQ-20260428-09 | FE | 완료 | 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
+| RES-REQ-20260428-25 | REQ-20260428-25 | PM | 완료 | 위젯/딥링크 1차 설계 문서 작성 | 2026-04-28 |
+| RES-REQ-20260428-24 | REQ-20260428-24 | QA | 완료 | 일기 CRUD 회귀 시나리오 및 QA 하네스 확장 | 2026-04-28 |
+| RES-REQ-20260428-26 | REQ-20260428-26 | FE | 완료 | CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 |
 
 ## 응답 상세
+### RES-REQ-20260428-25
+- 요청 ID: REQ-20260428-25
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - 위젯 요약 데이터 모델 후보와 딥링크 URL/Flutter route 후보를 정리했다.
+  - 위젯은 앱이 기록한 로컬 공유 요약 데이터를 읽는 조회 전용 진입점으로 우선 설계했다.
+  - FE 딥링크 라우터, 앱 기반 위젯 요약 데이터 생성, 네이티브 위젯 shell 검토와 BE 위젯 요약 API, 연속 작성 일수, 날짜별 일기 조회 계약 검토를 후속 후보로 분리했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/widget-deeplink-plan.md`
+  - `.ai-work/msyeo/docs/delivery-roadmap.md`
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - 문서 설계 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+  - `git diff --check -- .ai-work/msyeo/docs`로 문서 diff 공백 검증을 수행했다.
+- 남은 이슈:
+  - 실제 Android/iOS 위젯 구현과 Flutter 딥링크 라우터 구현은 아직 시작하지 않았다.
+  - 위젯 요약 API가 필요한지는 BE `REQ-20260428-27` 결과와 함께 판단한다.
+- 다음 제안:
+  - PM은 FE `REQ-20260428-26`과 BE `REQ-20260428-27` 결과를 모아 딥링크/위젯 구현 요청을 별도 ID로 분리한다.
+
 ### RES-REQ-20260428-01
 - 요청 ID: REQ-20260428-01
 - 담당 역할: PM
@@ -402,23 +434,54 @@
   - 문서/계획 작업이라 코드 테스트는 새로 실행하지 않았다.
   - 기준선 검증 결과는 기존 BE Maven 테스트, Flutter analyze/test, QA remote 검증 기록을 참조했다.
 - 커밋:
-  - `73ae3ea8b4921794df5312771f0b3cbf1e71db8f` (`docs: establish ai collaboration baseline (REQ-20260428-21)`)
+  - `5fc65e5b42cd69e1e827e12cd3a6a5434ed3a6a0` (`docs: AI 협업 기준선 정리 (REQ-20260428-21)`)
 - 남은 이슈:
   - 실제 커밋은 여러 역할 변경이 섞여 있어 요청 ID 단위 선별이 필요하다.
 - 다음 제안:
-  - BE는 `REQ-20260428-22`, FE는 `REQ-20260428-23`, QA는 `REQ-20260428-24`를 순서대로 진행한다.
+  - BE는 `REQ-20260428-22`를 우선 진행하고, `REQ-20260428-23`은 `REQ-20260428-09`에 흡수되어 보류됐으며, `REQ-20260428-24`는 완료됐다.
 
 ### RES-REQ-20260428-09
 - 요청 ID: REQ-20260428-09
 - 담당 역할: FE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - Flutter 일기 생성/수정/삭제 플로우와 repository/remote/mock 계약을 구현했다.
   - 홈 작성 진입, 상세 수정/삭제 진입, 저장/삭제 후 provider 갱신을 연결했다.
-  - `flutter analyze`, `flutter test`, `git diff --check` 통과 기록이 있다.
+  - PM이 `flutter analyze`, `flutter test`, `git diff --check`를 재실행해 통과를 확인했다.
+  - 중복 후속 요청 `REQ-20260428-23`은 별도 진행하지 않고 이 결과에 흡수했다.
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 8 tests passed
+  - `git diff --check -- mobile-flutter/lib mobile-flutter/test .ai-work/msyeo/docs/collaboration/roles/fe`: 통과
 - 남은 이슈:
   - QA가 remote 모드에서 백엔드 생성/수정/삭제 회귀 검증을 수행해야 한다.
   - 감정 코드 입력은 후속 UX 개선 후보로 남는다.
+
+### RES-REQ-20260428-24
+- 요청 ID: REQ-20260428-24
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - QA가 일기 생성/수정/삭제 회귀 시나리오를 정리했다.
+  - 상태형 QA harness fake repository와 작성/상세/수정/삭제 smoke test를 추가했다.
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+- 남은 이슈:
+  - 실제 서버 remote CRUD 검증도 QA 후속 검증에서 완료됐다.
+
+### RES-REQ-20260428-26
+- 요청 ID: REQ-20260428-26
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - CRUD 이후 앱 사용성 개선 후보를 사용자 가치, Flutter 변경 범위, BE 의존성 기준으로 비교했다.
+  - 1순위 구현 후보는 캘린더 날짜 탭에서 해당 날짜 일기 확인 또는 작성으로 이어지는 플로우다.
+- 검증:
+  - 설계 문서 작업이라 코드 테스트는 실행하지 않았다.
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 같은 날짜 다건 처리 UX는 PM 결정 후 신규 구현 요청으로 분리한다.
 
 ## 응답 템플릿
 ```text

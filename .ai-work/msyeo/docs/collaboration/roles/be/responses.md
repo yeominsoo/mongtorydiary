@@ -3,14 +3,14 @@
 ## 응답 목록
 | 응답 ID | 요청 ID | 상태 | 요약 | 작성일 |
 | --- | --- | --- | --- | --- |
-| RES-REQ-20260428-04 | REQ-20260428-04 | 검토중 | 인증/소유권 검증 테스트 보강 및 Maven 테스트 통과 | 2026-04-28 |
-| RES-REQ-20260428-08 | REQ-20260428-08 | 검토중 | 전역 예외 응답 ApiResponse 표준화 및 Maven 테스트 통과 | 2026-04-28 |
+| RES-REQ-20260428-04 | REQ-20260428-04 | 완료 | 인증/소유권 검증 테스트 보강 및 Maven 테스트 통과 | 2026-04-28 |
+| RES-REQ-20260428-08 | REQ-20260428-08 | 완료 | 전역 예외 응답 ApiResponse 표준화 및 Maven 테스트 통과 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-04
 - 요청 ID: REQ-20260428-04
 - 담당 역할: BE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - 로그인 실패, 회원가입 토큰 발급, refresh token 재발급 테스트를 추가했다.
   - invalid access token 거부와 타 사용자 일기 상세 접근 차단 테스트를 추가했다.
@@ -25,14 +25,14 @@
   - `bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`
   - 결과: `BUILD SUCCESS`, tests run 8, failures 0, errors 0, skipped 0
 - 남은 이슈:
-  - `ResponseStatusException` 오류 응답은 아직 `ApiResponse` 형태로 표준화되지 않았다.
+  - 전역 예외 응답 표준화는 후속 `REQ-20260428-08`에서 완료됐다.
 - 다음 제안:
-  - PM이 `REQ-20260428-04`를 완료 처리한 뒤, 선행 조건이 충족되면 `REQ-20260428-08` 전역 예외 응답 표준화를 진행한다.
+  - 추가 검증 오류 계약 보강은 `REQ-20260428-22`에서 진행한다.
 
 ### RES-REQ-20260428-08
 - 요청 ID: REQ-20260428-08
 - 담당 역할: BE
-- 상태: 검토중
+- 상태: 완료
 - 요약:
   - `ApiResponse.error(message)` 팩토리를 추가했다.
   - `GlobalExceptionHandler`를 추가해 `ResponseStatusException`, `MissingRequestHeaderException`, `MethodArgumentTypeMismatchException`, 일반 예외를 JSON `ApiResponse` 형태로 변환하도록 했다.
@@ -50,11 +50,9 @@
   - `bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`
   - 결과: `BUILD SUCCESS`, tests run 10, failures 0, errors 0, skipped 0
 - 남은 이슈:
-  - 공통 인덱스(`collaboration/requests.md`, `status.md`, `responses.md`)와 handoff는 새 규칙상 PM이 반영해야 한다.
   - 일반 `Exception`은 보안상 `Internal server error`로만 응답한다.
 - 다음 제안:
-  - PM/QA가 오류 응답 예시를 확인한 뒤 `REQ-20260428-08` 완료 여부를 판단한다.
-  - QA는 Flutter remote 모드에서 실패 응답이 `ApiException.message`로 표시되는지 확인한다.
+  - malformed JSON, 누락 query parameter, calendar 범위 오류는 `REQ-20260428-22`에서 보강한다.
 
 ## 작성 템플릿
 ```text

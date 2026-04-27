@@ -52,4 +52,58 @@ void main() {
 
     expect(find.text('QA 로그인 실패'), findsWidgets);
   });
+
+  testWidgets('QA harness covers diary create update and delete', (
+    tester,
+  ) async {
+    await pumpQaApp(tester);
+    await qaSignInWithSeedAccount(tester);
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text('일기 작성'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField).at(0), '2026-03-21');
+    await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 작성 일기');
+    await tester.enterText(
+      find.byType(TextFormField).at(2),
+      '생성 회귀 검증 본문입니다.',
+    );
+    await tester.enterText(find.byType(TextFormField).at(3), 'CALM');
+    await tester.tap(find.text('저장'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CRUD 작성 일기'), findsOneWidget);
+
+    await tester.tap(find.text('CRUD 작성 일기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('일기 상세'), findsOneWidget);
+    expect(find.text('생성 회귀 검증 본문입니다.'), findsOneWidget);
+
+    await tester.tap(find.text('수정'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('일기 수정'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 수정 일기');
+    await tester.enterText(
+      find.byType(TextFormField).at(2),
+      '수정 회귀 검증 본문입니다.',
+    );
+    await tester.tap(find.text('저장'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CRUD 수정 일기'), findsOneWidget);
+    expect(find.text('수정 회귀 검증 본문입니다.'), findsOneWidget);
+
+    await tester.tap(find.text('삭제'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('삭제').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('오늘의 일기'), findsOneWidget);
+    expect(find.text('CRUD 수정 일기'), findsNothing);
+  });
 }
