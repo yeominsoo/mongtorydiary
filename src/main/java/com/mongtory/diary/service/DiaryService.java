@@ -19,7 +19,7 @@ import com.mongtory.diary.repository.DiaryEntryRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-	@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class DiaryService {
 
 	private final DiaryEntryRepository diaryEntryRepository;
@@ -42,11 +42,16 @@ public class DiaryService {
 	}
 
 	public DiaryDetailResponse createDiary(UserAccount currentUser, DiaryUpsertRequest request) {
+		final LocalDate entryDate = requireEntryDate(request);
+		final String title = requireText(request.getTitle(), "Diary title is required");
+		final String content = requireText(request.getContent(), "Diary content is required");
+		final String emotionCode = requireText(request.getEmotionCode(), "Diary emotion code is required");
+
 		final DiaryEntry diaryEntry = DiaryEntry.builder()
-			.entryDate(request.getEntryDate())
-			.title(request.getTitle())
-			.content(request.getContent())
-			.emotionCode(normalizeEmotionCode(request.getEmotionCode()))
+			.entryDate(entryDate)
+			.title(title)
+			.content(content)
+			.emotionCode(normalizeEmotionCode(emotionCode))
 			.owner(currentUser)
 			.imageUrls(copyImageUrls(request.getImageUrls()))
 			.build();
@@ -56,12 +61,16 @@ public class DiaryService {
 
 	public DiaryDetailResponse updateDiary(UserAccount currentUser, Long diaryId, DiaryUpsertRequest request) {
 		final DiaryEntry diaryEntry = getDiaryEntry(currentUser, diaryId);
+		final LocalDate entryDate = requireEntryDate(request);
+		final String title = requireText(request.getTitle(), "Diary title is required");
+		final String content = requireText(request.getContent(), "Diary content is required");
+		final String emotionCode = requireText(request.getEmotionCode(), "Diary emotion code is required");
 
 		diaryEntry.update(
-			request.getEntryDate(),
-			request.getTitle(),
-			request.getContent(),
-			normalizeEmotionCode(request.getEmotionCode()),
+			entryDate,
+			title,
+			content,
+			normalizeEmotionCode(emotionCode),
 			copyImageUrls(request.getImageUrls())
 		);
 
@@ -112,11 +121,23 @@ public class DiaryService {
 		return imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
 	}
 
-	private String normalizeEmotionCode(String emotionCode) {
-		if (emotionCode == null || emotionCode.isBlank()) {
-			return "CALM";
+	private LocalDate requireEntryDate(DiaryUpsertRequest request) {
+		if (request.getEntryDate() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Diary entry date is required");
 		}
 
+		return request.getEntryDate();
+	}
+
+	private String requireText(String value, String message) {
+		if (value == null || value.isBlank()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+		}
+
+		return value.trim();
+	}
+
+	private String normalizeEmotionCode(String emotionCode) {
 		return emotionCode.trim().toUpperCase();
 	}
 }

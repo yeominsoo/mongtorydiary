@@ -7,7 +7,9 @@
 | RES-REQ-20260428-07 | REQ-20260428-07 | 완료 | 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 |
 | RES-REQ-20260428-09 | REQ-20260428-09 | 완료 | 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
 | RES-REQ-20260428-26 | REQ-20260428-26 | 완료 | CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 |
+| RES-REQ-20260428-28 | REQ-20260428-28 | 완료 | 캘린더 날짜 탭에서 일기 확인/작성 진입 플로우 구현 | 2026-04-28 |
 | RES-FE-IMPROVE-20260428-01 | FE-IMPROVE-20260428-01 | 완료 | 일기 홈/상세 퍼블리싱 품질 보강 | 2026-04-28 |
+| RES-FE-IMPROVE-20260428-03 | FE-IMPROVE-20260428-03 | 완료 | 일기 작성/수정 감정 선택 UI 개선 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-03
@@ -192,6 +194,69 @@
   - 날짜별 일기 목록 UX를 단일 상세 진입으로 제한할지, 같은 날짜 다건 목록을 보여줄지 PM 결정이 필요하다.
 - 다음 제안:
   - PM은 `REQ-20260428-26`을 검토한 뒤 캘린더 날짜 탭 진입 플로우 구현 요청을 FE에 배정한다.
+
+### RES-REQ-20260428-28
+- 요청 ID: REQ-20260428-28
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - 사용자 직접 지시로 시작한 `FE-IMPROVE-20260428-02` 작업을 PM 공통 요청 `REQ-20260428-28` 범위로 정규화해 완료했다.
+  - 캘린더 날짜를 탭하면 해당 날짜 action sheet가 열리도록 했다.
+  - 해당 날짜 일기가 있으면 action sheet에서 일기를 선택해 상세 화면으로 진입한다.
+  - 해당 날짜 일기가 없거나 추가 작성이 필요하면 날짜가 기본값으로 채워진 작성 화면으로 진입한다.
+  - 저장 후 일기 목록과 캘린더 provider를 갱신한다.
+  - QA harness 테스트에 캘린더 날짜 탭 후 상세 진입 회귀를 추가했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/calendar/calendar_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - QA `REQ-20260428-30`에서 상세 진입과 빈 날짜 작성 기본값을 하네스 기준으로 검증했다.
+  - 현재 날짜별 일기 매칭은 로드된 일기 목록 기준이다. 날짜별 다건 조회가 많아지면 목록 query 확장이 필요할 수 있다.
+- 다음 제안:
+  - FE 신규 결함은 없으며 다음 FE 요청은 PM 배정을 기다린다.
+
+### RES-FE-IMPROVE-20260428-03
+- 요청 ID: FE-IMPROVE-20260428-03
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - 공식 FE 수신함에 신규 배정 요청이 없어 사용자 지시를 직접 FE 후속 개선 작업으로 보고 착수했다.
+  - 일기 작성/수정 화면의 감정 코드 직접 입력을 `emotionListProvider` 기반 선택 UI로 개선했다.
+  - 감정 목록 로딩 실패 또는 빈 목록 상황에서는 기존 감정 코드 입력 fallback을 유지해 저장 계약이 막히지 않도록 했다.
+  - 저장 payload는 기존 `emotionCode` 문자열 계약을 유지해 BE API 변경 없이 동작한다.
+  - 위젯 테스트와 QA 하네스 테스트에서 기본 감정 선택 UI 노출을 확인하도록 보강했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 실제 remote 감정 목록 API 실패 상황의 화면 노출은 QA remote 검증에서 추가 확인할 수 있다.
+  - 날짜 입력은 아직 텍스트 필드이며, date picker 전환은 별도 FE 개선 후보로 남아 있다.
+- 다음 제안:
+  - PM은 이 개선을 검토한 뒤 필요하면 공통 인덱스에 FE 보강 작업으로 반영한다.
+  - QA는 기존 `REQ-20260428-30` 검증 시 작성 화면 감정 선택 UI도 함께 확인한다.
 
 ## 작성 템플릿
 ```text

@@ -7,6 +7,8 @@
 | RES-REQ-20260428-10 | REQ-20260428-10 | 완료 | Flutter QA 자동화 하네스 1차 구축 | 2026-04-28 |
 | RES-REQ-20260428-06 | REQ-20260428-06 | 완료 | 로그인 후 remote 통합 회귀 검증 완료 | 2026-04-28 |
 | RES-REQ-20260428-24 | REQ-20260428-24 | 완료 | 일기 CRUD 회귀 시나리오 및 QA 하네스 확장 | 2026-04-28 |
+| RES-REQ-20260428-29 | REQ-20260428-29 | 완료 | API 검증 오류 계약 실제 서버 회귀 검증 | 2026-04-28 |
+| RES-REQ-20260428-30 | REQ-20260428-30 | 완료 | 캘린더 날짜 탭 UX 회귀 검증 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-02
@@ -164,6 +166,45 @@
 - 다음 제안:
   - PM이 공통 인덱스에서 `REQ-20260428-24` 완료 상태를 반영한다.
   - BE `REQ-20260428-22` 완료 후 오류 계약 중심 회귀 검증을 추가한다.
+
+### RES-REQ-20260428-29
+- 요청 ID: REQ-20260428-29
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - BE `REQ-20260428-22` 오류 계약 보강 결과를 실제 서버에서 curl로 회귀 검증했다.
+  - 누락 query, calendar month 범위 오류, query 타입 불일치, malformed JSON, body 타입 불일치, 필수값 공백 요청이 모두 400 계열 `ApiResponse`로 응답했다.
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 spring-boot:run`: 8080 기동 후 종료
+  - `GET /api/v1/calendar?month=3`: 400, `message=year parameter is required`
+  - `GET /api/v1/calendar?year=2026`: 400, `message=month parameter is required`
+  - `GET /api/v1/calendar?year=2026&month=13`: 400, `message=Invalid calendar month`
+  - `GET /api/v1/calendar?year=abc&month=3`: 400, `message=Invalid request parameter`
+  - malformed JSON `POST /api/v1/diaries`: 400, `message=Invalid request body`
+  - `imageUrls` 문자열 `POST /api/v1/diaries`: 400, `message=Invalid request body`
+  - 빈 `title/content/emotionCode` `POST /api/v1/diaries`: 400, `message=Diary title is required`
+- FE/BE 후속 요청:
+  - 없음
+- 남은 이슈:
+  - 오류 메시지는 영어 고정 문자열이다. 사용자 노출 문구 현지화는 별도 UX 범위로 분리할 수 있다.
+
+### RES-REQ-20260428-30
+- 요청 ID: REQ-20260428-30
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - FE `REQ-20260428-28` 캘린더 날짜 탭 UX를 Flutter QA 하네스로 회귀 검증했다.
+  - 기록 있는 날짜 탭 후 bottom sheet에서 일기 상세 진입을 확인했다.
+  - 기록 없는 날짜 탭 후 날짜가 기본값으로 채워진 작성 화면 진입 테스트를 추가했다.
+- 변경 파일:
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+- FE/BE 후속 요청:
+  - 없음
+- 남은 이슈:
+  - 실제 디바이스 또는 웹 런타임에서 bottom sheet 조작감은 별도 수동 확인이 필요할 수 있다.
 
 ## 작성 템플릿
 ```text

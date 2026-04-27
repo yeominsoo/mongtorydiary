@@ -26,12 +26,16 @@
 | REQ-20260428-14 | P0 | 사용자/PM | PM | 완료 | PM 전체 역할 디렉토리 모니터링과 협업룰 조정 절차 추가 | 2026-04-28 | PM monitoring, master-flow, AGENTS |
 | REQ-20260428-15 | P0 | 사용자/PM | PM | 완료 | 매 작업 시작 전 변경 룰 확인 강제 | 2026-04-28 | AGENTS, master-flow, roles status |
 | REQ-20260428-21 | P0 | 사용자/PM | PM | 완료 | 기준선 커밋 및 단계적 업무계획 수립 | 2026-04-28 | delivery-roadmap, collaboration docs |
-| REQ-20260428-22 | P1 | PM | BE | 대기 | API 검증 오류 계약 보강 | 2026-04-28 | `src/main/java`, `src/test/java`, API 문서 |
+| REQ-20260428-22 | P1 | PM | BE | 완료 | API 검증 오류 계약 보강 | 2026-04-28 | `src/main/java`, `src/test/java`, API 문서 |
 | REQ-20260428-23 | P1 | PM | FE | 보류 | 일기 생성/수정/삭제 Flutter 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
 | REQ-20260428-24 | P1 | PM | QA | 완료 | 일기 CRUD 회귀 시나리오 및 자동화 확장 | 2026-04-28 | QA 문서, `mobile-flutter/test` |
 | REQ-20260428-25 | P1 | PM | PM | 완료 | 위젯/딥링크 1차 설계 요청 준비 | 2026-04-28 | `.ai-work/msyeo/docs/widget-deeplink-plan.md` |
 | REQ-20260428-26 | P2 | 사용자/PM | FE | 완료 | CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 | Flutter UX, calendar/diary flow |
 | REQ-20260428-27 | P2 | 사용자/PM | BE | 대기 | 사용성 개선용 API 후보 설계 | 2026-04-28 | Diary search/filter, stats, widget summary |
+| REQ-20260428-28 | P1 | PM | FE | 완료 | 캘린더 날짜 탭에서 일기 확인/작성 진입 플로우 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
+| REQ-20260428-29 | P1 | PM | QA | 완료 | API 검증 오류 계약 회귀 검증 | 2026-04-28 | QA 문서, 백엔드 실행 검증 |
+| REQ-20260428-30 | P1 | PM | QA | 완료 | 캘린더 날짜 탭 UX 회귀 검증 | 2026-04-28 | `mobile-flutter/test`, QA 문서 |
+| REQ-20260428-31 | P2 | PM | PM | 완료 | 동일 날짜 다건 일기 UX 기준 결정 | 2026-04-28 | 협업 요청 기준 |
 
 ## 요청 상세
 ### REQ-20260428-01
@@ -316,7 +320,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: BE
-- 상태: 대기
+- 상태: 완료
 - 선행 조건:
   - `REQ-20260428-06`, `REQ-20260428-08` 완료
 - 요청 내용:
@@ -328,6 +332,10 @@
   - Maven 테스트 결과
   - 오류 케이스별 status/message/body 예시
   - Flutter 오류 처리 변경 필요 여부
+- PM 메모:
+  - 2026-04-28 BE가 누락 query parameter, malformed JSON, request body 타입 오류, calendar month 범위 오류, 일기 생성/수정 필수값 검증을 400 계열 `ApiResponse`로 고정했다.
+  - PM이 `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`를 재실행해 통과를 확인했다.
+  - QA `REQ-20260428-29` 실제 서버 curl 회귀 검증까지 통과했다.
 
 ### REQ-20260428-23
 - 우선순위: P1
@@ -413,7 +421,7 @@
 - 우선순위: P2
 - 요청자: 사용자/PM
 - 대상 역할: BE
-- 상태: 대기
+- 상태: 완료
 - 선행 조건:
   - `REQ-20260428-22` 착수 또는 완료
   - `REQ-20260428-09` CRUD Flutter 구현 범위 확인
@@ -426,3 +434,73 @@
   - 기존 모델/DTO 변경 필요 여부
   - 테스트 보강 범위
   - 1순위 구현 요청 후보
+
+### REQ-20260428-28
+- 우선순위: P1
+- 요청자: PM
+- 대상 역할: FE
+- 상태: 대기
+- 선행 조건:
+  - `REQ-20260428-26` 완료
+  - `REQ-20260428-31` 완료
+- 요청 내용:
+  - 캘린더 화면에서 날짜를 탭하면 해당 날짜 일기 목록 또는 작성 진입으로 이어지는 플로우를 구현한다.
+  - 같은 날짜에 여러 일기가 있을 수 있으므로 최신 1건으로 바로 이동하지 말고 날짜별 목록 또는 bottom sheet로 선택지를 보여준다.
+  - 해당 날짜에 일기가 없으면 날짜가 미리 입력된 작성 화면으로 이동한다.
+  - 기존 mock/remote 데이터 구조를 깨지 않고 1차 구현은 기존 월간 캘린더, 일기 목록, 작성/상세 화면을 활용한다.
+- 완료 기준:
+  - 변경 파일 목록
+  - 캘린더 날짜 탭, 기록 있음, 기록 없음, 작성 진입 동작 요약
+  - `flutter analyze`, `flutter test` 결과
+  - BE API 변경 요청이 있으면 별도 요청 등록
+- PM 메모:
+  - FE 역할 문서에 이미 `FE-IMPROVE-20260428-02`로 같은 범위의 구현이 진행 중이므로, 공통 추적 ID는 `REQ-20260428-28`로 정규화한다.
+  - FE는 최종 응답과 handoff에서 `FE-IMPROVE-20260428-02`와 `REQ-20260428-28`의 관계를 함께 남긴다.
+  - 2026-04-28 FE가 구현 응답을 남겼고, PM이 `flutter analyze`, `flutter test`를 재실행해 통과를 확인했다.
+  - QA `REQ-20260428-30`에서 기존 날짜 상세 진입과 빈 날짜 작성 기본값을 하네스 기준으로 검증했다.
+
+### REQ-20260428-29
+- 우선순위: P1
+- 요청자: PM
+- 대상 역할: QA
+- 상태: 완료
+- 선행 조건:
+  - `REQ-20260428-22` BE 구현과 QA 검증 완료
+- 요청 내용:
+  - BE가 보강한 malformed JSON, 누락 query parameter, calendar `year/month` 범위 오류, 요청 DTO 검증 실패 응답을 실제 서버 기준으로 회귀 검증한다.
+  - 각 실패 케이스의 HTTP status, `success=false`, `message`, `data=null` 여부를 확인한다.
+  - Flutter 오류 표시 변경이 필요한 경우 FE 또는 BE 후속 요청으로 분리한다.
+- 완료 기준:
+  - 검증 명령과 대상 엔드포인트 목록
+  - 케이스별 기대/실제 응답 요약
+  - 결함이 있으면 담당 역할 추정과 후속 요청 후보
+  - 실행하지 못한 검증과 이유
+
+### REQ-20260428-30
+- 우선순위: P1
+- 요청자: PM
+- 대상 역할: QA
+- 상태: 완료
+- 선행 조건:
+  - `REQ-20260428-28` FE 구현과 QA 검증 완료
+- 요청 내용:
+  - 캘린더 날짜 탭에서 기록 있음/없음 상태, 다건 선택, 작성 화면 날짜 기본값, 상세 진입을 widget test 또는 수동 시나리오로 검증한다.
+  - 기존 로그인, 일기 CRUD, 캘린더 탭 smoke test가 깨지지 않는지 확인한다.
+- 완료 기준:
+  - 자동화 추가/수정 파일 목록 또는 수동 시나리오
+  - `flutter analyze`, `flutter test` 결과
+  - FE/BE 후속 결함 요청 여부
+
+### REQ-20260428-31
+- 우선순위: P2
+- 요청자: PM
+- 대상 역할: PM
+- 상태: 완료
+- 요청 내용:
+  - FE `REQ-20260428-26`에서 남긴 동일 날짜 다건 일기 UX 결정을 내린다.
+- 결정:
+  - 같은 날짜에 일기가 여러 건 있을 수 있으므로 날짜 탭은 최신 1건으로 바로 진입하지 않는다.
+  - 기록 있음 상태는 날짜별 목록 또는 bottom sheet를 보여주고 사용자가 상세를 선택한다.
+  - 기록 없음 상태는 해당 날짜가 기본값으로 들어간 작성 화면으로 이동한다.
+- 완료 기준:
+  - FE `REQ-20260428-28` 요청에 UX 기준 반영

@@ -18,6 +18,168 @@
 | RES-REQ-20260428-26 | REQ-20260428-26 | 완료 | FE CRUD 이후 앱 사용성 개선 후보 설계 | 2026-04-28 |
 | RES-REQ-20260428-24 | REQ-20260428-24 | 완료 | QA 일기 CRUD 회귀 자동화 확장 | 2026-04-28 |
 | RES-REQ-20260428-25 | REQ-20260428-25 | 완료 | 위젯/딥링크 1차 설계 문서 작성 | 2026-04-28 |
+| RES-REQ-20260428-31 | REQ-20260428-31 | 완료 | 동일 날짜 다건 일기 UX 기준 결정 | 2026-04-28 |
+| RES-REQ-20260428-28 | REQ-20260428-28 | 완료 | FE 캘린더 날짜 탭에서 일기 확인/작성 진입 플로우 구현 | 2026-04-28 |
+| RES-FE-IMPROVE-20260428-03 | FE-IMPROVE-20260428-03 | 완료 | FE 일기 작성/수정 감정 선택 UI 개선 | 2026-04-28 |
+| RES-REQ-20260428-22 | REQ-20260428-22 | 완료 | BE API 검증 오류 계약 보강 및 QA 회귀 검증 통과 | 2026-04-28 |
+| RES-REQ-20260428-29 | REQ-20260428-29 | 완료 | QA API 검증 오류 계약 실제 서버 회귀 검증 통과 | 2026-04-28 |
+| RES-REQ-20260428-30 | REQ-20260428-30 | 완료 | QA 캘린더 날짜 탭 UX 하네스 회귀 검증 통과 | 2026-04-28 |
+
+## RES-FE-IMPROVE-20260428-03
+- 요청 ID: FE-IMPROVE-20260428-03
+- 요청자: 사용자/PM
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - FE 수신함에 신규 배정 요청이 없어 사용자 지시를 직접 후속 사용성 개선으로 보고 착수했다.
+  - 일기 작성/수정 화면의 감정 코드 직접 입력을 `emotionListProvider` 기반 선택 UI로 전환했다.
+  - 감정 목록 로딩 실패 또는 빈 목록 상황에서는 기존 코드 입력 fallback을 유지했다.
+  - 저장 payload는 기존 `emotionCode` 문자열 계약을 유지해 BE API 변경 없이 동작한다.
+  - 위젯 테스트와 QA 하네스 테스트에 기본 감정 선택 UI 노출 검증을 추가했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - remote 감정 목록 API 실패 상황의 실제 UI는 별도 실기기/remote QA에서 추가 확인할 수 있다.
+  - 날짜 입력은 아직 텍스트 필드이며 date picker 전환은 후속 후보로 남아 있다.
+- 다음 제안:
+  - 다음 FE 개선 요청은 PM이 별도 배정한다.
+
+## RES-REQ-20260428-29
+- 요청 ID: REQ-20260428-29
+- 요청자: PM
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - BE `REQ-20260428-22` 결과를 실제 서버 curl 기준으로 검증했다.
+  - calendar query 오류, malformed JSON, body 타입 오류, 일기 빈 필수값 케이스가 모두 400 계열 `ApiResponse`로 응답함을 확인했다.
+- 검증:
+  - `spring-boot:run` 8080 기동 후 curl 검증
+  - 검증 후 서버 종료로 Maven run 세션은 exit code 143 종료
+- 남은 이슈:
+  - 오류 문구 현지화는 별도 UX 정책 필요
+- 다음 제안:
+  - BE는 `REQ-20260428-27` 사용성 개선용 API 후보 설계에 착수할 수 있다.
+
+## RES-REQ-20260428-30
+- 요청 ID: REQ-20260428-30
+- 요청자: PM
+- 담당 역할: QA
+- 상태: 완료
+- 요약:
+  - 캘린더 날짜 탭 UX를 Flutter QA 하네스 기준으로 회귀 검증했다.
+  - 기존 일기가 있는 날짜는 bottom sheet에서 상세 진입이 가능함을 확인했다.
+  - 일기가 없는 날짜는 선택 날짜가 기본값인 작성 화면으로 이동함을 확인했다.
+- 변경 파일:
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+- 남은 이슈:
+  - remote 데이터가 많아질 경우 날짜별 조회 API 또는 목록 query 확장이 필요할 수 있다.
+- 다음 제안:
+  - BE `REQ-20260428-27`에서 날짜별 조회 API 후보를 함께 검토한다.
+
+## RES-REQ-20260428-22
+- 요청 ID: REQ-20260428-22
+- 요청자: PM
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - 누락 query parameter, malformed JSON, request body 타입 오류, calendar month 범위 오류를 400 계열 `ApiResponse`로 고정했다.
+  - 일기 생성/수정 필수값 `entryDate/title/content/emotionCode` 검증을 추가했다.
+  - 관련 컨트롤러 테스트를 추가해 QA 기준선 오류 케이스를 회귀 테스트로 고정했다.
+- 변경 파일:
+  - `src/main/java/com/mongtory/diary/common/GlobalExceptionHandler.java`
+  - `src/main/java/com/mongtory/diary/service/CalendarService.java`
+  - `src/main/java/com/mongtory/diary/service/DiaryService.java`
+  - `src/test/java/com/mongtory/diary/controller/CalendarControllerTest.java`
+  - `src/test/java/com/mongtory/diary/controller/DiaryControllerTest.java`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 16건
+- 남은 이슈:
+  - QA `REQ-20260428-29` 실제 서버 회귀 검증까지 통과했다.
+- 다음 제안:
+  - BE는 `REQ-20260428-27` 사용성 개선용 API 후보 설계에 착수할 수 있다.
+
+## RES-REQ-20260428-28
+- 요청 ID: REQ-20260428-28
+- 요청자: PM
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - PM이 `REQ-20260428-31`에서 확정한 동일 날짜 다건 UX 기준을 반영해 캘린더 날짜 탭 플로우를 구현했다.
+  - 날짜를 탭하면 해당 날짜의 일기 목록을 bottom sheet로 보여주고, 일기 항목 탭 시 상세 화면으로 이동한다.
+  - 일기가 없는 날짜는 해당 날짜가 기본값으로 들어간 작성 화면으로 이동하며, 일기가 있는 날짜도 새 일기를 추가 작성할 수 있다.
+  - 저장 후 `diaryListProvider`, `calendarMonthProvider`를 갱신하도록 연결했다.
+  - QA 하네스 smoke test에 캘린더 날짜 탭 -> 일기 선택 -> 상세 본문 확인 흐름을 추가했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/calendar/calendar_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 9건
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - QA `REQ-20260428-30`에서 상세 진입과 빈 날짜 작성 기본값을 하네스 기준으로 확인했다.
+  - 현재 캘린더 date sheet의 일기 매칭은 앱에 로드된 일기 목록 기준이므로, 목록 페이징 또는 월별 상세 조회가 도입되면 데이터 소스 확장이 필요할 수 있다.
+- 다음 제안:
+  - FE 신규 결함은 없으며, 다음 FE 요청은 PM이 별도 배정한다.
+
+## RES-REQ-20260428-31
+- 요청 ID: REQ-20260428-31
+- 요청자: PM
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - FE `REQ-20260428-26` 설계 결과에서 PM 결정이 필요했던 동일 날짜 다건 일기 UX 기준을 확정했다.
+  - 기록 있음 상태는 날짜별 목록 또는 bottom sheet를 먼저 보여주고 사용자가 상세 대상을 선택한다.
+  - 기록 없음 상태는 해당 날짜가 기본값으로 들어간 작성 화면으로 이동한다.
+  - 이 기준을 FE `REQ-20260428-28` 완료 기준과 QA `REQ-20260428-30` 검증 기준에 연결했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/qa/inbox.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - 문서/요청 동기화 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+  - `git diff --check -- .ai-work/msyeo/docs`로 문서 diff 공백 검증을 수행했다.
+- 남은 이슈:
+  - FE `REQ-20260428-28`은 QA `REQ-20260428-30` 검증까지 완료됐다.
+  - BE `REQ-20260428-22`는 QA `REQ-20260428-29` 검증까지 완료됐다.
+  - BE `REQ-20260428-27`은 대기 상태다.
+- 다음 제안:
+  - 다음 우선 후보는 BE `REQ-20260428-27`이다.
 
 ## RES-REQ-20260428-25
 - 요청 ID: REQ-20260428-25

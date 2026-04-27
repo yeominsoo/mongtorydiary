@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mongtory_diary/domain/models/calendar_day_summary.dart';
+import 'package:mongtory_diary/domain/models/calendar_month.dart';
 
 import 'support/qa_app_harness.dart';
 
@@ -23,6 +25,20 @@ void main() {
 
     expect(find.text('월간 캘린더'), findsOneWidget);
     expect(find.text('2026-03-20'), findsOneWidget);
+
+    await tester.tap(find.text('2026-03-20'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('QA 자동화 일기'), findsWidgets);
+
+    await tester.tap(find.text('QA 자동화 일기').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('일기 상세'), findsOneWidget);
+    expect(find.text('하네스 검증용 일기입니다.'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.face_outlined));
     await tester.pumpAndSettle();
@@ -53,6 +69,44 @@ void main() {
     expect(find.text('QA 로그인 실패'), findsWidgets);
   });
 
+  testWidgets('QA harness opens dated create flow from empty calendar date', (
+    tester,
+  ) async {
+    await pumpQaApp(
+      tester,
+      harness: QaAppHarness(
+        calendarRepository: QaCalendarRepository(
+          month: CalendarMonth(
+            year: 2026,
+            month: 3,
+            days: [
+              CalendarDaySummary(
+                date: DateTime(2026, 3, 22),
+                hasEntry: false,
+                entryCount: 0,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await qaSignInWithSeedAccount(tester);
+
+    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('2026-03-22'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('이 날짜에 작성된 일기가 없습니다.'), findsOneWidget);
+
+    await tester.tap(find.text('이 날짜로 작성'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('일기 작성'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, '2026-03-22'), findsOneWidget);
+  });
+
   testWidgets('QA harness covers diary create update and delete', (
     tester,
   ) async {
@@ -66,11 +120,8 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(0), '2026-03-21');
     await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 작성 일기');
-    await tester.enterText(
-      find.byType(TextFormField).at(2),
-      '생성 회귀 검증 본문입니다.',
-    );
-    await tester.enterText(find.byType(TextFormField).at(3), 'CALM');
+    await tester.enterText(find.byType(TextFormField).at(2), '생성 회귀 검증 본문입니다.');
+    expect(find.text('평온 (CALM)'), findsOneWidget);
     await tester.tap(find.text('저장'));
     await tester.pumpAndSettle();
 
@@ -88,10 +139,7 @@ void main() {
     expect(find.text('일기 수정'), findsOneWidget);
 
     await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 수정 일기');
-    await tester.enterText(
-      find.byType(TextFormField).at(2),
-      '수정 회귀 검증 본문입니다.',
-    );
+    await tester.enterText(find.byType(TextFormField).at(2), '수정 회귀 검증 본문입니다.');
     await tester.tap(find.text('저장'));
     await tester.pumpAndSettle();
 

@@ -3,7 +3,7 @@
 ## 현재 상태
 - 역할: QA
 - 현재 요청: 없음
-- 최근 완료: `REQ-20260428-24`, `REQ-20260428-06`, `REQ-20260428-02`, `REQ-20260428-10`
+- 최근 완료: `REQ-20260428-30`, `REQ-20260428-29`, `REQ-20260428-24`, `REQ-20260428-06`, `REQ-20260428-02`, `REQ-20260428-10`
 - 담당 문서:
   - `.ai-work/msyeo/docs/api-contract.md`
   - `.ai-work/msyeo/docs/api-spec.md`
@@ -155,9 +155,65 @@ HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test
   - 로그인 -> 생성 -> 상세 -> 수정 -> 목록 반영 -> 삭제 -> 목록 제외 -> invalid token 실패 응답을 curl로 확인했다.
   - 생성한 검증 일기는 삭제까지 확인해 테스트 데이터가 남지 않도록 했다.
 
+## QA 사전 검증: REQ-20260428-22
+- 목표: BE 오류 계약 보강 전 현재 응답 기준선 재현
+- 실행:
+  - 백엔드 서버를 `spring-boot:run`으로 8080에서 기동한 뒤 종료했다.
+  - 로그인 후 access token을 받아 calendar/diary 오류 케이스를 curl로 호출했다.
+- 재현 결과:
+  - calendar `year` 누락: 500, `Internal server error`
+  - calendar `month` 누락: 500, `Internal server error`
+  - calendar `month=13`: 500, `Internal server error`
+  - calendar `year=abc`: 400, `Invalid request parameter`
+  - diary 생성 malformed JSON: 500, `Internal server error`
+  - diary 생성 `imageUrls` 타입 오류: 500, `Internal server error`
+  - diary 생성 빈 `title/content/emotionCode`: 200 생성 허용
+- 정리:
+  - 빈 필드 생성 검증으로 생긴 레코드는 삭제했고, 삭제 후 빈 제목 레코드가 남지 않음을 확인했다.
+  - `QA-REQ-20260428-02`와 BE `REQ-20260428-22` 메모에 재현 결과를 보강했다.
+- FE/BE 후속 요청:
+  - 신규 요청은 만들지 않고 기존 BE `REQ-20260428-22` 범위로 유지한다.
+
+## 완료 결과: REQ-20260428-29
+- 목표: BE `REQ-20260428-22` 이후 API 검증 오류 계약을 실제 서버에서 회귀 검증
+- 실행:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 spring-boot:run`으로 백엔드 서버를 8080에서 기동했다.
+  - 로그인 후 access token을 받아 calendar/diary 오류 케이스를 curl로 호출했다.
+  - 검증 후 서버 프로세스를 종료했다.
+- 검증 결과:
+  - calendar `year` 누락: 400, `year parameter is required`
+  - calendar `month` 누락: 400, `month parameter is required`
+  - calendar `month=13`: 400, `Invalid calendar month`
+  - calendar `year=abc`: 400, `Invalid request parameter`
+  - diary 생성 malformed JSON: 400, `Invalid request body`
+  - diary 생성 `imageUrls` 타입 오류: 400, `Invalid request body`
+  - diary 생성 빈 `title/content/emotionCode`: 400, `Diary title is required`
+- 자동화/통합 중 발생한 오류:
+  - 없음. 서버 종료를 위해 프로세스를 kill 했으므로 `spring-boot:run` Maven 세션은 exit code 143으로 종료됐다.
+- FE/BE 후속 요청:
+  - 신규 후속 요청 없음. QA 기준 `REQ-20260428-22` 오류 계약은 통과로 판단한다.
+
+## 완료 결과: REQ-20260428-30
+- 목표: FE `REQ-20260428-28` 캘린더 날짜 탭 UX를 하네스 기준으로 회귀 검증
+- 실행:
+  - QA 하네스에서 기존 일기가 있는 날짜를 탭해 bottom sheet와 상세 진입을 확인했다.
+  - QA 하네스에 빈 날짜 `2026-03-22` 시나리오를 추가하고, 날짜 탭 후 작성 화면 기본 날짜를 확인했다.
+- 검증 결과:
+  - 기존 일기 날짜 `2026-03-20`: bottom sheet 노출, `QA 자동화 일기` 선택, `일기 상세`와 본문 노출 확인
+  - 빈 날짜 `2026-03-22`: `이 날짜에 작성된 일기가 없습니다.` 노출, `이 날짜로 작성` 선택 후 `일기 작성` 화면과 `2026-03-22` 기본값 확인
+  - Flutter `analyze`: 통과
+  - Flutter `test`: 통과, 10건
+- 자동화/통합 중 발생한 오류:
+  - 없음
+- FE/BE 후속 요청:
+  - FE 결함 요청 없음. 데이터가 많아질 경우 날짜별 조회 API는 BE `REQ-20260428-27` 후보로 검토한다.
+
 ## 룰 확인 기록
 - 2026-04-28 02:31: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-06
 - 2026-04-28 02:39: 다음 작업 점검 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: 요청 점검/업무 분장
 - 2026-04-28 02:44: 사용성 개선 요청 작성 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-26/27
+- 2026-04-28 07:35: `REQ-20260428-29` 착수 전 AGENTS/project-status/QA inbox/QA status 확인, 변경 룰 반영 여부: 예
+- 2026-04-28 07:36: `REQ-20260428-30` 착수 전 AGENTS/project-status/QA inbox/QA status 확인, 변경 룰 반영 여부: 예
 - 2026-04-28 02:52: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-24
 - 2026-04-28 02:57: QA 후속 remote CRUD 검증 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-24
+- 2026-04-28 07:22: BE 오류 계약 기준선 검증 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-22

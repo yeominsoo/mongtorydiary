@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.mongtory.diary.domain.diary.DiaryEntry;
 import com.mongtory.diary.domain.user.UserAccount;
@@ -23,6 +25,10 @@ public class CalendarService {
 	private final DiaryEntryRepository diaryEntryRepository;
 
 	public CalendarMonthResponse getMonth(UserAccount currentUser, int year, int month) {
+		if (month < 1 || month > 12) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid calendar month");
+		}
+
 		final LocalDate startDate = LocalDate.of(year, month, 1);
 		final LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 		final Map<LocalDate, List<DiaryEntry>> diariesByDate = diaryEntryRepository.findAllByOwnerAndEntryDateBetween(currentUser, startDate, endDate)

@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mongtory_diary/application/providers/app_providers.dart';
 import 'package:mongtory_diary/domain/models/diary_detail.dart';
 import 'package:mongtory_diary/domain/models/diary_upsert.dart';
+import 'package:mongtory_diary/domain/models/emotion_type.dart';
 
 class DiaryEditScreen extends ConsumerStatefulWidget {
-  const DiaryEditScreen({super.key, this.initial});
+  const DiaryEditScreen({super.key, this.initial, this.initialDate});
 
   final DiaryDetail? initial;
+  final DateTime? initialDate;
 
   @override
   ConsumerState<DiaryEditScreen> createState() => _DiaryEditScreenState();
@@ -30,7 +32,9 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     super.initState();
     final initial = widget.initial;
     _entryDateController = TextEditingController(
-      text: _formatDate(initial?.entryDate ?? DateTime.now()),
+      text: _formatDate(
+        initial?.entryDate ?? widget.initialDate ?? DateTime.now(),
+      ),
     );
     _titleController = TextEditingController(text: initial?.title ?? '');
     _contentController = TextEditingController(text: initial?.content ?? '');
@@ -55,6 +59,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   @override
   Widget build(BuildContext context) {
     final title = _isEditing ? '일기 수정' : '일기 작성';
+    final emotions = ref.watch(emotionListProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -95,14 +100,10 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                       validator: _required('본문을 입력해주세요.'),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
+                    _EmotionSelector(
+                      emotions: emotions,
                       controller: _emotionCodeController,
-                      decoration: const InputDecoration(
-                        labelText: '감정 코드',
-                        hintText: 'CALM',
-                      ),
-                      textCapitalization: TextCapitalization.characters,
-                      validator: _required('감정 코드를 입력해주세요.'),
+                      onChanged: () => setState(() {}),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -205,6 +206,113 @@ class _ErrorMessage extends StatelessWidget {
           color: theme.colorScheme.onErrorContainer,
         ),
       ),
+    );
+  }
+}
+
+class _EmotionSelector extends StatelessWidget {
+  const _EmotionSelector({
+    required this.emotions,
+    required this.controller,
+    required this.onChanged,
+  });
+
+  final AsyncValue<List<EmotionType>> emotions;
+  final TextEditingController controller;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return emotions.when(
+      data: (items) {
+        if (items.isEmpty) {
+          return _EmotionCodeField(controller: controller);
+        }
+
+        final currentCode = controller.text.trim().toUpperCase();
+        final containsCurrent = items.any((item) => item.code == currentCode);
+        final options = containsCurrent || currentCode.isEmpty
+            ? items
+            : [
+                EmotionType(
+                  code: currentCode,
+                  label: currentCode,
+                  iconKey: 'custom',
+                ),
+                ...items,
+              ];
+
+        return DropdownButtonFormField<String>(
+          initialValue: currentCode.isEmpty ? null : currentCode,
+          decoration: const InputDecoration(labelText: '감정'),
+          items: options
+              .map(
+                (item) => DropdownMenuItem(
+                  value: item.code,
+                  child: Text('${item.label} (${item.code})'),
+                ),
+              )
+              .toList(),
+          onChanged: (value) {
+            if (value == null) {
+              return;
+            }
+
+            controller.text = value;
+            onChanged();
+          },
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return '감정을 선택해주세요.';
+            }
+
+            return null;
+          },
+        );
+      },
+      loading: () => DropdownButtonFormField<String>(
+        initialValue: controller.text.trim().isEmpty
+            ? null
+            : controller.text.trim().toUpperCase(),
+        decoration: const InputDecoration(labelText: '감정'),
+        items: [
+          if (controller.text.trim().isNotEmpty)
+            DropdownMenuItem(
+              value: controller.text.trim().toUpperCase(),
+              child: Text(controller.text.trim().toUpperCase()),
+            ),
+        ],
+        onChanged: null,
+      ),
+      error: (error, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _EmotionCodeField(controller: controller),
+          const SizedBox(height: 8),
+          Text(
+            '감정 목록을 불러오지 못해 코드 입력으로 저장합니다.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmotionCodeField extends StatelessWidget {
+  const _EmotionCodeField({required this.controller});
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: const InputDecoration(labelText: '감정 코드', hintText: 'CALM'),
+      textCapitalization: TextCapitalization.characters,
+      validator: _required('감정 코드를 입력해주세요.'),
     );
   }
 }

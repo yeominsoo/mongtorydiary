@@ -70,6 +70,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('일기 작성'), findsOneWidget);
+    expect(find.text('차분 (CALM)'), findsOneWidget);
 
     await tester.tap(find.text('저장'));
     await tester.pump();

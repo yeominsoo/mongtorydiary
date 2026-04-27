@@ -3,7 +3,7 @@
 ## 현재 상태
 - 역할: FE 개발자
 - 현재 요청: 없음
-- 최근 완료: `REQ-20260428-26`, `REQ-20260428-09`, `REQ-20260428-07`, `REQ-20260428-03`
+- 최근 완료: `FE-IMPROVE-20260428-03`, `REQ-20260428-28`, `REQ-20260428-26`, `REQ-20260428-09`, `REQ-20260428-07`, `REQ-20260428-03`
 - 담당 경로:
   - `mobile-flutter/lib`
   - `mobile-flutter/test`
@@ -11,8 +11,8 @@
 ## 잠금 상태
 | 경로 | 상태 | 메모 |
 | --- | --- | --- |
-| `mobile-flutter/lib` | 열림 | CRUD 이후 앱 사용성 개선 후보 설계 완료, 신규 구현 요청 대기 |
-| `mobile-flutter/test` | 변경 없음 | 설계 요청이라 테스트 변경 없음 |
+| `mobile-flutter/lib` | 열림 | `REQ-20260428-28`, `FE-IMPROVE-20260428-03` 구현/검증 완료 |
+| `mobile-flutter/test` | 열림 | 캘린더 UX와 감정 선택 UI 회귀 테스트 보강 완료 |
 
 ## 작업 메모
 - mock/remote 데이터 소스 전환 구조를 깨지 않는다.
@@ -43,6 +43,21 @@
   - 1순위 후보는 캘린더 날짜 탭 -> 해당 날짜 일기 목록/작성 진입 플로우다.
   - BE 의존성 없이 Flutter 화면/상태 변경만으로 1차 구현 가능하다.
   - 작성 UX 개선과 감정 선택 UI를 2순위 후속 후보로 둔다.
+- 사용자 직접 지시에 따라 `FE-IMPROVE-20260428-02`로 시작한 캘린더 날짜 탭 진입 플로우는 PM 공통 요청 `REQ-20260428-28`로 정규화해 추적한다.
+- 구현 목표:
+  - 캘린더 날짜를 탭하면 해당 날짜의 일기 목록 또는 작성 CTA를 보여준다.
+  - 해당 날짜 일기가 있으면 상세 화면으로 진입할 수 있다.
+  - 해당 날짜 일기가 없으면 날짜가 채워진 작성 화면으로 진입할 수 있다.
+  - mock/remote 전환 구조와 기존 CRUD provider 갱신 흐름을 유지한다.
+- `REQ-20260428-28` 구현과 검증을 완료했다.
+- 검증 결과: `flutter analyze`, `flutter test`, `git diff --check` 통과.
+- `FE-IMPROVE-20260428-03` 작업 목표:
+  - 일기 작성/수정 화면의 감정 코드 직접 입력을 사용자 선택형 UI로 개선한다.
+  - 기존 `emotionListProvider`와 mock/remote 전환 구조를 유지한다.
+  - 저장 payload는 기존 감정 코드 계약을 유지해 BE API 변경 없이 처리한다.
+  - 위젯 테스트 또는 QA 하네스 테스트로 선택 UI 회귀를 보강한다.
+- `FE-IMPROVE-20260428-03` 구현과 검증을 완료했다.
+- 검증 결과: `flutter analyze`, `flutter test`, `git diff --check` 통과.
 
 ## 룰 확인 기록
 - 2026-04-28 02:28: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: 요청 점검
@@ -51,10 +66,13 @@
 - 2026-04-28 02:45: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: 다음 작업 점검
 - 2026-04-28 02:52: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-26
 - 2026-04-28 02:56: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: 다음 작업 확인
+- 2026-04-28 03:00: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: FE-IMPROVE-20260428-02
+- 2026-04-28 03:08: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: FE-IMPROVE-20260428-03
 
 ## 다음 세션 FE 시작 기준
 - `AGENTS.md`, `collaboration/master-flow.md`, `roles/README.md`, FE `inbox.md`, FE `status.md`를 먼저 확인하고 룰 확인 기록을 남긴다.
 - 현재 FE 신규 착수 요청은 없다.
-- `REQ-20260428-26`은 설계 응답 완료 후 PM 인덱스에도 완료로 동기화됐다.
-- QA `REQ-20260428-24` 결과에서 FE 대상 결함 요청이 생기면 해당 요청 ID 기준으로 착수한다.
-- PM이 캘린더 날짜 탭 진입 플로우 구현 요청을 신규 배정하면 `mobile-flutter/lib/presentation/screens/calendar/calendar_screen.dart`, `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`, `mobile-flutter/test/widget_test.dart` 범위를 우선 확인한다.
+- `REQ-20260428-28`은 QA `REQ-20260428-30`까지 통과해 완료됐다.
+- `FE-IMPROVE-20260428-03`은 Flutter 검증 통과 상태이며 PM이 공통 요청화 여부를 판단한다.
+- FE 대상 결함 요청이 생기면 해당 요청 ID 기준으로 착수한다.
+- 추가 사용성 개선 요청이 배정되면 해당 요청의 선행 조건과 담당 경로를 먼저 확인한다.

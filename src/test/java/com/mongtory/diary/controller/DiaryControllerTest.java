@@ -76,6 +76,70 @@ class DiaryControllerTest {
 			.andExpect(jsonPath("$.data").value(nullValue()));
 	}
 
+	@Test
+	void diaryCreateRejectsMalformedJsonWithWrappedError() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+
+		mockMvc.perform(
+				post("/api/v1/diaries")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{")
+			)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("Invalid request body"))
+			.andExpect(jsonPath("$.data").value(nullValue()));
+	}
+
+	@Test
+	void diaryCreateRejectsMismatchedBodyTypeWithWrappedError() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+
+		mockMvc.perform(
+				post("/api/v1/diaries")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("""
+						{
+						  "entryDate": "2026-04-28",
+						  "title": "요청 형식 검증",
+						  "content": "imageUrls는 배열이어야 한다.",
+						  "emotionCode": "CALM",
+						  "imageUrls": "not-array"
+						}
+						""")
+			)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("Invalid request body"))
+			.andExpect(jsonPath("$.data").value(nullValue()));
+	}
+
+	@Test
+	void diaryCreateRejectsBlankRequiredFieldsWithWrappedError() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+
+		mockMvc.perform(
+				post("/api/v1/diaries")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("""
+						{
+						  "entryDate": "2026-04-28",
+						  "title": " ",
+						  "content": " ",
+						  "emotionCode": " ",
+						  "imageUrls": []
+						}
+						""")
+			)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("Diary title is required"))
+			.andExpect(jsonPath("$.data").value(nullValue()));
+	}
+
 	private String login(String email, String password) throws Exception {
 		final MvcResult loginResult = mockMvc.perform(
 				post("/api/v1/auth/login")

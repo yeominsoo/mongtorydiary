@@ -5,8 +5,34 @@
 | --- | --- | --- | --- | --- |
 | RES-REQ-20260428-04 | REQ-20260428-04 | 완료 | 인증/소유권 검증 테스트 보강 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-08 | REQ-20260428-08 | 완료 | 전역 예외 응답 ApiResponse 표준화 및 Maven 테스트 통과 | 2026-04-28 |
+| RES-REQ-20260428-22 | REQ-20260428-22 | 완료 | API 검증 오류 계약 보강 및 Maven/QA 검증 통과 | 2026-04-28 |
 
 ## 응답 상세
+### RES-REQ-20260428-22
+- 요청 ID: REQ-20260428-22
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - 누락 query parameter를 400 `ApiResponse`로 응답하도록 `MissingServletRequestParameterException` 처리를 추가했다.
+  - malformed JSON과 request body 타입 불일치를 400 `Invalid request body`로 응답하도록 처리했다.
+  - calendar `month`가 1~12 범위를 벗어나면 400 `Invalid calendar month`로 응답하도록 검증했다.
+  - 일기 생성/수정의 `entryDate`, `title`, `content`, `emotionCode` 필수값 검증을 추가하고 저장 전 문자열을 trim하도록 했다.
+- 변경 파일:
+  - `src/main/java/com/mongtory/diary/common/GlobalExceptionHandler.java`
+  - `src/main/java/com/mongtory/diary/service/CalendarService.java`
+  - `src/main/java/com/mongtory/diary/service/DiaryService.java`
+  - `src/test/java/com/mongtory/diary/controller/CalendarControllerTest.java`
+  - `src/test/java/com/mongtory/diary/controller/DiaryControllerTest.java`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`
+  - 결과: `BUILD SUCCESS`, tests run 16, failures 0, errors 0, skipped 0
+  - 참고: `JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64` 경로는 현재 환경에 없어 실행 실패했고, 설치된 OpenJDK 21로 재실행했다.
+- 남은 이슈:
+  - QA `REQ-20260428-29`에서 실제 서버 curl 재검증을 완료했다.
+  - 오류 메시지는 현재 영어 고정 문자열이다. 앱 사용자 노출 문구는 FE/PM UX 기준에서 별도 정리할 수 있다.
+- 다음 제안:
+  - BE는 후속 `REQ-20260428-27` 사용성 개선용 API 후보 설계에 착수할 수 있다.
+
 ### RES-REQ-20260428-04
 - 요청 ID: REQ-20260428-04
 - 담당 역할: BE
