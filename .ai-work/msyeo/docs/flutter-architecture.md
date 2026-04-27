@@ -44,7 +44,7 @@ Flutter 앱은 아래 계층으로 구성한다.
 
 ## 저장소 구조 제안
 ```text
-docs/
+.ai-work/msyeo/docs/
   handoff/
   flutter-architecture.md
   planning.md
@@ -98,4 +98,4 @@ src/test/java/
 - 앱과 웹은 UI를 공유하지 않는다.
 - 공통은 API 계약과 도메인 규칙 수준에서 맞춘다.
 - 서버 응답 모델은 DTO로 통일한다.
-- 컨텍스트 유실을 막기 위해 구조 변경 시 `docs/project-status.md`와 일자별 `handoff`를 함께 갱신한다.
+- 컨텍스트 유실을 막기 위해 구조 변경 시 `.ai-work/msyeo/docs/project-status.md`와 일자별 `handoff`를 함께 갱신한다.

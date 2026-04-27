@@ -45,7 +45,7 @@ Flutter 앱, 웹, 위젯이 같은 데이터를 소비하려면 백엔드를 먼
 장기적으로는 아래 구조를 기준으로 확장한다.
 
 ```text
-docs/
+.ai-work/msyeo/docs/
   handoff/
   planning.md
   platform-direction.md

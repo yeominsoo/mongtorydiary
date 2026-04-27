@@ -37,8 +37,8 @@
 ### AuthTokenResponse
 ```json
 {
-  "accessToken": "jwt-access-token",
-  "refreshToken": "jwt-refresh-token",
+  "accessToken": "access-uuid",
+  "refreshToken": "refresh-uuid",
   "user": {
     "id": 1,
     "email": "user@example.com",
@@ -124,6 +124,8 @@
 
 응답:
 - `ApiResponse<AuthTokenResponse>`
+
+현재 백엔드 토큰은 JWT가 아니라 `UserAccount` 테이블에 저장되는 임시 문자열이다. access token은 `Authorization: Bearer <token>` 헤더로 일기/캘린더 API에서 사용한다.
 
 ### 로그인
 - `POST /api/v1/auth/login`
@@ -218,6 +220,8 @@
 응답:
 - `ApiResponse<CalendarMonthResponse>`
 
+현재 응답의 `days`에는 기록이 있는 날짜만 포함된다. 빈 날짜 전체를 내려주는 월간 그리드 응답은 아직 구현되어 있지 않다.
+
 ## 위젯 관점 최소 데이터
 위젯은 아래 데이터만 우선 참조한다.
 
@@ -229,6 +233,6 @@
 이 값은 추후 별도 위젯 요약 API 또는 앱 로컬 저장소 캐시로 제공할 수 있다.
 
 ## 다음 작업
-- 백엔드 패키지 구조에 맞춰 Request/Response DTO 클래스로 분해
-- Flutter `domain` 모델과 `data` DTO 매핑 초안 작성
-- 인증 예외, 검증 규칙, 이미지 업로드 API 추가 정의
+- Flutter repository 계약에 회원가입, 토큰 재발급, 일기 생성/수정/삭제 메서드 추가 여부 결정
+- 인증 예외와 전역 오류 응답 규칙 표준화
+- 이미지 업로드 API와 위젯 요약 API 추가 정의

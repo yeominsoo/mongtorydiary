@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.mongtory.diary.domain.diary.DiaryEntry;
@@ -14,6 +15,7 @@ import com.mongtory.diary.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
+@Order(2)
 @RequiredArgsConstructor
 public class DiaryDataInitializer implements CommandLineRunner {
 
