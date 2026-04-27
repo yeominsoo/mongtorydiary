@@ -1,7 +1,9 @@
 import 'package:mongtory_diary/data/dto/diary_detail_response_dto.dart';
 import 'package:mongtory_diary/data/dto/diary_summary_response_dto.dart';
+import 'package:mongtory_diary/data/dto/diary_upsert_request_dto.dart';
 import 'package:mongtory_diary/domain/models/diary_detail.dart';
 import 'package:mongtory_diary/domain/models/diary_summary.dart';
+import 'package:mongtory_diary/domain/models/diary_upsert.dart';
 
 class DiaryMapper {
   const DiaryMapper._();
@@ -29,5 +31,21 @@ class DiaryMapper {
       createdAt: DateTime.parse(dto.createdAt),
       updatedAt: DateTime.parse(dto.updatedAt),
     );
+  }
+
+  static DiaryUpsertRequestDto toUpsertRequest(DiaryUpsert input) {
+    return DiaryUpsertRequestDto(
+      entryDate: _formatDate(input.entryDate),
+      title: input.title,
+      content: input.content,
+      emotionCode: input.emotionCode,
+      imageUrls: input.imageUrls,
+    );
+  }
+
+  static String _formatDate(DateTime value) {
+    final month = value.month.toString().padLeft(2, '0');
+    final day = value.day.toString().padLeft(2, '0');
+    return '${value.year}-$month-$day';
   }
 }

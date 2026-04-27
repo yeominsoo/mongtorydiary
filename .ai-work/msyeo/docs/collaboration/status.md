@@ -2,7 +2,7 @@
 
 ## 현재 운영 상태
 - 운영 방식: PM, QA, FE 개발자, BE 개발자 4역할 비동기 협업
-- 현재 대화 세션 역할: QA
+- 현재 대화 세션 역할: PM
 - 공통 기준 문서: `.ai-work/msyeo/docs/collaboration/master-flow.md`
 - 요청 인덱스: `.ai-work/msyeo/docs/collaboration/requests.md`
 - 응답 인덱스: `.ai-work/msyeo/docs/collaboration/responses.md`
@@ -41,10 +41,10 @@
 | REQ-20260428-06 | P1 | 로그인 완료 후 remote 통합 회귀 검증 | QA | 완료 | REQ-02, REQ-03, REQ-04 완료 | 실제 서버 API 검증과 Flutter analyze/test 통과 |
 | REQ-20260428-07 | P1 | 일기 목록에서 상세 진입 플로우 구현 | FE | 완료 | REQ-02, REQ-03 완료 | QA remote 통합 검증에서 실제 상세 API 연결 확인 |
 | REQ-20260428-08 | P1 | 전역 예외 응답 표준화 | BE | 완료 | REQ-02, REQ-04 완료 | QA remote 통합 검증에서 실패 메시지 표시 확인 |
-| REQ-20260428-09 | P1 | 일기 생성/수정/삭제 연결 준비 | FE/BE | 진행중 | REQ-06 완료, REQ-07 완료, REQ-08 완료 | FE/BE 범위 산정 및 후속 구현 요청으로 분리 중 |
+| REQ-20260428-09 | P1 | 일기 생성/수정/삭제 연결 준비 | FE/BE | 검토중 | REQ-06 완료, REQ-07 완료, REQ-08 완료 | FE 구현/검증 완료, QA remote CRUD 검증 필요 |
 | REQ-20260428-10 | P1 | Flutter QA 자동화 하네스 1차 구축 | QA | 완료 | REQ-02와 병행 가능 | QA 하네스 구현과 Flutter analyze/test 통과 |
 | REQ-20260428-22 | P1 | API 검증 오류 계약 보강 | BE | 대기 | REQ-06, REQ-08 완료 | malformed JSON, 누락/범위 오류 응답 계약 고정 |
-| REQ-20260428-23 | P1 | 일기 생성/수정/삭제 Flutter 구현 | FE | 대기 | REQ-07, REQ-08 완료 | 작성/수정/삭제 UI와 repository 연결 |
+| REQ-20260428-23 | P1 | 일기 생성/수정/삭제 Flutter 구현 | FE | 보류 | REQ-09 FE 구현 완료 | REQ-09 결과 검토 후 필요 시 분리 |
 | REQ-20260428-24 | P1 | 일기 CRUD 회귀 시나리오 및 자동화 확장 | QA | 대기 | REQ-23 착수 또는 완료 | CRUD QA 시나리오와 widget test 확장 |
 | REQ-20260428-25 | P1 | 위젯/딥링크 1차 설계 요청 준비 | PM | 대기 | CRUD MVP 범위 확정 | 위젯 데이터와 딥링크 책임 경계 설계 |
 

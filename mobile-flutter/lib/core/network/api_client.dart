@@ -5,10 +5,8 @@ import 'package:mongtory_diary/core/network/api_exception.dart';
 import 'package:mongtory_diary/data/dto/api_response_dto.dart';
 
 class ApiClient {
-  ApiClient({
-    required this.baseUrl,
-    http.Client? httpClient,
-  }) : _httpClient = httpClient ?? http.Client();
+  ApiClient({required this.baseUrl, http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client();
 
   final String baseUrl;
   final http.Client _httpClient;
@@ -42,10 +40,35 @@ class ApiClient {
     return _parseResponse(response, parser);
   }
 
-  Uri _buildUri(
+  Future<ApiResponseDto<T>> put<T>(
     String path, {
-    Map<String, String>? queryParameters,
-  }) {
+    required T Function(Object? json) parser,
+    Object? body,
+    Map<String, String>? headers,
+  }) async {
+    final response = await _httpClient.put(
+      _buildUri(path),
+      headers: _mergeHeaders(headers),
+      body: body == null ? null : jsonEncode(body),
+    );
+
+    return _parseResponse(response, parser);
+  }
+
+  Future<ApiResponseDto<T>> delete<T>(
+    String path, {
+    required T Function(Object? json) parser,
+    Map<String, String>? headers,
+  }) async {
+    final response = await _httpClient.delete(
+      _buildUri(path),
+      headers: _mergeHeaders(headers),
+    );
+
+    return _parseResponse(response, parser);
+  }
+
+  Uri _buildUri(String path, {Map<String, String>? queryParameters}) {
     final normalizedBaseUrl = baseUrl.endsWith('/')
         ? baseUrl.substring(0, baseUrl.length - 1)
         : baseUrl;
@@ -75,14 +98,11 @@ class ApiClient {
   }
 
   Map<String, String> get _defaultHeaders => const {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
   Map<String, String> _mergeHeaders(Map<String, String>? headers) {
-    return {
-      ..._defaultHeaders,
-      ...?headers,
-    };
+    return {..._defaultHeaders, ...?headers};
   }
 }

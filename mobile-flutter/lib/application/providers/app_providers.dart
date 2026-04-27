@@ -22,6 +22,7 @@ import 'package:mongtory_diary/data/repositories/mock_calendar_repository.dart';
 import 'package:mongtory_diary/data/repositories/mock_diary_repository.dart';
 import 'package:mongtory_diary/data/repositories/mock_emotion_repository.dart';
 import 'package:mongtory_diary/domain/models/calendar_month.dart';
+import 'package:mongtory_diary/domain/models/diary_detail.dart';
 import 'package:mongtory_diary/domain/models/diary_summary.dart';
 import 'package:mongtory_diary/domain/models/emotion_type.dart';
 import 'package:mongtory_diary/domain/repositories/auth_repository.dart';
@@ -133,6 +134,13 @@ final diaryListProvider =
   final repository = ref.read(diaryRepositoryProvider);
   return repository.getDiarySummaries();
 });
+
+final diaryDetailProvider = FutureProvider.autoDispose.family<DiaryDetail, int>(
+  (ref, diaryId) async {
+    final repository = ref.read(diaryRepositoryProvider);
+    return repository.getDiaryDetail(diaryId);
+  },
+);
 
 final calendarMonthProvider =
     FutureProvider.autoDispose<CalendarMonth>((ref) async {

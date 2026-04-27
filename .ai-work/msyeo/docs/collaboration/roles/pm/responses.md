@@ -14,6 +14,7 @@
 | RES-REQ-20260428-08 | REQ-20260428-08 | 검토중 | BE 전역 예외 응답 ApiResponse 표준화 완료 | 2026-04-28 |
 | RES-REQ-20260428-07 | REQ-20260428-07 | 검토중 | FE 일기 목록에서 상세 진입 플로우 구현 | 2026-04-28 |
 | RES-REQ-20260428-06 | REQ-20260428-06 | 완료 | QA remote 통합 회귀 검증 완료 | 2026-04-28 |
+| RES-REQ-20260428-09 | REQ-20260428-09 | 검토중 | FE 일기 생성/수정/삭제 Flutter 플로우 구현 | 2026-04-28 |
 
 ## RES-REQ-20260428-21
 - 요청 ID: REQ-20260428-21
@@ -38,6 +39,8 @@
 - 검증:
   - 문서/계획 작업이라 코드 테스트는 새로 실행하지 않았다.
   - 기준선 검증 결과는 기존 BE Maven 테스트, Flutter analyze/test, QA remote 검증 기록을 참조했다.
+- 커밋:
+  - `73ae3ea8b4921794df5312771f0b3cbf1e71db8f` (`docs: establish ai collaboration baseline (REQ-20260428-21)`)
 - 남은 이슈:
   - 실제 커밋은 여러 역할 변경이 섞여 있어 요청 ID 단위 선별이 필요하다.
 - 다음 제안:
@@ -290,3 +293,45 @@
   - `REQ-20260428-09` 선행 조건이 완료되기 전까지 작성/수정/삭제 실제 플로우는 구현하지 않았다.
 - 다음 제안:
   - PM은 이 개선을 별도 FE 보강 작업으로 검토하고, 필요 시 공통 인덱스에 후속 정리한다.
+
+## RES-REQ-20260428-09
+- 요청 ID: REQ-20260428-09
+- 요청자: PM
+- 담당 역할: FE
+- 상태: 검토중
+- 요약:
+  - FE가 백엔드 Diary CRUD API 계약에 맞춰 Flutter 일기 생성/수정/삭제 플로우를 구현했다.
+  - `ApiClient`에 `put`, `delete`를 추가하고, repository/remote/mock datasource 계약을 확장했다.
+  - 홈 FAB에서 작성 화면으로 진입하고, 상세 화면에서 수정/삭제를 수행하도록 연결했다.
+  - 저장/삭제 후 목록/상세 provider 갱신 흐름을 연결했다.
+  - 작성 화면 필수 입력 검증 테스트와 QA 하네스 repository 계약을 보강했다.
+- 변경 파일:
+  - `mobile-flutter/lib/core/network/api_client.dart`
+  - `mobile-flutter/lib/domain/models/diary_upsert.dart`
+  - `mobile-flutter/lib/domain/repositories/diary_repository.dart`
+  - `mobile-flutter/lib/data/dto/diary_upsert_request_dto.dart`
+  - `mobile-flutter/lib/data/mappers/diary_mapper.dart`
+  - `mobile-flutter/lib/data/datasources/remote/remote_diary_datasource.dart`
+  - `mobile-flutter/lib/data/datasources/mock/mock_diary_datasource.dart`
+  - `mobile-flutter/lib/data/repositories/api_diary_repository.dart`
+  - `mobile-flutter/lib/data/repositories/mock_diary_repository.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_home_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_detail_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/support/qa_app_harness.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - QA가 remote 모드에서 실제 백엔드 생성/수정/삭제 회귀 검증을 수행해야 한다.
+  - 감정 코드 입력은 현재 텍스트 필드이며, 감정 목록 기반 선택 UI는 후속 UX 개선 후보이다.
+- 다음 제안:
+  - PM은 `REQ-20260428-09` FE 결과를 검토하고 QA CRUD 회귀 요청을 진행 상태로 전환한다.
