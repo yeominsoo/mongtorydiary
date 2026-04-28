@@ -194,6 +194,36 @@ GET /api/v1/calendar?year=2026&month=3
 
 현재 캘린더 응답은 기록이 있는 날짜만 `days`에 포함한다. 빈 날짜 전체를 채우는 월간 그리드 API는 아직 없다.
 
+## 위젯/요약 API
+### GET `/api/v1/widgets/today-summary`
+- 설명: 현재 사용자 기준 지정일의 위젯/홈 요약 정보 조회
+- 필수 쿼리: `date`
+- 인증: 필요
+- 응답 DTO: `ApiResponse<WidgetTodaySummaryResponse>`
+
+예시:
+```text
+GET /api/v1/widgets/today-summary?date=2026-04-28
+```
+
+### WidgetTodaySummaryResponse
+```json
+{
+  "date": "2026-04-28",
+  "hasTodayEntry": true,
+  "todayEntryCount": 2,
+  "latestDiaryId": 101,
+  "latestDiaryTitle": "오늘의 기록",
+  "latestEmotionCode": "CALM",
+  "streakDays": 3,
+  "lastEntryDate": "2026-04-28",
+  "message": "오늘도 몽토리와 기록했어요.",
+  "updatedAt": "2026-04-28T19:46:00"
+}
+```
+
+동일 날짜에 여러 일기가 있으면 `todayEntryCount`에는 해당 날짜 전체 건수를 넣고, `latestDiaryId/latestDiaryTitle/latestEmotionCode`는 `updatedAt`이 가장 최신인 일기 기준으로 채운다. `streakDays`는 요청일 또는 그 이전 마지막 작성일을 기준으로 연속 작성 날짜 수를 계산한다.
+
 ## Flutter 연동 현황
 Flutter remote datasource가 실제 사용하는 API는 아래 범위다.
 - 로그인: `POST /api/v1/auth/login`
@@ -201,5 +231,6 @@ Flutter remote datasource가 실제 사용하는 API는 아래 범위다.
 - 일기 상세: `GET /api/v1/diaries/{diaryId}`
 - 캘린더: `GET /api/v1/calendar?year=2026&month=3`
 - 감정 목록: `GET /api/v1/emotions`
+- 위젯/요약: `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD`
 
 Flutter repository 계약에는 아직 회원가입, 토큰 재발급, 일기 생성/수정/삭제 메서드가 없다. 화면은 로그인 입력 폼, 일기 목록/상세, 캘린더/프로필 요약 표시 중심이다.

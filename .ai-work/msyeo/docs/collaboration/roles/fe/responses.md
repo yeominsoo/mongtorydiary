@@ -10,6 +10,7 @@
 | RES-REQ-20260428-28 | REQ-20260428-28 | 완료 | 캘린더 날짜 탭에서 일기 확인/작성 진입 플로우 구현 | 2026-04-28 |
 | RES-FE-IMPROVE-20260428-01 | FE-IMPROVE-20260428-01 | 완료 | 일기 홈/상세 퍼블리싱 품질 보강 | 2026-04-28 |
 | RES-FE-IMPROVE-20260428-03 | FE-IMPROVE-20260428-03 | 완료 | 일기 작성/수정 감정 선택 UI 개선 | 2026-04-28 |
+| RES-FE-IMPROVE-20260428-04 | FE-IMPROVE-20260428-04 | 완료 | 일기 작성/수정 날짜 선택 UI 개선 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-03
@@ -257,6 +258,37 @@
 - 다음 제안:
   - PM은 이 개선을 검토한 뒤 필요하면 공통 인덱스에 FE 보강 작업으로 반영한다.
   - QA는 기존 `REQ-20260428-30` 검증 시 작성 화면 감정 선택 UI도 함께 확인한다.
+
+### RES-FE-IMPROVE-20260428-04
+- 요청 ID: FE-IMPROVE-20260428-04
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - 공식 FE 수신함에 신규 배정 요청이 없어 사용자 지시를 직접 FE 후속 개선 작업으로 보고 착수했다.
+  - 일기 작성/수정 화면의 날짜 직접 입력을 read-only 필드와 date picker 기반 선택 UX로 전환했다.
+  - 캘린더 날짜 탭에서 작성 화면으로 넘어온 `initialDate` 기본값은 유지했다.
+  - 저장 payload는 기존 `YYYY-MM-DD` 문자열을 `DateTime.parse`하는 계약을 유지해 BE API 변경 없이 동작한다.
+  - 위젯 테스트에서 날짜 선택 아이콘과 `DatePickerDialog` 노출을 검증하고, QA 하네스 CRUD 작성 플로우는 기본 날짜를 사용하도록 조정했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 날짜 picker의 locale/표시 언어는 앱 전체 localization 설정이 확정되면 함께 조정할 수 있다.
+  - 사진 URL 입력 UX는 아직 단일 텍스트 입력이며 후속 개선 후보로 남아 있다.
+- 다음 제안:
+  - PM은 이 개선을 검토한 뒤 필요하면 공통 인덱스에 FE 보강 작업으로 반영한다.
+  - 다음 FE 자체 개선은 사진 URL 입력 UX 정리 또는 캘린더 월 이동 UX 확장이 적절하다.
 
 ## 작성 템플릿
 ```text

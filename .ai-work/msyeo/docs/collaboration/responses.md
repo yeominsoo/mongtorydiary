@@ -34,8 +34,49 @@
 | RES-REQ-20260428-22 | REQ-20260428-22 | BE | 완료 | API 검증 오류 계약 보강 및 QA 회귀 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-29 | REQ-20260428-29 | QA | 완료 | API 검증 오류 계약 실제 서버 회귀 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-30 | REQ-20260428-30 | QA | 완료 | 캘린더 날짜 탭 UX 하네스 회귀 검증 통과 | 2026-04-28 |
+| RES-REQ-20260428-27 | REQ-20260428-27 | BE | 완료 | 사용성 개선용 API 후보 설계와 1순위 구현 후보 선정 | 2026-04-28 |
+| RES-REQ-20260428-32 | REQ-20260428-32 | PM | 완료 | 기획 개선 후보 도출 및 역할별 업무 배분 | 2026-04-28 |
 
 ## 응답 상세
+### RES-REQ-20260428-32
+- 요청 ID: REQ-20260428-32
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - 기획자 관점에서 MVP 이후 개선 항목을 작성 UX, 오늘/위젯 요약 API, 릴리스 QA, 위젯/딥링크 구현 분해로 정리했다.
+  - FE `REQ-20260428-33`, BE `REQ-20260428-34`, QA `REQ-20260428-35`, PM `REQ-20260428-36`을 신규 배정했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/*/inbox.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/delivery-roadmap.md`
+- 검증:
+  - 문서 배분 작업이라 코드 테스트는 실행하지 않았다.
+- 다음 제안:
+  - 각 담당자는 자기 역할 `status.md`에 룰 확인 기록을 남기고 신규 요청을 착수한다.
+
+### RES-REQ-20260428-27
+- 요청 ID: REQ-20260428-27
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - 사용성 개선용 API 후보를 오늘/위젯 요약, 월간 감정 통계, 일기 검색/필터 확장, 날짜별 일기 조회 계약, 이미지 업로드 준비, 토큰 전략으로 비교했다.
+  - 날짜별 일기 조회는 기존 `GET /api/v1/diaries?from=YYYY-MM-DD&to=YYYY-MM-DD`를 우선 사용하면 된다고 판단했다.
+  - 1순위 구현 후보는 `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD` 오늘/위젯 요약 API다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/api-usability-improvement-plan.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/responses.md`
+- 검증:
+  - 설계 문서 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+- 남은 이슈:
+  - PM이 오늘/위젯 요약 API 구현 요청을 새 ID로 분리해야 한다.
+- 다음 제안:
+  - BE 구현 요청 완료 후 QA가 today entry 없음/1건/다건/streak/invalid token 케이스를 검증한다.
+
 ### RES-REQ-20260428-22
 - 요청 ID: REQ-20260428-22
 - 담당 역할: BE

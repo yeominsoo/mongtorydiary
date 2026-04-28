@@ -21,9 +21,81 @@
 | RES-REQ-20260428-31 | REQ-20260428-31 | 완료 | 동일 날짜 다건 일기 UX 기준 결정 | 2026-04-28 |
 | RES-REQ-20260428-28 | REQ-20260428-28 | 완료 | FE 캘린더 날짜 탭에서 일기 확인/작성 진입 플로우 구현 | 2026-04-28 |
 | RES-FE-IMPROVE-20260428-03 | FE-IMPROVE-20260428-03 | 완료 | FE 일기 작성/수정 감정 선택 UI 개선 | 2026-04-28 |
+| RES-FE-IMPROVE-20260428-04 | FE-IMPROVE-20260428-04 | 완료 | FE 일기 작성/수정 날짜 선택 UI 개선 | 2026-04-28 |
 | RES-REQ-20260428-22 | REQ-20260428-22 | 완료 | BE API 검증 오류 계약 보강 및 QA 회귀 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-29 | REQ-20260428-29 | 완료 | QA API 검증 오류 계약 실제 서버 회귀 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-30 | REQ-20260428-30 | 완료 | QA 캘린더 날짜 탭 UX 하네스 회귀 검증 통과 | 2026-04-28 |
+| RES-REQ-20260428-27 | REQ-20260428-27 | 완료 | BE 사용성 개선용 API 후보 설계와 1순위 구현 후보 선정 | 2026-04-28 |
+| RES-REQ-20260428-32 | REQ-20260428-32 | 완료 | 기획 개선 후보 도출 및 역할별 업무 배분 | 2026-04-28 |
+
+## RES-REQ-20260428-32
+- 요청 ID: REQ-20260428-32
+- 요청자: 사용자/PM
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - 현재 MVP의 다음 개선 축을 작성 UX, 오늘/위젯 요약 API, 릴리스 QA, 위젯/딥링크 구현 분해로 정리했다.
+  - FE `REQ-20260428-33`, BE `REQ-20260428-34`, QA `REQ-20260428-35`, PM `REQ-20260428-36`을 신규 배정했다.
+- 검증:
+  - 문서 배분 작업이라 코드 테스트는 실행하지 않았다.
+- 남은 이슈:
+  - 각 담당자 착수 후 responses와 handoff를 받아 PM이 완료 여부를 판단한다.
+- 다음 제안:
+  - PM은 각 역할의 룰 확인 기록과 착수 상태를 모니터링한다.
+
+## RES-REQ-20260428-27
+- 요청 ID: REQ-20260428-27
+- 요청자: 사용자/PM
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - BE가 사용성 개선용 API 후보를 비교하고 `.ai-work/msyeo/docs/api-usability-improvement-plan.md`에 정리했다.
+  - 1순위 구현 후보는 `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD` 오늘/위젯 요약 API다.
+  - 날짜별 일기 조회는 기존 `GET /api/v1/diaries?from=YYYY-MM-DD&to=YYYY-MM-DD` 계약으로 우선 처리 가능하다고 판단했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/api-usability-improvement-plan.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+- 검증:
+  - 설계 문서 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+- 남은 이슈:
+  - PM이 오늘/위젯 요약 API 구현 요청을 새 ID로 분리해야 한다.
+- 다음 제안:
+  - 구현 요청 완료 후 QA가 today entry 없음/1건/다건/streak/invalid token 회귀 검증을 맡는다.
+
+## RES-FE-IMPROVE-20260428-04
+- 요청 ID: FE-IMPROVE-20260428-04
+- 요청자: 사용자/PM
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - FE 수신함에 신규 배정 요청이 없어 사용자 지시를 직접 후속 사용성 개선으로 보고 착수했다.
+  - 일기 작성/수정 화면의 날짜 직접 입력을 read-only 필드와 date picker 기반 선택 UX로 전환했다.
+  - 캘린더 날짜 탭에서 작성 화면으로 넘어온 `initialDate` 기본값은 유지했다.
+  - 저장 payload는 기존 `YYYY-MM-DD` 문자열을 `DateTime.parse`하는 계약을 유지해 BE API 변경 없이 동작한다.
+  - 위젯 테스트에서 날짜 선택 아이콘과 `DatePickerDialog` 노출을 검증하고, QA 하네스 CRUD 작성 플로우는 기본 날짜를 사용하도록 조정했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 날짜 picker의 locale/표시 언어는 앱 전체 localization 설정이 확정되면 함께 조정할 수 있다.
+  - 사진 URL 입력 UX는 아직 단일 텍스트 입력이며 후속 개선 후보로 남아 있다.
+- 다음 제안:
+  - PM은 이 개선을 공통 인덱스에 반영할지 결정한다.
+  - 다음 FE 자체 개선은 사진 URL 입력 UX 정리 또는 캘린더 월 이동 UX 확장이 적절하다.
 
 ## RES-FE-IMPROVE-20260428-03
 - 요청 ID: FE-IMPROVE-20260428-03

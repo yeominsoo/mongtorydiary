@@ -6,8 +6,31 @@
 | RES-REQ-20260428-04 | REQ-20260428-04 | 완료 | 인증/소유권 검증 테스트 보강 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-08 | REQ-20260428-08 | 완료 | 전역 예외 응답 ApiResponse 표준화 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-22 | REQ-20260428-22 | 완료 | API 검증 오류 계약 보강 및 Maven/QA 검증 통과 | 2026-04-28 |
+| RES-REQ-20260428-27 | REQ-20260428-27 | 완료 | 사용성 개선용 API 후보 설계와 1순위 구현 후보 선정 | 2026-04-28 |
 
 ## 응답 상세
+### RES-REQ-20260428-27
+- 요청 ID: REQ-20260428-27
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - 사용성 개선용 API 후보 6개를 비교했다.
+  - 날짜별 일기 조회는 기존 `GET /api/v1/diaries?from=YYYY-MM-DD&to=YYYY-MM-DD`로 우선 처리 가능하다고 판단했다.
+  - 1순위 구현 후보는 위젯/홈/프로필에서 재사용 가능한 `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD` 오늘/위젯 요약 API로 선정했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/api-usability-improvement-plan.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/be/responses.md`
+- 검증:
+  - 설계 문서 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+- 남은 이슈:
+  - 실제 구현 요청 ID는 PM이 별도로 분리해야 한다.
+  - 오늘/위젯 요약 API 구현 시 streak 계산 기준과 동일 날짜 다건 처리 기준을 테스트로 고정해야 한다.
+- 다음 제안:
+  - PM은 오늘/위젯 요약 API 구현 요청을 BE에 새 ID로 배정한다.
+  - QA는 구현 후 today entry 없음/1건/다건/streak/invalid token 케이스를 검증한다.
+
 ### RES-REQ-20260428-22
 - 요청 ID: REQ-20260428-22
 - 담당 역할: BE
