@@ -7,8 +7,35 @@
 | RES-REQ-20260428-08 | REQ-20260428-08 | 완료 | 전역 예외 응답 ApiResponse 표준화 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-22 | REQ-20260428-22 | 완료 | API 검증 오류 계약 보강 및 Maven/QA 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-27 | REQ-20260428-27 | 완료 | 사용성 개선용 API 후보 설계와 1순위 구현 후보 선정 | 2026-04-28 |
+| RES-REQ-20260428-34 | REQ-20260428-34 | 완료 | 오늘/위젯 요약 API 구현 및 Maven 테스트 통과 | 2026-04-28 |
 
 ## 응답 상세
+### RES-REQ-20260428-34
+- 요청 ID: REQ-20260428-34
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD` API를 추가했다.
+  - 응답에는 지정일 작성 여부, 지정일 일기 수, 최신 일기 id/title/emotionCode, streakDays, lastEntryDate, message, updatedAt을 포함한다.
+  - 동일 날짜 다건은 `updatedAt`이 가장 최신인 일기를 대표 일기로 선택한다.
+  - streak는 요청일 또는 그 이전 마지막 작성일 기준으로 연속 작성 날짜 수를 계산한다.
+- 변경 파일:
+  - `src/main/java/com/mongtory/diary/controller/WidgetController.java`
+  - `src/main/java/com/mongtory/diary/dto/widget/WidgetTodaySummaryResponse.java`
+  - `src/main/java/com/mongtory/diary/service/WidgetSummaryService.java`
+  - `src/main/java/com/mongtory/diary/repository/DiaryEntryRepository.java`
+  - `src/test/java/com/mongtory/diary/controller/WidgetControllerTest.java`
+  - `.ai-work/msyeo/docs/api-contract.md`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`
+  - 결과: `BUILD SUCCESS`, tests run 19, failures 0, errors 0, skipped 0
+- 남은 이슈:
+  - 실제 서버 curl 검증은 QA 후속 요청에서 수행하면 된다.
+  - Flutter remote datasource 연동은 아직 하지 않았다.
+- 다음 제안:
+  - QA는 today entry 없음/1건/다건/streak/invalid token을 실제 서버 기준으로 검증한다.
+  - FE는 위젯/홈 요약 DTO를 remote datasource에 연결하는 후속 요청을 받으면 된다.
+
 ### RES-REQ-20260428-27
 - 요청 ID: REQ-20260428-27
 - 담당 역할: BE

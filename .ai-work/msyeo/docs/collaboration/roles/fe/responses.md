@@ -11,6 +11,7 @@
 | RES-FE-IMPROVE-20260428-01 | FE-IMPROVE-20260428-01 | 완료 | 일기 홈/상세 퍼블리싱 품질 보강 | 2026-04-28 |
 | RES-FE-IMPROVE-20260428-03 | FE-IMPROVE-20260428-03 | 완료 | 일기 작성/수정 감정 선택 UI 개선 | 2026-04-28 |
 | RES-FE-IMPROVE-20260428-04 | FE-IMPROVE-20260428-04 | 완료 | 일기 작성/수정 날짜 선택 UI 개선 | 2026-04-28 |
+| RES-REQ-20260428-33 | REQ-20260428-33 | 완료 | 일기 작성 UX 잔여 개선 | 2026-04-28 |
 
 ## 응답 상세
 ### RES-REQ-20260428-03
@@ -289,6 +290,38 @@
 - 다음 제안:
   - PM은 이 개선을 검토한 뒤 필요하면 공통 인덱스에 FE 보강 작업으로 반영한다.
   - 다음 FE 자체 개선은 사진 URL 입력 UX 정리 또는 캘린더 월 이동 UX 확장이 적절하다.
+
+### RES-REQ-20260428-33
+- 요청 ID: REQ-20260428-33
+- 담당 역할: FE
+- 상태: 검토중
+- 요약:
+  - PM이 배정한 일기 작성 UX 잔여 개선 요청을 처리했다.
+  - 이미 완료된 날짜 선택 UI는 유지하고, 사진 URL 입력을 쉼표 문자열에서 추가/삭제 가능한 목록 UI로 전환했다.
+  - 저장 시 입력칸에 남아 있는 URL도 자동으로 목록에 반영해 기존 `imageUrls: List<String>` 저장 계약을 유지했다.
+  - 작성/수정 화면에서 변경사항이 있을 때 AppBar 뒤로가기를 누르면 이탈 확인 다이얼로그를 표시한다.
+  - 저장 중 중복 탭 방지와 저장 실패 표시 흐름은 기존 동작을 유지했다.
+  - 위젯 테스트에 사진 URL 추가와 이탈 확인 흐름을 추가하고, QA 하네스 CRUD 테스트의 스크롤 저장 회귀를 보강했다.
+- 변경 파일:
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/handoff/2026-04-28.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-04-28.md`
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - AppBar 뒤로가기 기준 이탈 확인을 구현했다. Android 시스템 back까지 포함한 route-level 차단은 후속 안정화 후보로 남길 수 있다.
+  - 사진 URL 자체의 네트워크 접근성 검증이나 이미지 미리보기는 아직 구현하지 않았다.
+- 다음 제안:
+  - QA는 `REQ-20260428-35` 검증 계획에 사진 URL 목록 UI와 이탈 확인을 포함한다.
+  - 다음 FE 후보는 캘린더 월 이동 UX 또는 위젯/딥링크 FE 구현 요청이다.
 
 ## 작성 템플릿
 ```text

@@ -2,7 +2,7 @@
 
 ## 현재 상태
 - 역할: FE 개발자
-- 현재 요청: `REQ-20260428-33` 대기
+- 현재 요청: `REQ-20260428-33` 완료
 - 최근 완료: `FE-IMPROVE-20260428-04`, `FE-IMPROVE-20260428-03`, `REQ-20260428-28`, `REQ-20260428-26`, `REQ-20260428-09`, `REQ-20260428-07`, `REQ-20260428-03`
 - 담당 경로:
   - `mobile-flutter/lib`
@@ -11,8 +11,8 @@
 ## 잠금 상태
 | 경로 | 상태 | 메모 |
 | --- | --- | --- |
-| `mobile-flutter/lib` | FE 우선 | REQ-20260428-33 사진 URL 목록, 저장/이탈 UX 개선 대기 |
-| `mobile-flutter/test` | FE 우선 | REQ-20260428-33 회귀 테스트 보강 대기 |
+| `mobile-flutter/lib` | 검토 대기 | REQ-20260428-33 사진 URL 목록, 저장/이탈 UX 개선 완료 |
+| `mobile-flutter/test` | 검토 대기 | REQ-20260428-33 회귀 테스트 보강 완료 |
 
 ## 작업 메모
 - mock/remote 데이터 소스 전환 구조를 깨지 않는다.
@@ -65,6 +65,13 @@
   - 위젯 테스트 또는 QA 하네스 테스트로 날짜 선택 UI 회귀를 보강한다.
 - `FE-IMPROVE-20260428-04` 구현과 검증을 완료했다.
 - 검증 결과: `flutter analyze`, `flutter test`, `git diff --check` 통과.
+- `REQ-20260428-33` 작업 목표:
+  - 사진 URL 입력을 쉼표 문자열이 아니라 추가/삭제 가능한 목록 UI로 정리한다.
+  - 작성/수정 화면에서 변경사항이 있을 때 뒤로가기를 누르면 이탈 확인을 표시한다.
+  - 저장 중 중복 탭 방지와 저장 실패 표시 흐름은 기존 동작을 유지한다.
+  - 날짜 선택 UI와 감정 선택 UI 회귀가 깨지지 않도록 테스트를 보강한다.
+- `REQ-20260428-33` 구현과 검증을 완료했다.
+- 검증 결과: `flutter analyze`, `flutter test`, `git diff --check` 통과.
 
 ## 룰 확인 기록
 - 2026-04-28 02:28: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: 요청 점검
@@ -76,10 +83,12 @@
 - 2026-04-28 03:00: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: FE-IMPROVE-20260428-02
 - 2026-04-28 03:08: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: FE-IMPROVE-20260428-03
 - 2026-04-28 03:16: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: FE-IMPROVE-20260428-04
+- 2026-04-28 03:24: 작업 시작 전 AGENTS/master-flow/roles README/inbox/status 확인, 변경 룰 반영 여부: 예, 요청 ID: REQ-20260428-33
 
 ## 다음 세션 FE 시작 기준
 - `AGENTS.md`, `collaboration/master-flow.md`, `roles/README.md`, FE `inbox.md`, FE `status.md`를 먼저 확인하고 룰 확인 기록을 남긴다.
 - 현재 FE 신규 착수 요청은 없다.
+- `REQ-20260428-33`은 구현/검증 완료 후 PM 완료 처리됐다. QA 회귀는 `REQ-20260428-35`에서 확인한다.
 - `REQ-20260428-28`은 QA `REQ-20260428-30`까지 통과해 완료됐다.
 - `FE-IMPROVE-20260428-03`은 Flutter 검증 통과 상태이며 PM이 공통 요청화 여부를 판단한다.
 - `FE-IMPROVE-20260428-04`는 Flutter 검증 통과 상태이며 PM이 공통 요청화 여부를 판단한다.

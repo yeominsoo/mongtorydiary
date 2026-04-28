@@ -37,10 +37,14 @@
 | REQ-20260428-30 | P1 | PM | QA | 완료 | 캘린더 날짜 탭 UX 회귀 검증 | 2026-04-28 | `mobile-flutter/test`, QA 문서 |
 | REQ-20260428-31 | P2 | PM | PM | 완료 | 동일 날짜 다건 일기 UX 기준 결정 | 2026-04-28 | 협업 요청 기준 |
 | REQ-20260428-32 | P0 | 사용자/PM | PM | 완료 | 기획 개선 후보 도출 및 역할별 업무 배분 | 2026-04-28 | 협업 요청/현황 문서 |
-| REQ-20260428-33 | P1 | PM | FE | 대기 | 일기 작성 UX 잔여 개선 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
-| REQ-20260428-34 | P1 | PM | BE | 대기 | 오늘/위젯 요약 API 1차 구현 | 2026-04-28 | `src/main/java`, `src/test/java`, API 문서 |
+| REQ-20260428-33 | P1 | PM | FE | 완료 | 일기 작성 UX 잔여 개선 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
+| REQ-20260428-34 | P1 | PM | BE | 완료 | 오늘/위젯 요약 API 1차 구현 | 2026-04-28 | `src/main/java`, `src/test/java`, API 문서 |
 | REQ-20260428-35 | P1 | PM | QA | 대기 | MVP 릴리스 회귀 체크리스트와 신규 개선 검증 계획 | 2026-04-28 | QA 문서, `mobile-flutter/test` |
-| REQ-20260428-36 | P1 | PM | PM | 대기 | 위젯/딥링크 구현 요청 분해와 우선순위 결정 | 2026-04-28 | widget/deeplink 계획, 협업 문서 |
+| REQ-20260428-36 | P1 | PM | PM | 완료 | 위젯/딥링크 구현 요청 분해와 우선순위 결정 | 2026-04-28 | widget/deeplink 계획, 협업 문서 |
+| REQ-20260428-37 | P1 | PM | QA | 대기 | 오늘/위젯 요약 API 실제 서버 회귀 검증 | 2026-04-28 | QA 문서, 백엔드 실행 검증 |
+| REQ-20260428-38 | P1 | PM | FE | 대기 | Flutter 딥링크 라우터 1차 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
+| REQ-20260428-39 | P1 | PM | FE | 대기 | 위젯 요약 데이터 앱 연동 경계 구현 | 2026-04-28 | `mobile-flutter/lib`, `mobile-flutter/test` |
+| REQ-20260428-40 | P2 | PM | PM | 대기 | 네이티브 위젯 shell 범위 결정 | 2026-04-28 | Android/iOS 위젯 구현 범위 |
 
 ## 요청 상세
 ### REQ-20260428-01
@@ -448,7 +452,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: FE
-- 상태: 대기
+- 상태: 검토중
 - 선행 조건:
   - `REQ-20260428-26` 완료
   - `REQ-20260428-31` 완료
@@ -533,7 +537,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: FE
-- 상태: 대기
+- 상태: 검토중
 - 선행 조건:
   - `REQ-20260428-28` 완료
   - `FE-IMPROVE-20260428-03` 감정 선택 UI 개선 결과 확인
@@ -552,7 +556,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: BE
-- 상태: 대기
+- 상태: 검토중
 - 선행 조건:
   - `REQ-20260428-27` 완료
   - `REQ-20260428-22` 오류 계약 보강 완료
@@ -566,6 +570,9 @@
   - API endpoint/DTO/오류 계약 요약
   - Maven 테스트 결과
   - Flutter 연동 시 필요한 DTO 필드 공유
+- PM 메모:
+  - 2026-04-28 구현 파일과 테스트 파일이 생성됐고 Maven 테스트 19건이 통과했다.
+  - BE `responses.md`와 BE handoff에 `RES-REQ-20260428-34` 결과를 반영해 완료 처리했다.
 
 ### REQ-20260428-35
 - 우선순위: P1
@@ -588,7 +595,7 @@
 - 우선순위: P1
 - 요청자: PM
 - 대상 역할: PM
-- 상태: 대기
+- 상태: 완료
 - 선행 조건:
   - `REQ-20260428-27` 또는 `REQ-20260428-34`의 BE API 후보 결과 확인
   - `widget-deeplink-plan.md` 기존 설계 확인
@@ -600,3 +607,77 @@
   - 위젯/딥링크 구현 요청 분해표
   - 선행 API와 플랫폼 작업 순서
   - QA 검증 범위
+- PM 메모:
+  - 2026-04-28 `.ai-work/msyeo/docs/widget-deeplink-implementation-plan.md`를 작성했다.
+  - MVP 포함 범위는 Flutter 내부 딥링크 라우터, today-summary 앱 연동 경계, QA 검증 계획까지로 제한했다.
+  - Android/iOS 네이티브 위젯 shell은 `REQ-20260428-40`에서 별도 결정한다.
+
+### REQ-20260428-37
+- 우선순위: P1
+- 요청자: PM
+- 대상 역할: QA
+- 상태: 대기
+- 선행 조건:
+  - `REQ-20260428-34` 완료
+- 요청 내용:
+  - today-summary API를 실제 서버 기준으로 검증한다.
+  - today entry 없음, 1건, 다건, streak, invalid token 케이스를 포함한다.
+  - FE `REQ-20260428-38`, `REQ-20260428-39` 결과 검증 시나리오 초안을 준비한다.
+- 완료 기준:
+  - 실제 서버 검증 명령과 케이스별 결과
+  - 딥링크/위젯 요약 앱 연동 자동화/수동 검증 분류
+  - 결함이 있으면 FE/BE 후속 요청 후보
+
+### REQ-20260428-38
+- 우선순위: P1
+- 요청자: PM
+- 대상 역할: FE
+- 상태: 대기
+- 선행 조건:
+  - `REQ-20260428-34` 완료
+  - `widget-deeplink-implementation-plan.md` 확인
+- 요청 내용:
+  - Flutter 내부 딥링크 라우터 1차 구현을 진행한다.
+  - `mongtory://home`, `mongtory://diaries/new?date=YYYY-MM-DD`, `mongtory://diaries/{diaryId}`, `mongtory://calendar?year=YYYY&month=MM&date=YYYY-MM-DD` 후보를 앱 내부 route로 매핑한다.
+  - 세션이 없을 때 로그인 후 원래 진입 의도를 이어갈 수 있는 최소 구조를 둔다.
+  - 네이티브 Android/iOS link 설정은 아직 수정하지 않는다.
+- 완료 기준:
+  - 변경 파일 목록
+  - 지원 딥링크와 fallback 동작 요약
+  - `flutter analyze`, `flutter test` 결과
+  - 네이티브 설정 변경 필요 여부
+
+### REQ-20260428-39
+- 우선순위: P1
+- 요청자: PM
+- 대상 역할: FE
+- 상태: 대기
+- 선행 조건:
+  - `REQ-20260428-34` 완료
+  - `REQ-20260428-38` 착수 또는 완료
+- 요청 내용:
+  - BE today-summary 응답을 Flutter DTO/model/repository 경계에 추가한다.
+  - 홈 진입, 일기 CRUD 성공, 캘린더 새로고침 이후 요약 갱신 책임을 정리한다.
+  - Android/iOS 공유 저장소 쓰기는 네이티브 shell 결정 전까지 interface 또는 adapter 경계로 둔다.
+- 완료 기준:
+  - 변경 파일 목록
+  - 위젯 요약 DTO/model/repository 계약
+  - 갱신 트리거와 실패 fallback 요약
+  - `flutter analyze`, `flutter test` 결과
+
+### REQ-20260428-40
+- 우선순위: P2
+- 요청자: PM
+- 대상 역할: PM
+- 상태: 대기
+- 선행 조건:
+  - `REQ-20260428-38` 또는 `REQ-20260428-39` 결과 확인
+  - `REQ-20260428-37` 또는 `REQ-20260428-35` 검증 결과 확인
+- 요청 내용:
+  - Android App Widget 또는 Glance, iOS WidgetKit 중 1차 구현 방식을 결정한다.
+  - `mobile-flutter/android`, `mobile-flutter/ios` 변경 범위와 PM 승인 필요 범위를 분리한다.
+  - FE/QA 후속 구현 및 검증 요청을 새 요청 ID로 배정한다.
+- 완료 기준:
+  - Android/iOS 위젯 shell 구현 방식 결정
+  - 플랫폼별 변경 파일 범위
+  - FE/QA 후속 요청 ID 후보

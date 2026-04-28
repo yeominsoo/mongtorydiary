@@ -70,12 +70,61 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('일기 작성'), findsOneWidget);
+    expect(find.byIcon(Icons.calendar_today_outlined), findsOneWidget);
     expect(find.text('차분 (CALM)'), findsOneWidget);
 
+    await tester.tap(find.byIcon(Icons.calendar_today_outlined));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DatePickerDialog), findsOneWidget);
+
+    Navigator.of(tester.element(find.byType(DatePickerDialog))).pop();
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('저장'));
     await tester.pump();
 
     expect(find.text('제목을 입력해주세요.'), findsOneWidget);
     expect(find.text('본문을 입력해주세요.'), findsOneWidget);
+  });
+
+  testWidgets('diary editor manages image urls and confirms discard', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: MaterialApp(home: DiaryHomeScreen())),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, '사진 URL 추가'),
+      'https://example.com/photo.jpg',
+    );
+    await tester.tap(find.byTooltip('사진 URL 추가'));
+    await tester.pump();
+
+    expect(find.text('https://example.com/photo.jpg'), findsWidgets);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text('변경사항을 버릴까요?'), findsOneWidget);
+
+    await tester.tap(find.text('계속 작성'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('일기 작성'), findsOneWidget);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('버리기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('오늘의 일기'), findsOneWidget);
   });
 }

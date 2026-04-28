@@ -118,10 +118,11 @@ void main() {
 
     expect(find.text('일기 작성'), findsOneWidget);
 
-    await tester.enterText(find.byType(TextFormField).at(0), '2026-03-21');
     await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 작성 일기');
     await tester.enterText(find.byType(TextFormField).at(2), '생성 회귀 검증 본문입니다.');
     expect(find.text('평온 (CALM)'), findsOneWidget);
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('저장'));
     await tester.pumpAndSettle();
 
@@ -140,6 +141,8 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 수정 일기');
     await tester.enterText(find.byType(TextFormField).at(2), '수정 회귀 검증 본문입니다.');
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('저장'));
     await tester.pumpAndSettle();
 

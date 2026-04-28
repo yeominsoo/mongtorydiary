@@ -35,9 +35,75 @@
 | RES-REQ-20260428-29 | REQ-20260428-29 | QA | 완료 | API 검증 오류 계약 실제 서버 회귀 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-30 | REQ-20260428-30 | QA | 완료 | 캘린더 날짜 탭 UX 하네스 회귀 검증 통과 | 2026-04-28 |
 | RES-REQ-20260428-27 | REQ-20260428-27 | BE | 완료 | 사용성 개선용 API 후보 설계와 1순위 구현 후보 선정 | 2026-04-28 |
+| RES-REQ-20260428-33 | REQ-20260428-33 | FE | 완료 | 일기 작성 UX 잔여 개선 및 Flutter 검증 통과 | 2026-04-28 |
+| RES-REQ-20260428-34 | REQ-20260428-34 | BE | 완료 | 오늘/위젯 요약 API 구현 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-32 | REQ-20260428-32 | PM | 완료 | 기획 개선 후보 도출 및 역할별 업무 배분 | 2026-04-28 |
+| RES-REQ-20260428-36 | REQ-20260428-36 | PM | 완료 | 위젯/딥링크 구현 요청 분해와 후속 요청 등록 | 2026-04-28 |
 
 ## 응답 상세
+### RES-REQ-20260428-33
+- 요청 ID: REQ-20260428-33
+- 담당 역할: FE
+- 상태: 완료
+- 요약:
+  - 사진 URL 입력을 추가/삭제 가능한 목록 UI로 전환했다.
+  - 저장 시 입력칸에 남은 URL도 기존 `imageUrls` 목록 계약에 반영한다.
+  - 변경사항이 있을 때 AppBar 뒤로가기를 누르면 이탈 확인 다이얼로그를 표시한다.
+- 검증:
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: 통과
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test`: 통과, 10건
+  - `git diff --check`: 통과
+- 다음 제안:
+  - QA `REQ-20260428-35` 검증 계획에 사진 URL 목록 UI와 이탈 확인 회귀를 포함한다.
+
+### RES-REQ-20260428-36
+- 요청 ID: REQ-20260428-36
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - `.ai-work/msyeo/docs/widget-deeplink-implementation-plan.md`를 작성했다.
+  - MVP 포함 범위를 Flutter 내부 딥링크 라우터, today-summary 앱 연동 경계, QA 검증 계획까지로 제한했다.
+  - Android/iOS 네이티브 위젯 shell은 후속 `REQ-20260428-40`에서 별도 결정한다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/widget-deeplink-implementation-plan.md`
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/fe/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/inbox.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/delivery-roadmap.md`
+- 검증:
+  - 문서 분해 작업이라 코드 테스트는 실행하지 않았다.
+  - `git diff --check`: 통과
+- 다음 제안:
+  - QA `REQ-20260428-37`, FE `REQ-20260428-38`, FE `REQ-20260428-39`, PM `REQ-20260428-40` 순서로 진행한다.
+
+### RES-REQ-20260428-34
+- 요청 ID: REQ-20260428-34
+- 담당 역할: BE
+- 상태: 완료
+- 요약:
+  - `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD` API를 구현했다.
+  - 지정일 작성 여부, 지정일 일기 수, 대표 일기 id/title/emotionCode, streakDays, lastEntryDate, message, updatedAt을 응답한다.
+  - 동일 날짜 다건은 `updatedAt` 최신 일기를 대표 일기로 선택하고, 사용자 소유 일기만 집계한다.
+- 변경 파일:
+  - `src/main/java/com/mongtory/diary/controller/WidgetController.java`
+  - `src/main/java/com/mongtory/diary/dto/widget/WidgetTodaySummaryResponse.java`
+  - `src/main/java/com/mongtory/diary/service/WidgetSummaryService.java`
+  - `src/main/java/com/mongtory/diary/repository/DiaryEntryRepository.java`
+  - `src/test/java/com/mongtory/diary/controller/WidgetControllerTest.java`
+  - `.ai-work/msyeo/docs/api-contract.md`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 19건
+- 남은 이슈:
+  - QA 실제 서버 검증과 Flutter 연동은 후속 요청으로 분리 가능하다.
+- 다음 제안:
+  - PM은 `REQ-20260428-36`에서 위젯/딥링크 구현 요청을 분해한다.
+
 ### RES-REQ-20260428-32
 - 요청 ID: REQ-20260428-32
 - 담당 역할: PM

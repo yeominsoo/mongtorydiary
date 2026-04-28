@@ -21,7 +21,13 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   late final TextEditingController _emotionCodeController;
-  late final TextEditingController _imageUrlsController;
+  late final TextEditingController _pendingImageUrlController;
+  late final String _initialEntryDate;
+  late final String _initialTitle;
+  late final String _initialContent;
+  late final String _initialEmotionCode;
+  late final List<String> _initialImageUrls;
+  late final List<String> _imageUrls;
   bool _isSaving = false;
   String? _errorMessage;
 
@@ -31,19 +37,20 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   void initState() {
     super.initState();
     final initial = widget.initial;
-    _entryDateController = TextEditingController(
-      text: _formatDate(
-        initial?.entryDate ?? widget.initialDate ?? DateTime.now(),
-      ),
+    final entryDate = _formatDate(
+      initial?.entryDate ?? widget.initialDate ?? DateTime.now(),
     );
-    _titleController = TextEditingController(text: initial?.title ?? '');
-    _contentController = TextEditingController(text: initial?.content ?? '');
-    _emotionCodeController = TextEditingController(
-      text: initial?.emotionCode ?? 'CALM',
-    );
-    _imageUrlsController = TextEditingController(
-      text: initial?.imageUrls.join(', ') ?? '',
-    );
+    _initialEntryDate = entryDate;
+    _initialTitle = initial?.title ?? '';
+    _initialContent = initial?.content ?? '';
+    _initialEmotionCode = (initial?.emotionCode ?? 'CALM').toUpperCase();
+    _initialImageUrls = List.unmodifiable(initial?.imageUrls ?? []);
+    _imageUrls = [..._initialImageUrls];
+    _entryDateController = TextEditingController(text: entryDate);
+    _titleController = TextEditingController(text: _initialTitle);
+    _contentController = TextEditingController(text: _initialContent);
+    _emotionCodeController = TextEditingController(text: _initialEmotionCode);
+    _pendingImageUrlController = TextEditingController();
   }
 
   @override
@@ -52,7 +59,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     _titleController.dispose();
     _contentController.dispose();
     _emotionCodeController.dispose();
-    _imageUrlsController.dispose();
+    _pendingImageUrlController.dispose();
     super.dispose();
   }
 
@@ -62,7 +69,10 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     final emotions = ref.watch(emotionListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        leading: BackButton(onPressed: _requestClose),
+        title: Text(title),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -80,8 +90,10 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                       decoration: const InputDecoration(
                         labelText: '날짜',
                         hintText: 'YYYY-MM-DD',
+                        suffixIcon: Icon(Icons.calendar_today_outlined),
                       ),
-                      keyboardType: TextInputType.datetime,
+                      readOnly: true,
+                      onTap: _pickEntryDate,
                       validator: _validateDate,
                     ),
                     const SizedBox(height: 16),
@@ -106,12 +118,11 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                       onChanged: () => setState(() {}),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _imageUrlsController,
-                      decoration: const InputDecoration(
-                        labelText: '사진 URL',
-                        hintText: '여러 개는 쉼표로 구분',
-                      ),
+                    _ImageUrlEditor(
+                      controller: _pendingImageUrlController,
+                      imageUrls: _imageUrls,
+                      onAdd: _addImageUrls,
+                      onRemove: _removeImageUrl,
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
@@ -139,6 +150,8 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   }
 
   Future<void> _submit() async {
+    _addImageUrls(rebuild: false);
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -155,7 +168,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         title: _titleController.text.trim(),
         content: _contentController.text.trim(),
         emotionCode: _emotionCodeController.text.trim().toUpperCase(),
-        imageUrls: _parseImageUrls(_imageUrlsController.text),
+        imageUrls: _imageUrls,
       );
       final initial = widget.initial;
 
@@ -182,6 +195,145 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         });
       }
     }
+  }
+
+  Future<void> _pickEntryDate() async {
+    final current = DateTime.tryParse(_entryDateController.text.trim());
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked == null) {
+      return;
+    }
+
+    setState(() {
+      _entryDateController.text = _formatDate(picked);
+    });
+  }
+
+  Future<void> _requestClose() async {
+    if (!_hasUnsavedChanges) {
+      Navigator.of(context).maybePop();
+      return;
+    }
+
+    final shouldDiscard = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('변경사항을 버릴까요?'),
+        content: const Text('저장하지 않은 내용은 사라집니다.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('계속 작성'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('버리기'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDiscard == true && mounted) {
+      Navigator.of(context).maybePop();
+    }
+  }
+
+  void _addImageUrls({bool rebuild = true}) {
+    final values = _parseImageUrls(_pendingImageUrlController.text);
+    if (values.isEmpty) {
+      return;
+    }
+
+    void addValues() {
+      for (final value in values) {
+        if (!_imageUrls.contains(value)) {
+          _imageUrls.add(value);
+        }
+      }
+      _pendingImageUrlController.clear();
+    }
+
+    if (rebuild) {
+      setState(addValues);
+      return;
+    }
+
+    addValues();
+  }
+
+  void _removeImageUrl(String value) {
+    setState(() {
+      _imageUrls.remove(value);
+    });
+  }
+
+  bool get _hasUnsavedChanges {
+    return _entryDateController.text.trim() != _initialEntryDate ||
+        _titleController.text != _initialTitle ||
+        _contentController.text != _initialContent ||
+        _emotionCodeController.text.trim().toUpperCase() !=
+            _initialEmotionCode ||
+        _pendingImageUrlController.text.trim().isNotEmpty ||
+        !_listEquals(_imageUrls, _initialImageUrls);
+  }
+}
+
+class _ImageUrlEditor extends StatelessWidget {
+  const _ImageUrlEditor({
+    required this.controller,
+    required this.imageUrls,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  final TextEditingController controller;
+  final List<String> imageUrls;
+  final VoidCallback onAdd;
+  final ValueChanged<String> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: '사진 URL 추가',
+            hintText: 'https://example.com/photo.jpg',
+            suffixIcon: IconButton(
+              tooltip: '사진 URL 추가',
+              onPressed: onAdd,
+              icon: const Icon(Icons.add_link_outlined),
+            ),
+          ),
+          keyboardType: TextInputType.url,
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) => onAdd(),
+        ),
+        const SizedBox(height: 8),
+        if (imageUrls.isEmpty)
+          Text(
+            '추가된 사진 URL이 없습니다.',
+            style: Theme.of(context).textTheme.bodySmall,
+          )
+        else
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final item in imageUrls)
+                InputChip(label: Text(item), onDeleted: () => onRemove(item)),
+            ],
+          ),
+      ],
+    );
   }
 }
 
@@ -353,4 +505,18 @@ String _formatDate(DateTime value) {
   final month = value.month.toString().padLeft(2, '0');
   final day = value.day.toString().padLeft(2, '0');
   return '${value.year}-$month-$day';
+}
+
+bool _listEquals(List<String> first, List<String> second) {
+  if (first.length != second.length) {
+    return false;
+  }
+
+  for (var index = 0; index < first.length; index += 1) {
+    if (first[index] != second[index]) {
+      return false;
+    }
+  }
+
+  return true;
 }
