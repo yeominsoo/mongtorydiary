@@ -1,7 +1,7 @@
 # API 및 DTO 초안
 
 ## 목적
-이 문서는 Spring Boot 백엔드와 Flutter 앱이 함께 참조할 최소 API 계약 초안이다. 현재 목표는 MVP 범위의 인증, 일기 CRUD, 감정 스티커, 캘린더 조회를 안정적으로 정의하는 것이다.
+이 문서는 Spring Boot 백엔드와 Flutter 앱이 함께 참조할 최소 API 계약 초안이다. 현재 목표는 MVP 범위의 인증, 일기 CRUD, TODO, 감정 스티커, 캘린더 조회를 안정적으로 정의하는 것이다.
 
 ## 공통 응답 규칙
 모든 API 응답은 `ApiResponse<T>` 형태를 따른다.
@@ -89,7 +89,9 @@
   "date": "2026-03-19",
   "hasEntry": true,
   "emotionCode": "CALM",
-  "entryCount": 1
+  "entryCount": 1,
+  "todoCount": 2,
+  "completedTodoCount": 1
 }
 ```
 
@@ -103,9 +105,32 @@
       "date": "2026-03-19",
       "hasEntry": true,
       "emotionCode": "CALM",
-      "entryCount": 1
+      "entryCount": 1,
+      "todoCount": 2,
+      "completedTodoCount": 1
     }
   ]
+}
+```
+
+### TodoItem
+```json
+{
+  "id": 201,
+  "dueDate": "2026-03-19",
+  "content": "출품용 캘린더 TODO 점검",
+  "completed": false,
+  "createdAt": "2026-03-19T09:00:00",
+  "updatedAt": "2026-03-19T09:00:00"
+}
+```
+
+### TodoUpsert
+```json
+{
+  "dueDate": "2026-03-19",
+  "content": "출품용 캘린더 TODO 점검",
+  "completed": false
 }
 ```
 
@@ -220,7 +245,54 @@
 응답:
 - `ApiResponse<CalendarMonthResponse>`
 
-현재 응답의 `days`에는 기록이 있는 날짜만 포함된다. 빈 날짜 전체를 내려주는 월간 그리드 응답은 아직 구현되어 있지 않다.
+현재 응답의 `days`에는 일기 또는 TODO가 있는 날짜만 포함된다. 빈 날짜 전체를 내려주는 월간 그리드 응답은 아직 구현되어 있지 않으며, Flutter 앱은 월 정보를 바탕으로 빈 날짜 셀을 클라이언트에서 생성한다.
+
+## TODO API
+TODO API는 access token 기준 현재 사용자 데이터만 조회/변경한다.
+
+### TODO 목록 조회
+- `GET /api/v1/todos?from=2026-03-01&to=2026-03-31`
+
+응답:
+- `ApiResponse<List<TodoItem>>`
+
+`from`과 `to`를 생략하면 오늘 하루 기준으로 조회한다. `to`가 `from`보다 이전이면 400 오류를 반환한다.
+
+### TODO 생성
+- `POST /api/v1/todos`
+
+요청:
+```json
+{
+  "dueDate": "2026-03-19",
+  "content": "달력에서 할 일 남기기",
+  "completed": false
+}
+```
+
+응답:
+- `ApiResponse<TodoItem>`
+
+### TODO 수정
+- `PUT /api/v1/todos/{todoId}`
+
+요청:
+```json
+{
+  "dueDate": "2026-03-19",
+  "content": "달력에서 할 일 완료 처리하기",
+  "completed": true
+}
+```
+
+응답:
+- `ApiResponse<TodoItem>`
+
+### TODO 삭제
+- `DELETE /api/v1/todos/{todoId}`
+
+응답:
+- `ApiResponse<Void>`
 
 ## 위젯 관점 최소 데이터
 위젯은 아래 데이터만 우선 참조한다.

@@ -1,6 +1,6 @@
 # 멀티윈도우 개발 준비 노트
 
-> 참고: 이 문서는 멀티 터미널 작업을 위한 보조 문서다. 현재 공식 협업 기준은 `.ai-work/msyeo/docs/collaboration/master-flow.md`이며, 역할은 PM, QA, FE 개발자, BE 개발자 4개로 운영한다.
+> 참고: 이 문서는 멀티 터미널 작업을 위한 과거 보조 문서다. 현재 공식 기준은 `.ai-work/msyeo/docs/collaboration/master-flow.md`이며, 2026-05-21부터 역할 분배는 철회되고 단일 세션 운영으로 전환됐다.
 
 ## 목적
 PuTTY 터미널을 여러 개 띄워 각 세션에 역할을 나눠 개발할 때, 세션 간 충돌을 줄이고 바로 작업에 들어가기 위한 기준 문서다. 이 문서는 코드 실행 산출물이 아니라 작업 맥락과 역할 분담 기준을 기록한다.
@@ -87,9 +87,9 @@ JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 bash ./mvnw spring-boot:run
 - Flutter web 실행 후보:
 ```bash
 cd mobile-flutter
-HOME=/home/msyeo/workspace/mongtorydiary/.tmp_flutter_home /tmp/flutter/bin/flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080
+HOME=/home/msyeo/workspace/mongtorydiary/.tmp_flutter_home /tmp/flutter/bin/flutter run -d web-server --web-hostname 0.0.0.0 --web-port 30081
 ```
-- 주의: 백엔드 기본 포트도 8080이므로 동시에 실행하려면 둘 중 하나의 포트를 바꿔야 한다.
+- 기준: 백엔드는 30080, Flutter web은 30081로 분리해 동시에 실행한다.
 
 ### 5번: API 계약/테스트 세션
 - 담당: API 계약 문서, 컨트롤러 테스트, 수동 API 호출 시나리오

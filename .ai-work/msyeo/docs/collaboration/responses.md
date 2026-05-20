@@ -1,11 +1,12 @@
-# 역할 간 응답 인덱스
+# 단일 세션 응답 인덱스
 
 ## 사용법
-- 이 문서는 PM이 관리하는 공통 응답 인덱스다.
-- 각 역할은 자기 역할 디렉토리의 `responses.md`에 상세 응답을 먼저 기록한다.
-- PM은 역할별 응답을 확인한 뒤 이 문서에는 추적에 필요한 요약만 반영한다.
+- 이 문서는 단일 세션이 관리하는 공통 응답 인덱스다.
+- 2026-05-21부터 역할 분배는 철회됐다.
+- 신규 응답은 이 문서에 기록한다.
+- 과거 역할별 `responses.md`는 이력 확인용이다.
 - 응답 제목은 `RES-요청ID` 형식을 사용한다.
-- 긴 검증 로그나 상세 재현 절차는 역할별 `responses.md`에 남긴다.
+- 긴 검증 로그나 상세 재현 절차는 필요한 경우 별도 문서 또는 handoff에 남긴다.
 
 ## 응답 목록
 | 응답 ID | 요청 ID | 담당 역할 | 상태 | 요약 | 작성일 |
@@ -39,8 +40,223 @@
 | RES-REQ-20260428-34 | REQ-20260428-34 | BE | 완료 | 오늘/위젯 요약 API 구현 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-32 | REQ-20260428-32 | PM | 완료 | 기획 개선 후보 도출 및 역할별 업무 배분 | 2026-04-28 |
 | RES-REQ-20260428-36 | REQ-20260428-36 | PM | 완료 | 위젯/딥링크 구현 요청 분해와 후속 요청 등록 | 2026-04-28 |
+| RES-SINGLE-MIGRATION-20260521-01 | SINGLE-MIGRATION-20260521-01 | 단일 세션 | 완료 | 역할 분배 철회와 단일 세션 작업 목록 정리 | 2026-05-21 |
+| RES-REQ-20260428-37 | REQ-20260428-37 | 단일 세션 | 완료 | today-summary API 실제 서버 회귀 검증 통과 | 2026-05-21 |
+| RES-REQ-20260521-01 | REQ-20260521-01 | 단일 세션 | 완료 | 백엔드 30080, Flutter web 30081 포트 기준 반영 | 2026-05-21 |
+| RES-REQ-20260521-02 | REQ-20260521-02 | 단일 세션 | 완료 | Flutter SDK 3.41.7 설치 및 Flutter 검증 복구 | 2026-05-21 |
+| RES-REQ-20260521-03 | REQ-20260521-03 | 단일 세션 | 완료 | 백엔드 30080과 Flutter web 30081 실행, CORS 허용 및 브라우저 접속 준비 | 2026-05-21 |
+| RES-REQ-20260521-04 | REQ-20260521-04 | 단일 세션 | 검증완료 | 캘린더 TODO와 몽토리 메뉴 대시보드 구현, Flutter/Maven 검증 통과 | 2026-05-21 |
 
 ## 응답 상세
+### RES-REQ-20260521-04
+- 요청 ID: REQ-20260521-04
+- 담당: 단일 세션
+- 상태: 검증완료, 커밋/푸시/서버 재시작 대기
+- 요약:
+  - 백엔드에 TODO 엔티티, repository, service, controller, DTO, 시드 데이터 초기화를 추가했다.
+  - `GET/POST/PUT/DELETE /api/v1/todos`를 access token 기준 현재 사용자 범위로 제공한다.
+  - 월간 캘린더 API가 일기 수, TODO 수, 완료 TODO 수를 함께 반환하도록 확장했다.
+  - Flutter 캘린더를 큰 월간 달력, 날짜 선택, 이전/다음/오늘 이동, 날짜별 일기/TODO 패널로 개편했다.
+  - 캘린더에서 TODO 추가, 완료 토글, 삭제를 지원한다.
+  - 몽토리 메뉴를 `몽토리 컨디션`, `성장 기록`, `감정 팔레트`, `홈 위젯 미리보기` 대시보드로 구체화했다.
+  - 제품 범위 문서와 사용가이드 문서를 추가했다.
+- 주요 변경 파일:
+  - `src/main/java/com/mongtory/diary/domain/todo/TodoItem.java`
+  - `src/main/java/com/mongtory/diary/controller/TodoController.java`
+  - `src/main/java/com/mongtory/diary/service/TodoService.java`
+  - `src/main/java/com/mongtory/diary/service/CalendarService.java`
+  - `src/test/java/com/mongtory/diary/controller/TodoControllerTest.java`
+  - `src/test/java/com/mongtory/diary/controller/CalendarControllerTest.java`
+  - `mobile-flutter/lib/presentation/screens/calendar/calendar_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/profile/profile_screen.dart`
+  - `mobile-flutter/lib/application/providers/app_providers.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `.ai-work/msyeo/docs/calendar-mongtory-product-scope.md`
+  - `.ai-work/msyeo/docs/calendar-todo-user-guide.md`
+- 검증:
+  - `cd mobile-flutter && flutter analyze`: 통과, No issues found.
+  - `cd mobile-flutter && flutter test`: 통과, 12건.
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 24건.
+- 남은 이슈:
+  - Git 커밋과 원격 push는 아직 수행 전이다.
+  - 현재 실행 중인 30080/30081 서비스는 새 코드 반영을 위해 마지막에 재시작해야 한다.
+
+### RES-REQ-20260521-03
+- 요청 ID: REQ-20260521-03
+- 담당: 단일 세션
+- 상태: 완료
+- 요약:
+  - 브라우저에서 Flutter web이 30080 백엔드 API를 호출할 수 있도록 `/api/**` CORS 개발 설정을 추가했다.
+  - 백엔드를 systemd 임시 서비스 `mongtorydiary-backend-30080.service`로 실행했다.
+  - Flutter web을 systemd 임시 서비스 `mongtorydiary-flutter-30081.service`로 실행했다.
+  - Flutter web에는 remote API 주소로 `http://192.168.75.194:30080`을 주입했다.
+  - 브라우저 접속 주소는 `http://192.168.75.194:30081/`이다.
+- 변경 파일:
+  - `src/main/java/com/mongtory/diary/config/WebConfig.java`
+  - `src/test/java/com/mongtory/diary/controller/AuthControllerTest.java`
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/single-session-worklist.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-21.md`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 20건.
+  - `GET http://127.0.0.1:30080/api/v1/emotions`: 200 응답 확인.
+  - `GET http://192.168.75.194:30080/api/v1/emotions`: 200 응답 확인.
+  - `OPTIONS http://192.168.75.194:30080/api/v1/auth/login` with `Origin: http://192.168.75.194:30081`: 200, `Access-Control-Allow-Origin` 확인.
+  - `GET http://127.0.0.1:30081/`: HTML 응답 확인.
+  - `GET http://192.168.75.194:30081/`: HTML 응답 확인.
+  - `ss -ltnp` 기준 30080은 Java, 30081은 Dart/Flutter 프로세스가 LISTEN 중이다.
+  - `systemctl is-active mongtorydiary-backend-30080.service mongtorydiary-flutter-30081.service`: 둘 다 active.
+  - firewalld 허용 포트에 `30080/tcp`, `30081/tcp`가 포함되어 있다.
+- 남은 이슈:
+  - 두 서비스는 `/run/systemd/transient`의 임시 서비스라 재부팅 후 자동 복구 대상은 아니다.
+  - 실제 운영용 상시 구동은 별도 systemd unit 또는 Kubernetes/k3s 구성으로 정리해야 한다.
+- 다음 제안:
+  - 브라우저에서 `http://192.168.75.194:30081/`로 접속해 UI를 확인한다.
+
+### RES-REQ-20260521-02
+- 요청 ID: REQ-20260521-02
+- 담당: 단일 세션
+- 상태: 완료
+- 요약:
+  - Rocky 10.1 미니 PC에 Flutter SDK 3.41.7 stable을 `/home/msyeo/.local/share/flutter` 경로로 설치했다.
+  - `/home/msyeo/.local/bin/flutter`, `/home/msyeo/.local/bin/dart` 심볼릭 링크를 생성했고, `msyeo` 계정 PATH에서 인식됨을 확인했다.
+  - 최신 stable 3.44.0은 기존 `pubspec.lock`의 SDK 고정 패키지 변경을 요구해, 기존 프로젝트 검증 이력과 lockfile 유지를 위해 3.41.7로 고정했다.
+  - Flutter analytics는 비활성화했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/single-session-worklist.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-21.md`
+- 환경 변경:
+  - `/home/msyeo/.local/share/flutter`
+  - `/home/msyeo/.local/bin/flutter`
+  - `/home/msyeo/.local/bin/dart`
+  - `mobile-flutter` 디렉토리 소유권을 `msyeo:msyeo`로 조정했다.
+- 검증:
+  - `flutter --version`: Flutter 3.41.7, Dart 3.11.5 확인.
+  - `flutter doctor -v`: Flutter/Connected device/Network resources는 통과. Android SDK, Chrome, Linux desktop 빌드 툴은 미설치 경고.
+  - `cd mobile-flutter && flutter pub get --enforce-lockfile`: 통과.
+  - `cd mobile-flutter && flutter analyze`: 통과, No issues found.
+  - `cd mobile-flutter && flutter test`: 통과, 11건.
+  - `flutter run -d web-server --web-hostname 0.0.0.0 --web-port 30081 --dart-define=DATA_SOURCE_MODE=remote --dart-define=API_BASE_URL=http://127.0.0.1:30080`: 30081 기동 확인.
+  - `GET http://127.0.0.1:30081/`: HTML 응답 확인 후 Flutter web 서버 종료.
+- 남은 이슈:
+  - Android 앱 빌드/실행은 Android SDK 설치가 필요하다.
+  - Chrome 브라우저 디버깅은 Chrome 또는 `CHROME_EXECUTABLE` 설정이 필요하다.
+  - Linux desktop 앱 빌드는 clang, CMake, ninja, GTK3 개발 패키지 등이 필요하다.
+- 다음 제안:
+  - Flutter 딥링크 라우터 작업(`REQ-20260428-38`)을 진행한다.
+
+### RES-REQ-20260521-01
+- 요청 ID: REQ-20260521-01
+- 담당: 단일 세션
+- 상태: 완료
+- 요약:
+  - 백엔드 기본 포트를 30080으로 변경했다.
+  - Flutter remote 모드 기본 API 주소를 `http://10.0.2.2:30080`으로 변경했다.
+  - Flutter web 실행 포트 기준은 30081로 문서화했다.
+  - 9090은 Rocky Cockpit 기본 포트라 프로젝트에서 쓰지 않기로 했다. 중지했던 `cockpit.socket`은 복구했다.
+- 변경 파일:
+  - `src/main/resources/application.properties`
+  - `mobile-flutter/lib/core/config/app_config.dart`
+  - `mobile-flutter/README.md`
+  - `.ai-work/msyeo/docs/multiwindow-dev-prep.md`
+  - `.ai-work/msyeo/docs/session-continuity.md`
+  - `.ai-work/msyeo/docs/windows-flutter-app-guide.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-21.md`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 샌드박스 내부에서는 Mockito/Byte Buddy self-attach 실패.
+  - 같은 Maven 테스트를 샌드박스 밖 권한으로 재실행해 19건 통과, `BUILD SUCCESS`.
+  - `SPRING_DATASOURCE_URL=jdbc:sqlite:/tmp/mongtory-port-check-30080-20260521.db` 기준으로 `spring-boot:run` 실행 시 Tomcat이 30080 포트에서 기동되는 것을 확인했다.
+  - `GET http://localhost:30080/api/v1/emotions`: HTTP 200 응답 확인 후 서버 종료.
+  - firewalld 기준 `30080/tcp`, `30081/tcp`는 이미 허용되어 있었고 reload를 완료했다.
+  - `cockpit.socket`은 9090 포트에서 다시 LISTEN 상태임을 확인했다.
+  - `HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze`: `/tmp/flutter/bin/flutter`가 없어 실행 불가.
+  - `which flutter`, `.tooling`, `/tmp`, `/opt` 확인 결과 현재 세션에서 사용 가능한 Flutter SDK를 찾지 못했다.
+- 남은 이슈:
+  - Flutter analyze/test는 SDK 경로가 복구되면 재실행해야 한다.
+  - Flutter web 실제 기동은 SDK 경로 부재로 수행하지 못했다.
+- 다음 제안:
+  - 백엔드는 `http://localhost:30080`, Flutter web은 `http://localhost:30081` 기준으로 실행한다.
+
+### RES-REQ-20260428-37
+- 요청 ID: REQ-20260428-37
+- 담당: 단일 세션
+- 상태: 완료
+- 요약:
+  - `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD`를 실제 Spring Boot 서버에서 검증했다.
+  - 검증 서버는 `SPRING_DATASOURCE_URL=jdbc:sqlite:/tmp/mongtory-req37-202605210120.db`, `SERVER_PORT=18080` 기준으로 기동해 기존 `mongtory.db`와 분리했다.
+  - 시드 사용자 로그인, 지정일 일기 없음, 지정일 1건, 지정일 다건 대표 일기 선택, 다른 사용자 일기 제외, streakDays/lastEntryDate, invalid token, 잘못된 date, date 누락, Authorization 누락 케이스를 확인했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/single-session-worklist.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-21.md`
+- 검증:
+  - `env JAVA_HOME=/usr/lib/jvm/java-21-openjdk SPRING_DATASOURCE_URL=jdbc:sqlite:/tmp/mongtory-req37-202605210120.db SERVER_PORT=18080 bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 spring-boot:run`: 기동 성공, 검증 후 종료 시 `BUILD SUCCESS`.
+  - `POST /api/v1/auth/login`: 200, 시드 사용자 로그인 성공.
+  - `GET /api/v1/widgets/today-summary?date=2026-05-21`: 200, `hasTodayEntry=true`, `todayEntryCount=1`, `latestDiaryTitle=오늘의 기록`, `streakDays=1`.
+  - `GET /api/v1/widgets/today-summary?date=2026-05-19`: 200, `hasTodayEntry=false`, `todayEntryCount=0`, `lastEntryDate=null`.
+  - 신규 검증 사용자 기준 `2026-04-27`: 200, 지정일 1건, `latestDiaryTitle=Apr 27`, `streakDays=2`.
+  - 신규 검증 사용자 기준 `2026-04-28`: 200, 지정일 2건, `latestDiaryTitle=Apr 28 latest`, `latestEmotionCode=CALM`, `streakDays=3`, 다른 사용자 동일 날짜 일기 제외.
+  - 신규 검증 사용자 기준 `2026-04-29`: 200, 지정일 없음, `lastEntryDate=2026-04-28`, `streakDays=3`.
+  - invalid token: 401, `message=Invalid access token`.
+  - `date=not-a-date`: 400, `message=Invalid request parameter`.
+  - date 누락: 400, `message=date parameter is required`.
+  - Authorization 누락: 401, `message=Authorization header is required`.
+- 남은 이슈:
+  - 코드 변경은 없었다.
+  - 샌드박스 내부 서버 바인딩과 localhost curl은 권한 제한으로 실패해, 실제 서버 검증 명령만 권한 상승 실행했다.
+- 다음 제안:
+  - `REQ-20260428-38` Flutter 딥링크 라우터 1차 구현으로 진행한다.
+
+### RES-SINGLE-MIGRATION-20260521-01
+- 요청 ID: SINGLE-MIGRATION-20260521-01
+- 담당: 단일 세션
+- 상태: 완료
+- 요약:
+  - PM/QA/FE/BE 역할 분배를 활성 운영 방식에서 철회하고 단일 세션 운영 규칙으로 전환했다.
+  - 남은 대기 요청 `REQ-20260428-35`, `REQ-20260428-37`, `REQ-20260428-38`, `REQ-20260428-39`, `REQ-20260428-40`을 단일 세션 작업 목록으로 이관했다.
+  - `.ai-work/msyeo/docs/single-session-worklist.md`를 새 중앙 작업 목록으로 추가했다.
+- 변경 파일:
+  - `AGENTS.md`
+  - `.ai-work/msyeo/docs/README.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/session-continuity.md`
+  - `.ai-work/msyeo/docs/delivery-roadmap.md`
+  - `.ai-work/msyeo/docs/single-session-worklist.md`
+  - `.ai-work/msyeo/docs/widget-deeplink-implementation-plan.md`
+  - `.ai-work/msyeo/docs/collaboration/master-flow.md`
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/README.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/*/inbox.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/*/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/requests.md`
+  - `.ai-work/msyeo/docs/pm-collaboration-board.md`
+  - `.ai-work/msyeo/docs/multiwindow-dev-prep.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-21.md`
+- 검증:
+  - 문서 정리 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+  - `git diff --check`: 통과
+- 남은 이슈:
+  - 실제 남은 구현/검증은 `single-session-worklist.md` 순서로 진행한다.
+  - 기존 미추적 항목 `.codex`, `node_modules/`, `package-lock.json`, `package.json`은 이번 작업과 무관하다.
+- 다음 제안:
+  - `REQ-20260428-37` today-summary API 실제 서버 회귀 검증부터 시작한다.
+
 ### RES-REQ-20260428-33
 - 요청 ID: REQ-20260428-33
 - 담당 역할: FE

@@ -1,7 +1,7 @@
 # PM 협업 보드 안내
 
 ## 현재 기준
-이 문서는 이전 PM 중심 협업 보조 문서다. 현재 공식 협업 기준은 `.ai-work/msyeo/docs/collaboration/master-flow.md`이며, 역할은 PM, QA, FE 개발자, BE 개발자 4개로 운영한다.
+이 문서는 이전 PM 중심 협업 보조 문서다. 현재 공식 기준은 `.ai-work/msyeo/docs/collaboration/master-flow.md`이며, 2026-05-21부터 역할 분배는 철회되고 단일 세션 운영으로 전환됐다.
 
 역할 간 공식 소통은 아래 문서를 우선한다.
 

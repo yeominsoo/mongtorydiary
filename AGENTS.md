@@ -26,21 +26,23 @@
 - 코드 변경과 직접 연결되는 판단 근거만 남기고, 오래된 추정은 새 분석으로 갱신한다.
 - 저장소 규칙이나 handoff와 충돌하는 내용이 있으면 `AGENTS.md`와 `.ai-work/msyeo/docs/project-status.md`를 우선한다.
 
-## AI 세션 협업 공통룰
-PM, QA, FE 개발자, BE 개발자 세션은 `.ai-work/msyeo/docs/collaboration/master-flow.md`를 최상위 협업 문서로 따른다. 모든 역할 세션은 작업 시작 시 `AGENTS.md` 다음으로 해당 마스터 문서를 읽고, 역할 간 요청과 답변은 역할별 디렉토리에 기록한다.
+## AI 단일 세션 작업룰
+2026-05-21부터 PM, QA, FE 개발자, BE 개발자 역할 분배는 활성 운영 방식에서 철회한다. 이후 작업은 하나의 AI 세션이 계획, 구현, 검증, 문서화를 순서대로 처리한다.
 
-- 역할별 문서: `.ai-work/msyeo/docs/collaboration/roles/{pm|qa|fe|be}/`
+- 단일 세션 마스터 문서: `.ai-work/msyeo/docs/collaboration/master-flow.md`
+- 단일 작업 목록: `.ai-work/msyeo/docs/single-session-worklist.md`
 - 요청 인덱스: `.ai-work/msyeo/docs/collaboration/requests.md`
 - 현황 인덱스: `.ai-work/msyeo/docs/collaboration/status.md`
 - 응답 인덱스: `.ai-work/msyeo/docs/collaboration/responses.md`
+- 과거 역할 문서: `.ai-work/msyeo/docs/collaboration/roles/{pm|qa|fe|be}/`
 
-각 세션은 자기 담당 경로와 자기 역할 디렉토리만 수정하고, 같은 파일을 여러 세션이 동시에 수정하지 않는다. 공통 인덱스 문서는 PM이 최종 정리한다. 작업을 시작할 때는 요청 ID를 확인하고, 완료 시 자기 역할의 `responses.md`에 변경 파일, 검증 결과, 남은 이슈를 남긴다.
-모든 담당자는 매 작업 시작마다 변경된 룰이 없는지 확인해야 한다. 확인 대상은 `AGENTS.md`, `.ai-work/msyeo/docs/collaboration/master-flow.md`, `.ai-work/msyeo/docs/collaboration/roles/README.md`, 자기 역할 `inbox.md`, 자기 역할 `status.md`다. 확인 후 자기 역할 `status.md`에 `룰 확인 기록`을 남긴다.
-요청 처리 결과는 수행자 역할의 `responses.md`와 요청자 역할의 `responses.md` 양쪽에 남긴다. 작업 블록이 끝나면 각 역할은 자기 역할 디렉토리의 `handoff/YYYY-MM-DD.md`에 handoff를 작성한다. PM은 `.ai-work/msyeo/docs/collaboration/roles/pm/monitoring.md` 절차에 따라 모든 역할 디렉토리의 요청, 수신함, 현황, 응답, handoff와 공통 인덱스, 파일 잠금 상태를 모니터링한다. 소통 문제가 발견되면 PM이 원인을 분류하고 협업룰을 조정한다.
-PM은 모니터링 중 완료된 작업에 대해 커밋이 필요하다고 판단하면 요청 ID 단위로 관련 변경을 취합해 직접 커밋한다. 커밋 전 수행자/요청자 responses, 역할별 handoff, 검증 결과 또는 미실행 사유를 확인하고, 진행중 작업 파일은 커밋에 포함하지 않는다.
+역할별 디렉토리는 과거 분장과 검증 이력 확인용으로 유지한다. 사용자가 명시적으로 다중 역할 운영을 복구하라고 지시하지 않는 한, 새 요청과 진행 기록은 역할별 inbox/status/responses가 아니라 공통 인덱스와 `single-session-worklist.md`에 남긴다.
+
+작업 시작 시 `AGENTS.md`, `.ai-work/msyeo/docs/collaboration/master-flow.md`, `.ai-work/msyeo/docs/project-status.md`, `.ai-work/msyeo/docs/single-session-worklist.md`, 최신 handoff를 확인한다. 확인 후 `.ai-work/msyeo/docs/collaboration/status.md`의 `룰 확인 기록`에 기록한다.
+
+요청 처리 결과는 공통 `responses.md`에 남기고, 의미 있는 작업 블록이 끝나면 `.ai-work/msyeo/docs/handoff/YYYY-MM-DD.md`를 갱신한다. 역할별 handoff는 과거 이력 보관용이며 단일 세션 전환 이후에는 새로 작성하지 않는다.
+
 커밋 메시지는 한글로 작성한다. 필요한 경우 conventional commit 타입은 사용할 수 있지만 제목과 설명은 담당자가 이해할 수 있는 한글 문장으로 남긴다.
-
-현재 이 대화의 AI 세션은 PM 역할을 맡는다. PM 세션은 협업 프로세스, 요청 배정, 상태 인덱스, 문서/handoff 갱신을 관리한다.
 
 ## 기술 규칙
 백엔드는 `Controller -> Service -> Repository` 구조를 따른다. API는 DTO로만 통신하고 Entity를 직접 노출하지 않는다. 응답은 `ApiResponse<T>` 형태로 통일한다. Maven 실행 전에는 `JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64` 환경을 기준으로 한다.
@@ -49,7 +51,7 @@ Flutter 앱은 `presentation`, `application`, `domain`, `data`, `core` 계층을
 
 ## Handoff 및 상태 문서 규칙
 `.ai-work/msyeo/docs/project-status.md`는 현재 구조, 구현 범위, 미해결 이슈, 다음 우선순위를 항상 반영해야 한다. handoff 문서는 루트 `docs/`가 아니라 반드시 `.ai-work/msyeo/docs/handoff/` 아래에 생성한다. 해당 디렉토리가 없으면 먼저 생성한 뒤 `.ai-work/msyeo/docs/handoff/YYYY-MM-DD.md` 형식으로 작업이 끝난 직후 매번 즉시 기록하며, 이 규칙은 예외 없이 따른다.
-역할별 작업 블록 handoff는 `.ai-work/msyeo/docs/collaboration/roles/{pm|qa|fe|be}/handoff/YYYY-MM-DD.md`에 추가로 작성한다. 프로젝트 전체 handoff는 PM이 `.ai-work/msyeo/docs/handoff/YYYY-MM-DD.md`에 정리한다.
+단일 세션 전환 이후 역할별 작업 블록 handoff는 새로 작성하지 않는다. 과거 역할별 handoff는 이력 확인용으로만 둔다.
 
 각 handoff에는 아래 내용을 포함한다.
 - 이번 작업 목적

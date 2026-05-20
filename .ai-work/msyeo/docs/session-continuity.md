@@ -164,7 +164,7 @@ HOME=/home/msyeo/workspace/mongtorydiary/.tmp_flutter_home /home/msyeo/workspace
 cd /home/msyeo/workspace/mongtorydiary/mobile-flutter
 /home/msyeo/workspace/mongtorydiary/.tooling/flutter-sdk/bin/flutter run \
   --dart-define=DATA_SOURCE_MODE=remote \
-  --dart-define=API_BASE_URL=http://10.0.2.2:8080
+  --dart-define=API_BASE_URL=http://10.0.2.2:30080
 ```
 
 ### 백엔드
@@ -198,11 +198,26 @@ JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 bash ./mvnw -Dmaven.repo.local=/hom
 
 ## 새 세션 시작 체크리스트
 1. `AGENTS.md`를 먼저 읽어 작업 규칙을 확인한다.
-2. `.ai-work/msyeo/docs/project-status.md`로 전체 상태를 빠르게 확인한다.
-3. `.ai-work/msyeo/docs/session-continuity.md`로 전환 배경과 현재 구조를 복구한다.
-4. `.ai-work/msyeo/docs/handoff/`에서 2026-03-19, 2026-03-20, 2026-04-28 순서로 작업 흐름을 확인한다.
-5. `git status --short`로 기존 변경 파일과 신규 파일 상태를 점검한다.
-6. 작업 종료 직후 `.ai-work/msyeo/docs/project-status.md`와 `.ai-work/msyeo/docs/handoff/YYYY-MM-DD.md`를 바로 갱신한다.
+2. `.ai-work/msyeo/docs/collaboration/master-flow.md`로 단일 세션 운영 규칙을 확인한다.
+3. `.ai-work/msyeo/docs/project-status.md`로 전체 상태를 빠르게 확인한다.
+4. `.ai-work/msyeo/docs/single-session-worklist.md`로 남은 작업 순서를 확인한다.
+5. `.ai-work/msyeo/docs/session-continuity.md`로 전환 배경과 현재 구조를 복구한다.
+6. `.ai-work/msyeo/docs/handoff/`에서 날짜별 작업 흐름을 확인한다.
+7. `git status --short`로 기존 변경 파일과 신규 파일 상태를 점검한다.
+8. 작업 종료 직후 `.ai-work/msyeo/docs/project-status.md`와 `.ai-work/msyeo/docs/handoff/YYYY-MM-DD.md`를 바로 갱신한다.
+
+## 2026-05-21 단일 세션 전환
+PM, QA, FE, BE 역할 분배는 활성 운영 방식에서 철회됐다. 과거 역할별 문서는 이력 확인용으로 남기고, 신규 작업은 하나의 세션이 `single-session-worklist.md` 순서대로 처리한다.
+
+현재 이관된 대기 작업:
+- `REQ-20260428-37`: 오늘/위젯 요약 API 실제 서버 회귀 검증
+- `REQ-20260428-38`: Flutter 딥링크 라우터 1차 구현
+- `REQ-20260428-39`: 위젯 요약 데이터 앱 연동 경계 구현
+- `REQ-20260428-40`: 네이티브 위젯 shell 범위 결정
+- `REQ-20260428-35`: MVP 릴리스 회귀 체크리스트와 신규 개선 검증 계획
+- `SINGLE-20260521-OPS`: 문서/커밋 정합성 정리
+
+신규 상태 기록은 공통 `.ai-work/msyeo/docs/collaboration/status.md`에 남긴다. 역할별 `roles/{pm|qa|fe|be}/` 문서는 과거 분장과 검증 이력을 확인할 때만 참고한다.
 
 ## 다음 우선순위
 ### 1순위
@@ -220,8 +235,8 @@ JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 bash ./mvnw -Dmaven.repo.local=/hom
 - 위젯용 데이터 모델과 딥링크 규칙 상세화
 - Android/iOS 위젯 플랫폼 설정 설계
 
-## 2026-04-28 최신 협업 상태
-현재 협업 역할은 PM, QA, FE, BE로 나뉘며 공통 인덱스는 `.ai-work/msyeo/docs/collaboration/requests.md`, `.ai-work/msyeo/docs/collaboration/status.md`, `.ai-work/msyeo/docs/collaboration/responses.md`다. 각 역할은 `.ai-work/msyeo/docs/collaboration/roles/{pm|qa|fe|be}/` 아래 자기 문서를 먼저 확인하고 갱신한다. 모든 역할은 작업 시작 전 `AGENTS.md`, `collaboration/master-flow.md`, `collaboration/roles/README.md`, 자기 `inbox.md`, 자기 `status.md`를 확인하고 자기 `status.md`의 `룰 확인 기록`에 남겨야 한다.
+## 2026-04-28 협업 상태 이력
+아래 내용은 역할 분배가 유지되던 2026-04-28 기준 이력이다. 2026-05-21 이후 신규 작업에는 단일 세션 규칙을 우선 적용한다.
 
 ### 완료된 핵심 요청
 - `REQ-20260428-06`: QA가 실제 서버에서 로그인, 일기 목록/상세, 캘린더, 감정 목록, invalid token 응답을 검증했다.

@@ -16,6 +16,8 @@ class CalendarMapper {
               hasEntry: day.hasEntry,
               emotionCode: day.emotionCode,
               entryCount: day.entryCount,
+              todoCount: day.todoCount,
+              completedTodoCount: day.completedTodoCount,
             ),
           )
           .toList(),

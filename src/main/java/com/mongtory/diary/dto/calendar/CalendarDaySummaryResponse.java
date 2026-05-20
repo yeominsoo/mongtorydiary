@@ -13,4 +13,6 @@ public class CalendarDaySummaryResponse {
 	private final boolean hasEntry;
 	private final String emotionCode;
 	private final int entryCount;
+	private final int todoCount;
+	private final int completedTodoCount;
 }

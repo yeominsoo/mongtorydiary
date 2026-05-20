@@ -30,6 +30,28 @@
 | RES-REQ-20260428-34 | REQ-20260428-34 | 완료 | BE 오늘/위젯 요약 API 구현 및 Maven 테스트 통과 | 2026-04-28 |
 | RES-REQ-20260428-32 | REQ-20260428-32 | 완료 | 기획 개선 후보 도출 및 역할별 업무 배분 | 2026-04-28 |
 | RES-REQ-20260428-36 | REQ-20260428-36 | 완료 | 위젯/딥링크 구현 요청 분해와 후속 요청 등록 | 2026-04-28 |
+| RES-PM-CHECK-20260521-01 | PM-CHECK-20260521-01 | 완료 | 진행하던 작업 룰 확인 및 PM status 기록 | 2026-05-21 |
+
+## RES-PM-CHECK-20260521-01
+- 요청 ID: PM-CHECK-20260521-01
+- 요청자: 사용자/PM
+- 담당 역할: PM
+- 상태: 완료
+- 요약:
+  - `AGENTS.md`, 협업 마스터 플로우, 역할 README, PM inbox, PM status를 확인했다.
+  - 현재 PM 수신함의 대기 항목은 `REQ-20260428-40`이며, QA `REQ-20260428-37`과 FE `REQ-20260428-38`, `REQ-20260428-39` 결과 확인 후 진행하는 흐름을 유지한다.
+  - PM status에 이번 룰 확인 기록을 추가했다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/status.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/responses.md`
+  - `.ai-work/msyeo/docs/collaboration/roles/pm/handoff/2026-05-21.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-21.md`
+- 검증:
+  - 문서 확인 및 기록 작업이라 백엔드/Flutter 테스트는 실행하지 않았다.
+- 남은 이슈:
+  - 기존 미추적 항목 `.codex`, `node_modules/`, `package-lock.json`, `package.json`은 이번 작업과 무관해 변경하지 않았다.
+- 다음 제안:
+  - PM은 다음 실제 진행 전 QA/FE 후속 요청 착수 여부와 룰 확인 기록을 모니터링한다.
 
 ## RES-REQ-20260428-36
 - 요청 ID: REQ-20260428-36

@@ -23,12 +23,19 @@ void main() {
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
     await tester.pumpAndSettle();
 
-    expect(find.text('월간 캘린더'), findsOneWidget);
-    expect(find.text('2026-03-20'), findsOneWidget);
+    expect(find.text('2026년 3월'), findsOneWidget);
+    expect(find.text('일기 1건 · TODO 2건'), findsOneWidget);
+    expect(find.text('20'), findsOneWidget);
 
-    await tester.tap(find.text('2026-03-20'));
+    await tester.tap(find.text('20'));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView), const Offset(0, -520));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('QA TODO 확인'));
     await tester.pumpAndSettle();
 
+    expect(find.text('2026년 3월 20일 금요일'), findsOneWidget);
+    expect(find.text('QA TODO 확인'), findsOneWidget);
     expect(find.text('QA 자동화 일기'), findsWidgets);
 
     await tester.tap(find.text('QA 자동화 일기').last);
@@ -43,9 +50,14 @@ void main() {
     await tester.tap(find.byIcon(Icons.face_outlined));
     await tester.pumpAndSettle();
 
-    expect(find.text('현재 사용자'), findsOneWidget);
+    expect(find.text('몽토리 컨디션'), findsOneWidget);
     expect(find.text('이메일: user@example.com'), findsOneWidget);
-    expect(find.textContaining('감정 타입 2건'), findsOneWidget);
+
+    await tester.drag(find.byType(ListView), const Offset(0, -420));
+    await tester.pumpAndSettle();
+
+    expect(find.text('감정 팔레트'), findsOneWidget);
+    expect(find.textContaining('사용 가능한 감정 2종'), findsOneWidget);
   });
 
   testWidgets('QA harness surfaces sign in failures', (tester) async {
@@ -95,16 +107,48 @@ void main() {
     await tester.tap(find.byIcon(Icons.calendar_month_outlined));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('2026-03-22'));
+    await tester.ensureVisible(find.text('22'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('22'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('등록된 TODO가 없습니다.'));
     await tester.pumpAndSettle();
 
+    expect(find.text('2026년 3월 22일 일요일'), findsOneWidget);
     expect(find.text('이 날짜에 작성된 일기가 없습니다.'), findsOneWidget);
+    expect(find.text('등록된 TODO가 없습니다.'), findsOneWidget);
 
-    await tester.tap(find.text('이 날짜로 작성'));
+    await tester.ensureVisible(find.text('작성'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('작성'));
     await tester.pumpAndSettle();
 
     expect(find.text('일기 작성'), findsOneWidget);
     expect(find.widgetWithText(TextFormField, '2026-03-22'), findsOneWidget);
+  });
+
+  testWidgets('QA harness adds and completes calendar todo', (tester) async {
+    await pumpQaApp(tester);
+    await qaSignInWithSeedAccount(tester);
+
+    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(ListView), const Offset(0, -520));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byType(TextField));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '새 QA TODO');
+    await tester.tap(find.text('추가'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('새 QA TODO'), findsOneWidget);
+    expect(find.textContaining('TODO 1/3'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(CheckboxListTile, '새 QA TODO'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('TODO 2/3'), findsOneWidget);
   });
 
   testWidgets('QA harness covers diary create update and delete', (

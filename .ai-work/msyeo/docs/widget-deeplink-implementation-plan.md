@@ -3,6 +3,8 @@
 ## 목적
 `REQ-20260428-36` 기준으로 기존 위젯/딥링크 1차 설계와 BE `REQ-20260428-34` 오늘/위젯 요약 API 구현 결과를 바탕으로 다음 실행 요청을 분리한다.
 
+> 2026-05-21부터 역할별 담당은 철회됐다. 아래 요청 ID는 유지하지만 현재 담당은 모두 단일 세션이다.
+
 ## 현재 확정된 선행 조건
 - BE는 `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD`를 구현했다.
 - 오늘/위젯 요약 API는 인증 사용자 소유 일기만 집계한다.
@@ -35,16 +37,16 @@
 ## 신규 요청 분해
 | 요청 ID | 대상 | 우선순위 | 제목 | 핵심 범위 |
 | --- | --- | --- | --- | --- |
-| REQ-20260428-37 | QA | P1 | 오늘/위젯 요약 API 실제 서버 회귀 검증 | 실제 서버 today-summary 검증 |
-| REQ-20260428-38 | FE | P1 | Flutter 딥링크 라우터 1차 구현 | 홈, 작성, 상세, 캘린더 날짜 route 처리와 widget test |
-| REQ-20260428-39 | FE | P1 | 위젯 요약 데이터 앱 연동 경계 구현 | today-summary DTO/model, repository, 갱신 트리거, 저장 adapter 경계 |
-| REQ-20260428-40 | PM | P2 | 네이티브 위젯 shell 범위 결정 | Android/iOS 플랫폼 변경 범위와 구현 요청 분리 |
+| REQ-20260428-37 | 단일 세션 | P1 | 오늘/위젯 요약 API 실제 서버 회귀 검증 | 실제 서버 today-summary 검증 |
+| REQ-20260428-38 | 단일 세션 | P1 | Flutter 딥링크 라우터 1차 구현 | 홈, 작성, 상세, 캘린더 날짜 route 처리와 widget test |
+| REQ-20260428-39 | 단일 세션 | P1 | 위젯 요약 데이터 앱 연동 경계 구현 | today-summary DTO/model, repository, 갱신 트리거, 저장 adapter 경계 |
+| REQ-20260428-40 | 단일 세션 | P2 | 네이티브 위젯 shell 범위 결정 | Android/iOS 플랫폼 변경 범위와 구현 요청 분리 |
 
 ## 실행 순서
-1. QA `REQ-20260428-37`이 BE today-summary API를 실제 서버 기준으로 검증한다.
-2. FE `REQ-20260428-38`이 Flutter 내부 딥링크 route를 먼저 고정한다.
-3. FE `REQ-20260428-39`가 today-summary 연동 경계와 앱 내부 요약 갱신 책임을 구현한다.
-4. PM `REQ-20260428-40`은 FE/QA 결과를 확인한 뒤 Android/iOS 네이티브 shell 구현 요청을 별도 ID로 분리한다.
+1. 단일 세션이 `REQ-20260428-37`로 BE today-summary API를 실제 서버 기준으로 검증한다.
+2. 단일 세션이 `REQ-20260428-38`로 Flutter 내부 딥링크 route를 먼저 고정한다.
+3. 단일 세션이 `REQ-20260428-39`로 today-summary 연동 경계와 앱 내부 요약 갱신 책임을 구현한다.
+4. 단일 세션이 `REQ-20260428-40`에서 Android/iOS 네이티브 shell 구현 범위를 결정한다.
 
 ## 리스크
 - 현재 FE 공식 요청 `REQ-20260428-33`이 작성 화면 잔여 UX를 다루고 있어 `diary_edit_screen.dart` 변경 충돌 가능성이 있다.

@@ -61,8 +61,8 @@
 ```bash
 /home/msyeo/mongtorydiary/.tooling/flutter-sdk/bin/flutter run \
   --dart-define=DATA_SOURCE_MODE=remote \
-  --dart-define=API_BASE_URL=http://10.0.2.2:8080
+  --dart-define=API_BASE_URL=http://10.0.2.2:30080
 ```
 
-- Android Emulator 기준 기본 API 주소는 `http://10.0.2.2:8080`
-- iOS Simulator 또는 macOS 환경에서는 필요 시 `http://localhost:8080`로 바꿔서 실행
+- Android Emulator 기준 기본 API 주소는 `http://10.0.2.2:30080`
+- iOS Simulator 또는 macOS 환경에서는 필요 시 `http://localhost:30080`로 바꿔서 실행

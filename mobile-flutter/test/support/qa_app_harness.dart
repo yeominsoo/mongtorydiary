@@ -11,11 +11,14 @@ import 'package:mongtory_diary/domain/models/diary_detail.dart';
 import 'package:mongtory_diary/domain/models/diary_summary.dart';
 import 'package:mongtory_diary/domain/models/diary_upsert.dart';
 import 'package:mongtory_diary/domain/models/emotion_type.dart';
+import 'package:mongtory_diary/domain/models/todo_item.dart';
+import 'package:mongtory_diary/domain/models/todo_upsert.dart';
 import 'package:mongtory_diary/domain/models/user_profile.dart';
 import 'package:mongtory_diary/domain/repositories/auth_repository.dart';
 import 'package:mongtory_diary/domain/repositories/calendar_repository.dart';
 import 'package:mongtory_diary/domain/repositories/diary_repository.dart';
 import 'package:mongtory_diary/domain/repositories/emotion_repository.dart';
+import 'package:mongtory_diary/domain/repositories/todo_repository.dart';
 
 class QaAppHarness {
   QaAppHarness({
@@ -23,23 +26,29 @@ class QaAppHarness {
     QaDiaryRepository? diaryRepository,
     QaCalendarRepository? calendarRepository,
     QaEmotionRepository? emotionRepository,
+    QaTodoRepository? todoRepository,
   }) : authRepository = authRepository ?? QaAuthRepository.success(),
        diaryRepository = diaryRepository ?? QaDiaryRepository.withData(),
        calendarRepository =
            calendarRepository ?? QaCalendarRepository.withData(),
-       emotionRepository = emotionRepository ?? QaEmotionRepository.withData();
+       emotionRepository = emotionRepository ?? QaEmotionRepository.withData(),
+       todoRepository = todoRepository ?? QaTodoRepository.withData();
 
   final QaAuthRepository authRepository;
   final QaDiaryRepository diaryRepository;
   final QaCalendarRepository calendarRepository;
   final QaEmotionRepository emotionRepository;
+  final QaTodoRepository todoRepository;
 
   List<Override> get overrides => [
     dataSourceModeProvider.overrideWithValue(DataSourceMode.mock),
+    calendarVisibleMonthProvider.overrideWith((ref) => DateTime(2026, 3)),
+    calendarSelectedDateProvider.overrideWith((ref) => DateTime(2026, 3, 20)),
     authRepositoryProvider.overrideWithValue(authRepository),
     diaryRepositoryProvider.overrideWithValue(diaryRepository),
     calendarRepositoryProvider.overrideWithValue(calendarRepository),
     emotionRepositoryProvider.overrideWithValue(emotionRepository),
+    todoRepositoryProvider.overrideWithValue(todoRepository),
   ];
 }
 
@@ -211,6 +220,8 @@ class QaCalendarRepository implements CalendarRepository {
             hasEntry: true,
             emotionCode: 'HAPPY',
             entryCount: 1,
+            todoCount: 2,
+            completedTodoCount: 1,
           ),
         ],
       ),
@@ -225,6 +236,87 @@ class QaCalendarRepository implements CalendarRepository {
     required int month,
   }) async {
     return this.month;
+  }
+}
+
+class QaTodoRepository implements TodoRepository {
+  QaTodoRepository({required List<TodoItem> todos})
+    : todos = List.of(todos),
+      _nextId = todos.isEmpty
+          ? 1
+          : todos.map((todo) => todo.id).reduce((a, b) => a > b ? a : b) + 1;
+
+  factory QaTodoRepository.withData() {
+    final now = DateTime(2026, 3, 20, 9);
+    return QaTodoRepository(
+      todos: [
+        TodoItem(
+          id: 1,
+          dueDate: DateTime(2026, 3, 20),
+          content: 'QA TODO 확인',
+          completed: false,
+          createdAt: now,
+          updatedAt: now,
+        ),
+        TodoItem(
+          id: 2,
+          dueDate: DateTime(2026, 3, 20),
+          content: '완료된 QA TODO',
+          completed: true,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      ],
+    );
+  }
+
+  final List<TodoItem> todos;
+  int _nextId;
+
+  @override
+  Future<List<TodoItem>> getTodos({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    return todos.where((todo) {
+      return !todo.dueDate.isBefore(from) && !todo.dueDate.isAfter(to);
+    }).toList();
+  }
+
+  @override
+  Future<TodoItem> createTodo(TodoUpsert input) async {
+    final now = DateTime(2026, 3, 21, 12);
+    final todo = TodoItem(
+      id: _nextId++,
+      dueDate: input.dueDate,
+      content: input.content,
+      completed: input.completed,
+      createdAt: now,
+      updatedAt: now,
+    );
+    todos.add(todo);
+    return todo;
+  }
+
+  @override
+  Future<TodoItem> updateTodo(int todoId, TodoUpsert input) async {
+    final index = todos.indexWhere((todo) => todo.id == todoId);
+    final current = todos[index];
+    final updated = TodoItem(
+      id: current.id,
+      dueDate: input.dueDate,
+      content: input.content,
+      completed: input.completed,
+      createdAt: current.createdAt,
+      updatedAt: DateTime(2026, 3, 21, 12),
+    );
+    todos[index] = updated;
+    return updated;
+  }
+
+  @override
+  Future<void> deleteTodo(int todoId) async {
+    todos.removeWhere((todo) => todo.id == todoId);
   }
 }
 
