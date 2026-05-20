@@ -25,7 +25,7 @@
 | REQ-20260521-01 | P1 | 사용자 | 단일 세션 | 완료 | 백엔드 30080, Flutter web 30081 포트 기준 반영 | 백엔드 기본 포트, Flutter remote API 주소, Flutter web 실행 문서 갱신 |
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | Flutter SDK 설치, `mobile-flutter`의 pub get/analyze/test 결과 기록 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 30080/30081 서비스 실행, IP 기준 응답 확인, 접속 주소 안내 |
-| REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 검증완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 캘린더 TODO API/UI, 몽토리 메뉴 구체화, 검증, handoff, 사용가이드/커밋/푸시/서버 재시작 |
+| REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 캘린더 TODO API/UI, 몽토리 메뉴 구체화, 검증, handoff, 사용가이드/커밋/푸시/서버 재시작 |
 
 ## 권장 처리 순서
 1. `REQ-20260428-37`로 today-summary API를 실제 서버에서 먼저 검증한다. 완료.
@@ -47,9 +47,7 @@
   - `flutter test`: 통과, 12건.
   - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 24건.
 - 남은 마무리:
-  - 관련 파일만 선별 커밋.
-  - 원격 push.
-  - 백엔드 30080과 Flutter web 30081 서비스 재시작 후 접속 확인.
+  - 없음. 관련 파일 선별 커밋, 원격 push, 백엔드 30080과 Flutter web 30081 서비스 재시작, 실제 서버 smoke를 완료했다.
 
 ### REQ-20260428-37
 - 선행 조건: `REQ-20260428-34` 완료

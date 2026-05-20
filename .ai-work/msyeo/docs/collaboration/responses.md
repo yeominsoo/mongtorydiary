@@ -45,13 +45,13 @@
 | RES-REQ-20260521-01 | REQ-20260521-01 | 단일 세션 | 완료 | 백엔드 30080, Flutter web 30081 포트 기준 반영 | 2026-05-21 |
 | RES-REQ-20260521-02 | REQ-20260521-02 | 단일 세션 | 완료 | Flutter SDK 3.41.7 설치 및 Flutter 검증 복구 | 2026-05-21 |
 | RES-REQ-20260521-03 | REQ-20260521-03 | 단일 세션 | 완료 | 백엔드 30080과 Flutter web 30081 실행, CORS 허용 및 브라우저 접속 준비 | 2026-05-21 |
-| RES-REQ-20260521-04 | REQ-20260521-04 | 단일 세션 | 검증완료 | 캘린더 TODO와 몽토리 메뉴 대시보드 구현, Flutter/Maven 검증 통과 | 2026-05-21 |
+| RES-REQ-20260521-04 | REQ-20260521-04 | 단일 세션 | 완료 | 캘린더 TODO와 몽토리 메뉴 대시보드 구현, 검증, Git push, 서버 재시작 완료 | 2026-05-21 |
 
 ## 응답 상세
 ### RES-REQ-20260521-04
 - 요청 ID: REQ-20260521-04
 - 담당: 단일 세션
-- 상태: 검증완료, 커밋/푸시/서버 재시작 대기
+- 상태: 완료
 - 요약:
   - 백엔드에 TODO 엔티티, repository, service, controller, DTO, 시드 데이터 초기화를 추가했다.
   - `GET/POST/PUT/DELETE /api/v1/todos`를 access token 기준 현재 사용자 범위로 제공한다.
@@ -77,9 +77,15 @@
   - `cd mobile-flutter && flutter analyze`: 통과, No issues found.
   - `cd mobile-flutter && flutter test`: 통과, 12건.
   - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 24건.
+  - `git push -u origin feature/ai-workspace-docs`: 통과.
+  - `GET http://127.0.0.1:30080/api/v1/emotions`: 200 응답 확인.
+  - `GET http://127.0.0.1:30081/`: HTML 응답 확인.
+  - `GET http://192.168.75.194:30081/`: HTML 응답 확인.
+  - 로그인 후 `GET /api/v1/todos?from=2026-05-01&to=2026-05-31`: 200, TODO 1건 확인.
+  - 로그인 후 `GET /api/v1/calendar?year=2026&month=5`: 200, TODO만 있는 날짜의 `todoCount=1`, `completedTodoCount=0` 확인.
 - 남은 이슈:
-  - Git 커밋과 원격 push는 아직 수행 전이다.
-  - 현재 실행 중인 30080/30081 서비스는 새 코드 반영을 위해 마지막에 재시작해야 한다.
+  - Android/iOS 실제 앱 빌드와 네이티브 위젯은 후속 작업 범위다.
+  - 30080/30081 서비스는 systemd 임시 서비스라 재부팅 후 자동 실행되지는 않는다.
 
 ### RES-REQ-20260521-03
 - 요청 ID: REQ-20260521-03

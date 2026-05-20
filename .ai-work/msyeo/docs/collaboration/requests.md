@@ -53,14 +53,14 @@
 | REQ-20260521-01 | P1 | 사용자 | 단일 세션 | 완료 | 백엔드 30080, Flutter web 30081 포트 기준 반영 | 2026-05-21 | `src/main/resources`, `mobile-flutter`, 문서 |
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | 2026-05-21 | Flutter SDK, `mobile-flutter`, 실행 환경 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 2026-05-21 | systemd 임시 서비스, 30080/30081 |
-| REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 검증완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 2026-05-21 | `src/main/java`, `src/test/java`, `mobile-flutter/lib`, `mobile-flutter/test`, 사용가이드 |
+| REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 2026-05-21 | `src/main/java`, `src/test/java`, `mobile-flutter/lib`, `mobile-flutter/test`, 사용가이드 |
 
 ## 요청 상세
 ### REQ-20260521-04
 - 우선순위: P1
 - 요청자: 사용자
 - 대상: 단일 세션
-- 상태: 검증완료, 커밋/푸시/서버 재시작 대기
+- 상태: 완료
 - 요청 내용:
   - 캘린더 메뉴에서 큰 월간 달력을 제공한다.
   - 원하는 날짜를 눌러 TODO를 남길 수 있게 한다.
@@ -81,6 +81,8 @@
   - 몽토리 메뉴를 상태/성장/감정/위젯 미리보기 대시보드로 구체화했다.
   - 제품 범위 문서와 사용가이드 문서를 추가했다.
   - `flutter analyze`, `flutter test`, Maven test가 통과했다.
+  - `feature/ai-workspace-docs` 브랜치에 커밋/푸시했다.
+  - 백엔드 30080과 Flutter web 30081 서비스를 재시작하고 실제 서버 smoke를 통과했다.
 
 ### REQ-20260521-03
 - 우선순위: P0
