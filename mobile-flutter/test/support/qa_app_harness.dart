@@ -119,6 +119,7 @@ class QaDiaryRepository implements DiaryRepository {
           entryDate: DateTime(2026, 3, 20),
           title: 'QA 자동화 일기',
           emotionCode: 'HAPPY',
+          tags: const ['QA', '회고'],
           createdAt: now,
           updatedAt: now,
         ),
@@ -130,6 +131,7 @@ class QaDiaryRepository implements DiaryRepository {
         content: '하네스 검증용 일기입니다.',
         emotionCode: 'HAPPY',
         imageUrls: const [],
+        tags: const ['QA', '회고'],
         createdAt: now,
         updatedAt: now,
       ),
@@ -144,7 +146,40 @@ class QaDiaryRepository implements DiaryRepository {
   Future<DiaryDetail> getDiaryDetail(int diaryId) async => _details[diaryId]!;
 
   @override
-  Future<List<DiarySummary>> getDiarySummaries() async => summaries;
+  Future<List<DiarySummary>> getDiarySummaries({
+    String? query,
+    String? tag,
+  }) async {
+    final normalizedQuery = query?.trim().toLowerCase();
+    final normalizedTag = tag?.trim().toLowerCase();
+
+    return summaries.where((item) {
+      final matchesQuery = normalizedQuery == null || normalizedQuery.isEmpty
+          ? true
+          : item.title.toLowerCase().contains(normalizedQuery) ||
+                item.tags.any(
+                  (tag) => tag.toLowerCase().contains(normalizedQuery),
+                );
+      final matchesTag = normalizedTag == null || normalizedTag.isEmpty
+          ? true
+          : item.tags.any((tag) => tag.toLowerCase() == normalizedTag);
+
+      return matchesQuery && matchesTag;
+    }).toList();
+  }
+
+  @override
+  Future<List<DiarySummary>> getDiaryMemories({
+    required int month,
+    required int day,
+  }) async {
+    final currentYear = DateTime.now().year;
+    return summaries.where((item) {
+      return item.entryDate.year < currentYear &&
+          item.entryDate.month == month &&
+          item.entryDate.day == day;
+    }).toList();
+  }
 
   @override
   Future<DiaryDetail> createDiary(DiaryUpsert input) async {
@@ -156,6 +191,7 @@ class QaDiaryRepository implements DiaryRepository {
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
+      tags: input.tags,
       createdAt: now,
       updatedAt: now,
     );
@@ -175,6 +211,7 @@ class QaDiaryRepository implements DiaryRepository {
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
+      tags: input.tags,
       createdAt: current.createdAt,
       updatedAt: DateTime(2026, 3, 21, 12),
     );
@@ -200,6 +237,7 @@ class QaDiaryRepository implements DiaryRepository {
       entryDate: detail.entryDate,
       title: detail.title,
       emotionCode: detail.emotionCode,
+      tags: detail.tags,
       createdAt: detail.createdAt,
       updatedAt: detail.updatedAt,
     );

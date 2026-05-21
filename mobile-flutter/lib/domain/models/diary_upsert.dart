@@ -5,6 +5,7 @@ class DiaryUpsert {
     required this.content,
     required this.emotionCode,
     required this.imageUrls,
+    required this.tags,
   });
 
   final DateTime entryDate;
@@ -12,4 +13,5 @@ class DiaryUpsert {
   final String content;
   final String emotionCode;
   final List<String> imageUrls;
+  final List<String> tags;
 }

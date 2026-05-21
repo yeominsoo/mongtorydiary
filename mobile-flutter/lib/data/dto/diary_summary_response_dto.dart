@@ -5,6 +5,7 @@ class DiarySummaryResponseDto {
     required this.title,
     required this.emotionCode,
     this.thumbnailUrl,
+    required this.tags,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -14,6 +15,7 @@ class DiarySummaryResponseDto {
   final String title;
   final String emotionCode;
   final String? thumbnailUrl;
+  final List<String> tags;
   final String createdAt;
   final String updatedAt;
 
@@ -24,6 +26,9 @@ class DiarySummaryResponseDto {
       title: json['title'] as String? ?? '',
       emotionCode: json['emotionCode'] as String? ?? '',
       thumbnailUrl: json['thumbnailUrl'] as String?,
+      tags: (json['tags'] as List<dynamic>? ?? const [])
+          .map((item) => item.toString())
+          .toList(),
       createdAt: json['createdAt'] as String? ?? '',
       updatedAt: json['updatedAt'] as String? ?? '',
     );

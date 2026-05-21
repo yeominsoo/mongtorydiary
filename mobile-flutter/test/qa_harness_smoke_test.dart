@@ -14,7 +14,9 @@ void main() {
     expect(find.text('오늘의 일기'), findsOneWidget);
     expect(find.text('오늘의 회고'), findsOneWidget);
     expect(find.text('기록 흐름'), findsOneWidget);
+    expect(find.text('일기 찾기'), findsOneWidget);
     expect(find.text('QA 자동화 일기'), findsOneWidget);
+    expect(find.text('QA'), findsWidgets);
     expect(find.textContaining('mock 데이터 소스 기준 1건'), findsOneWidget);
   });
 
@@ -189,6 +191,7 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(1), 'CRUD 수정 일기');
     await tester.enterText(find.byType(TextFormField).at(2), '수정 회귀 검증 본문입니다.');
+    await tester.enterText(find.widgetWithText(TextFormField, '태그'), 'QA, 수정');
     await tester.drag(find.byType(ListView), const Offset(0, -500));
     await tester.pumpAndSettle();
     await tester.tap(find.text('저장'));
@@ -196,6 +199,7 @@ void main() {
 
     expect(find.text('CRUD 수정 일기'), findsOneWidget);
     expect(find.text('수정 회귀 검증 본문입니다.'), findsOneWidget);
+    expect(find.text('수정'), findsWidgets);
 
     await tester.tap(find.text('삭제'));
     await tester.pumpAndSettle();

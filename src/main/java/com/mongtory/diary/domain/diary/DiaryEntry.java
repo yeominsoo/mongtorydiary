@@ -62,6 +62,13 @@ public class DiaryEntry {
 	@Builder.Default
 	private List<String> imageUrls = new ArrayList<>();
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "diary_entry_tags", joinColumns = @JoinColumn(name = "diary_entry_id"))
+	@OrderColumn(name = "display_order")
+	@Column(name = "tag", nullable = false, length = 40)
+	@Builder.Default
+	private List<String> tags = new ArrayList<>();
+
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
@@ -73,13 +80,15 @@ public class DiaryEntry {
 		String title,
 		String content,
 		String emotionCode,
-		List<String> imageUrls
+		List<String> imageUrls,
+		List<String> tags
 	) {
 		this.entryDate = entryDate;
 		this.title = title;
 		this.content = content;
 		this.emotionCode = emotionCode;
 		this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
+		this.tags = tags == null ? new ArrayList<>() : new ArrayList<>(tags);
 	}
 
 	@PrePersist
@@ -90,6 +99,9 @@ public class DiaryEntry {
 		if (imageUrls == null) {
 			imageUrls = new ArrayList<>();
 		}
+		if (tags == null) {
+			tags = new ArrayList<>();
+		}
 	}
 
 	@PreUpdate
@@ -97,6 +109,9 @@ public class DiaryEntry {
 		updatedAt = LocalDateTime.now();
 		if (imageUrls == null) {
 			imageUrls = new ArrayList<>();
+		}
+		if (tags == null) {
+			tags = new ArrayList<>();
 		}
 	}
 }

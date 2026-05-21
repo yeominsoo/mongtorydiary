@@ -43,6 +43,7 @@ public class DiaryDataInitializer implements CommandLineRunner {
 				.emotionCode("CALM")
 				.owner(owner)
 				.imageUrls(List.of())
+				.tags(List.of("산책", "회고"))
 				.build()
 		);
 	}

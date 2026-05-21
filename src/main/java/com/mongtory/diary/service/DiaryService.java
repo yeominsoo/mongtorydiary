@@ -1,9 +1,13 @@
 package com.mongtory.diary.service;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,11 +28,39 @@ public class DiaryService {
 
 	private final DiaryEntryRepository diaryEntryRepository;
 
-	public List<DiarySummaryResponse> getDiaries(UserAccount currentUser, LocalDate from, LocalDate to, String emotion) {
+	public List<DiarySummaryResponse> getDiaries(
+		UserAccount currentUser,
+		LocalDate from,
+		LocalDate to,
+		String emotion,
+		String query,
+		String tag
+	) {
+		final String normalizedQuery = normalizeSearchTerm(query);
+		final String normalizedTag = normalizeTagForFilter(tag);
+
 		return diaryEntryRepository.findAllByOwner(currentUser).stream()
 			.filter(entry -> from == null || !entry.getEntryDate().isBefore(from))
 			.filter(entry -> to == null || !entry.getEntryDate().isAfter(to))
 			.filter(entry -> emotion == null || emotion.isBlank() || entry.getEmotionCode().equalsIgnoreCase(emotion))
+			.filter(entry -> normalizedQuery == null || containsQuery(entry, normalizedQuery))
+			.filter(entry -> normalizedTag == null || containsTag(entry, normalizedTag))
+			.sorted(
+				Comparator.comparing(DiaryEntry::getEntryDate).reversed()
+					.thenComparing(DiaryEntry::getUpdatedAt, Comparator.reverseOrder())
+			)
+			.map(this::toSummaryResponse)
+			.toList();
+	}
+
+	public List<DiarySummaryResponse> getMemoriesOnDate(UserAccount currentUser, int month, int day) {
+		validateMonthDay(month, day);
+		final int currentYear = LocalDate.now().getYear();
+
+		return diaryEntryRepository.findAllByOwner(currentUser).stream()
+			.filter(entry -> entry.getEntryDate().getYear() < currentYear)
+			.filter(entry -> entry.getEntryDate().getMonthValue() == month)
+			.filter(entry -> entry.getEntryDate().getDayOfMonth() == day)
 			.sorted(
 				Comparator.comparing(DiaryEntry::getEntryDate).reversed()
 					.thenComparing(DiaryEntry::getUpdatedAt, Comparator.reverseOrder())
@@ -54,6 +86,7 @@ public class DiaryService {
 			.emotionCode(normalizeEmotionCode(emotionCode))
 			.owner(currentUser)
 			.imageUrls(copyImageUrls(request.getImageUrls()))
+			.tags(normalizeTags(request.getTags()))
 			.build();
 
 		return toDetailResponse(diaryEntryRepository.save(diaryEntry));
@@ -71,7 +104,8 @@ public class DiaryService {
 			title,
 			content,
 			normalizeEmotionCode(emotionCode),
-			copyImageUrls(request.getImageUrls())
+			copyImageUrls(request.getImageUrls()),
+			normalizeTags(request.getTags())
 		);
 
 		return toDetailResponse(diaryEntryRepository.save(diaryEntry));
@@ -99,6 +133,7 @@ public class DiaryService {
 			.title(diaryEntry.getTitle())
 			.emotionCode(diaryEntry.getEmotionCode())
 			.thumbnailUrl(thumbnailUrl)
+			.tags(List.copyOf(diaryEntry.getTags()))
 			.createdAt(diaryEntry.getCreatedAt())
 			.updatedAt(diaryEntry.getUpdatedAt())
 			.build();
@@ -112,6 +147,7 @@ public class DiaryService {
 			.content(diaryEntry.getContent())
 			.emotionCode(diaryEntry.getEmotionCode())
 			.imageUrls(List.copyOf(diaryEntry.getImageUrls()))
+			.tags(List.copyOf(diaryEntry.getTags()))
 			.createdAt(diaryEntry.getCreatedAt())
 			.updatedAt(diaryEntry.getUpdatedAt())
 			.build();
@@ -138,6 +174,78 @@ public class DiaryService {
 	}
 
 	private String normalizeEmotionCode(String emotionCode) {
-		return emotionCode.trim().toUpperCase();
+		return emotionCode.trim().toUpperCase(Locale.ROOT);
+	}
+
+	private String normalizeSearchTerm(String value) {
+		return value == null || value.isBlank()
+			? null
+			: value.trim().toLowerCase(Locale.ROOT);
+	}
+
+	private boolean containsQuery(DiaryEntry diaryEntry, String normalizedQuery) {
+		return diaryEntry.getTitle().toLowerCase(Locale.ROOT).contains(normalizedQuery)
+			|| diaryEntry.getContent().toLowerCase(Locale.ROOT).contains(normalizedQuery)
+			|| diaryEntry.getTags().stream()
+				.map(tag -> tag.toLowerCase(Locale.ROOT))
+				.anyMatch(tag -> tag.contains(normalizedQuery));
+	}
+
+	private String normalizeTagForFilter(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+
+		return stripLeadingHash(value.trim()).toLowerCase(Locale.ROOT);
+	}
+
+	private boolean containsTag(DiaryEntry diaryEntry, String normalizedTag) {
+		return diaryEntry.getTags().stream()
+			.map(tag -> tag.toLowerCase(Locale.ROOT))
+			.anyMatch(tag -> tag.equals(normalizedTag));
+	}
+
+	private List<String> normalizeTags(List<String> tags) {
+		if (tags == null || tags.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		final Set<String> normalizedTags = new LinkedHashSet<>();
+		for (String tag : tags) {
+			if (tag == null || tag.isBlank()) {
+				continue;
+			}
+
+			final String normalizedTag = stripLeadingHash(tag.trim());
+			if (normalizedTag.isBlank()) {
+				continue;
+			}
+			if (normalizedTag.length() > 40) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Diary tag must be 40 characters or less");
+			}
+
+			normalizedTags.add(normalizedTag);
+			if (normalizedTags.size() > 8) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Diary tags must be 8 or fewer");
+			}
+		}
+
+		return new ArrayList<>(normalizedTags);
+	}
+
+	private String stripLeadingHash(String value) {
+		String normalizedValue = value;
+		while (normalizedValue.startsWith("#")) {
+			normalizedValue = normalizedValue.substring(1).trim();
+		}
+		return normalizedValue;
+	}
+
+	private void validateMonthDay(int month, int day) {
+		try {
+			LocalDate.of(2000, month, day);
+		} catch (DateTimeException exception) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid memory date");
+		}
 	}
 }

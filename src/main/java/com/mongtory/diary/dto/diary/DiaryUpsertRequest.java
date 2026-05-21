@@ -15,4 +15,5 @@ public class DiaryUpsertRequest {
 	private String content;
 	private String emotionCode;
 	private List<String> imageUrls;
+	private List<String> tags;
 }

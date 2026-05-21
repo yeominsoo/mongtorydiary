@@ -5,6 +5,7 @@ class DiaryUpsertRequestDto {
     required this.content,
     required this.emotionCode,
     required this.imageUrls,
+    required this.tags,
   });
 
   final String entryDate;
@@ -12,6 +13,7 @@ class DiaryUpsertRequestDto {
   final String content;
   final String emotionCode;
   final List<String> imageUrls;
+  final List<String> tags;
 
   Map<String, dynamic> toJson() {
     return {
@@ -20,6 +22,7 @@ class DiaryUpsertRequestDto {
       'content': content,
       'emotionCode': emotionCode,
       'imageUrls': imageUrls,
+      'tags': tags,
     };
   }
 }

@@ -46,6 +46,8 @@ class _DiaryDetailScreenState extends ConsumerState<DiaryDetailScreen> {
     if (didSave == true) {
       ref.invalidate(diaryDetailProvider(item.id));
       ref.invalidate(diaryListProvider);
+      ref.invalidate(diaryHomeListProvider);
+      ref.invalidate(diaryTodayMemoriesProvider);
     }
   }
 
@@ -80,6 +82,8 @@ class _DiaryDetailScreenState extends ConsumerState<DiaryDetailScreen> {
       await ref.read(diaryRepositoryProvider).deleteDiary(diaryId);
       ref.invalidate(diaryDetailProvider(diaryId));
       ref.invalidate(diaryListProvider);
+      ref.invalidate(diaryHomeListProvider);
+      ref.invalidate(diaryTodayMemoriesProvider);
 
       if (mounted) {
         Navigator.of(context).pop(true);
@@ -127,6 +131,12 @@ class _DiaryDetailContent extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Chip(label: Text(item.emotionCode)),
+                    for (final tag in item.tags)
+                      Chip(
+                        avatar: const Icon(Icons.tag_outlined, size: 16),
+                        label: Text(tag),
+                        visualDensity: VisualDensity.compact,
+                      ),
                     Text(
                       _formatDate(item.entryDate),
                       style: theme.textTheme.bodyMedium?.copyWith(

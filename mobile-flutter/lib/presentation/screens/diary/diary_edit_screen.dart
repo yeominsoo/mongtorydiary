@@ -21,11 +21,13 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   late final TextEditingController _emotionCodeController;
+  late final TextEditingController _tagController;
   late final TextEditingController _pendingImageUrlController;
   late final String _initialEntryDate;
   late final String _initialTitle;
   late final String _initialContent;
   late final String _initialEmotionCode;
+  late final String _initialTagsText;
   late final List<String> _initialImageUrls;
   late final List<String> _imageUrls;
   bool _isSaving = false;
@@ -44,12 +46,14 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     _initialTitle = initial?.title ?? '';
     _initialContent = initial?.content ?? '';
     _initialEmotionCode = (initial?.emotionCode ?? 'CALM').toUpperCase();
+    _initialTagsText = (initial?.tags ?? []).join(', ');
     _initialImageUrls = List.unmodifiable(initial?.imageUrls ?? []);
     _imageUrls = [..._initialImageUrls];
     _entryDateController = TextEditingController(text: entryDate);
     _titleController = TextEditingController(text: _initialTitle);
     _contentController = TextEditingController(text: _initialContent);
     _emotionCodeController = TextEditingController(text: _initialEmotionCode);
+    _tagController = TextEditingController(text: _initialTagsText);
     _pendingImageUrlController = TextEditingController();
   }
 
@@ -59,6 +63,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     _titleController.dispose();
     _contentController.dispose();
     _emotionCodeController.dispose();
+    _tagController.dispose();
     _pendingImageUrlController.dispose();
     super.dispose();
   }
@@ -118,6 +123,16 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                       onChanged: () => setState(() {}),
                     ),
                     const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _tagController,
+                      decoration: const InputDecoration(
+                        labelText: '태그',
+                        hintText: '산책, 회고',
+                        prefixIcon: Icon(Icons.tag_outlined),
+                      ),
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 16),
                     _ImageUrlEditor(
                       controller: _pendingImageUrlController,
                       imageUrls: _imageUrls,
@@ -169,6 +184,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         content: _contentController.text.trim(),
         emotionCode: _emotionCodeController.text.trim().toUpperCase(),
         imageUrls: _imageUrls,
+        tags: _parseTags(_tagController.text),
       );
       final initial = widget.initial;
 
@@ -180,6 +196,8 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
       }
 
       ref.invalidate(diaryListProvider);
+      ref.invalidate(diaryHomeListProvider);
+      ref.invalidate(diaryTodayMemoriesProvider);
 
       if (mounted) {
         Navigator.of(context).pop(true);
@@ -279,6 +297,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         _contentController.text != _initialContent ||
         _emotionCodeController.text.trim().toUpperCase() !=
             _initialEmotionCode ||
+        _tagController.text.trim() != _initialTagsText ||
         _pendingImageUrlController.text.trim().isNotEmpty ||
         !_listEquals(_imageUrls, _initialImageUrls);
   }
@@ -499,6 +518,19 @@ List<String> _parseImageUrls(String value) {
       .map((item) => item.trim())
       .where((item) => item.isNotEmpty)
       .toList();
+}
+
+List<String> _parseTags(String value) {
+  final tags = <String>[];
+  for (final item in value.split(',')) {
+    final tag = item.trim().replaceFirst(RegExp('^#+'), '').trim();
+    if (tag.isEmpty || tags.contains(tag)) {
+      continue;
+    }
+
+    tags.add(tag);
+  }
+  return tags;
 }
 
 String _formatDate(DateTime value) {

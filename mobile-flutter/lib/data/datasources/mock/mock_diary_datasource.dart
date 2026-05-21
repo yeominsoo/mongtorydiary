@@ -13,6 +13,7 @@ class MockDiaryDataSource {
       content: '몽토리와 함께 산책을 했다.',
       emotionCode: 'CALM',
       imageUrls: [],
+      tags: ['산책', '회고'],
       createdAt: '2026-03-19T09:00:00',
       updatedAt: '2026-03-19T09:10:00',
     ),
@@ -23,13 +24,40 @@ class MockDiaryDataSource {
       content: '공원에서 천천히 걸으며 하루를 정리했다.',
       emotionCode: 'HAPPY',
       imageUrls: [],
+      tags: ['산책', '정리'],
       createdAt: '2026-03-18T20:10:00',
       updatedAt: '2026-03-18T20:30:00',
     ),
   ];
 
-  Future<List<DiarySummaryResponseDto>> getDiarySummaries() async {
+  Future<List<DiarySummaryResponseDto>> getDiarySummaries({
+    String? query,
+    String? tag,
+  }) async {
+    final normalizedQuery = query?.trim().toLowerCase();
+    final normalizedTag = tag?.replaceFirst(RegExp('^#+'), '').trim();
+
     return _diaries
+        .where((item) {
+          if (normalizedQuery == null || normalizedQuery.isEmpty) {
+            return true;
+          }
+
+          return item.title.toLowerCase().contains(normalizedQuery) ||
+              item.content.toLowerCase().contains(normalizedQuery) ||
+              item.tags.any(
+                (tag) => tag.toLowerCase().contains(normalizedQuery),
+              );
+        })
+        .where((item) {
+          if (normalizedTag == null || normalizedTag.isEmpty) {
+            return true;
+          }
+
+          return item.tags.any(
+            (tag) => tag.toLowerCase() == normalizedTag.toLowerCase(),
+          );
+        })
         .map(
           (item) => DiarySummaryResponseDto(
             id: item.id,
@@ -37,6 +65,34 @@ class MockDiaryDataSource {
             title: item.title,
             emotionCode: item.emotionCode,
             thumbnailUrl: item.imageUrls.isEmpty ? null : item.imageUrls.first,
+            tags: item.tags,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+          ),
+        )
+        .toList();
+  }
+
+  Future<List<DiarySummaryResponseDto>> getDiaryMemories({
+    required int month,
+    required int day,
+  }) async {
+    final currentYear = DateTime.now().year;
+    return _diaries
+        .where((item) {
+          final entryDate = DateTime.parse(item.entryDate);
+          return entryDate.year < currentYear &&
+              entryDate.month == month &&
+              entryDate.day == day;
+        })
+        .map(
+          (item) => DiarySummaryResponseDto(
+            id: item.id,
+            entryDate: item.entryDate,
+            title: item.title,
+            emotionCode: item.emotionCode,
+            thumbnailUrl: item.imageUrls.isEmpty ? null : item.imageUrls.first,
+            tags: item.tags,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
           ),
@@ -59,6 +115,7 @@ class MockDiaryDataSource {
       content: request.content,
       emotionCode: request.emotionCode,
       imageUrls: request.imageUrls,
+      tags: request.tags,
       createdAt: _formatDateTime(now),
       updatedAt: _formatDateTime(now),
     );
@@ -83,6 +140,7 @@ class MockDiaryDataSource {
       content: request.content,
       emotionCode: request.emotionCode,
       imageUrls: request.imageUrls,
+      tags: request.tags,
       createdAt: current.createdAt,
       updatedAt: _formatDateTime(DateTime.now()),
     );
@@ -104,6 +162,7 @@ class MockDiaryDataSource {
         content: '몽토리와 함께 산책을 했다.',
         emotionCode: 'CALM',
         imageUrls: const [],
+        tags: const ['산책', '회고'],
         createdAt: '2026-03-19T09:00:00',
         updatedAt: '2026-03-19T09:10:00',
       ),

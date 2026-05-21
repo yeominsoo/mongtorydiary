@@ -10,7 +10,10 @@ class RemoteDiaryDataSource {
   final ApiClient _apiClient;
   final String? _accessToken;
 
-  Future<List<DiarySummaryResponseDto>> getDiarySummaries() async {
+  Future<List<DiarySummaryResponseDto>> getDiarySummaries({
+    String? query,
+    String? tag,
+  }) async {
     final response = await _apiClient.get<List<DiarySummaryResponseDto>>(
       '/api/v1/diaries',
       parser: (json) => (json as List<dynamic>? ?? const [])
@@ -19,6 +22,26 @@ class RemoteDiaryDataSource {
                 DiarySummaryResponseDto.fromJson(item as Map<String, dynamic>),
           )
           .toList(),
+      queryParameters: _diaryListQueryParameters(query: query, tag: tag),
+      headers: _authorizationHeaders,
+    );
+
+    return response.data;
+  }
+
+  Future<List<DiarySummaryResponseDto>> getDiaryMemories({
+    required int month,
+    required int day,
+  }) async {
+    final response = await _apiClient.get<List<DiarySummaryResponseDto>>(
+      '/api/v1/diaries/memories',
+      parser: (json) => (json as List<dynamic>? ?? const [])
+          .map(
+            (item) =>
+                DiarySummaryResponseDto.fromJson(item as Map<String, dynamic>),
+          )
+          .toList(),
+      queryParameters: {'month': '$month', 'day': '$day'},
       headers: _authorizationHeaders,
     );
 
@@ -79,5 +102,17 @@ class RemoteDiaryDataSource {
     }
 
     return {'Authorization': 'Bearer $_accessToken'};
+  }
+
+  Map<String, String>? _diaryListQueryParameters({String? query, String? tag}) {
+    final queryParameters = <String, String>{};
+    if (query != null && query.trim().isNotEmpty) {
+      queryParameters['query'] = query.trim();
+    }
+    if (tag != null && tag.trim().isNotEmpty) {
+      queryParameters['tag'] = tag.trim();
+    }
+
+    return queryParameters.isEmpty ? null : queryParameters;
   }
 }

@@ -64,6 +64,7 @@
   "title": "오늘의 기록",
   "emotionCode": "CALM",
   "thumbnailUrl": null,
+  "tags": ["산책", "회고"],
   "createdAt": "2026-03-19T09:00:00",
   "updatedAt": "2026-03-19T09:10:00"
 }
@@ -78,6 +79,7 @@
   "content": "몽토리와 함께 산책을 했다.",
   "emotionCode": "CALM",
   "imageUrls": [],
+  "tags": ["산책", "회고"],
   "createdAt": "2026-03-19T09:00:00",
   "updatedAt": "2026-03-19T09:10:00"
 }
@@ -188,10 +190,23 @@
 
 ## 일기 API
 ### 일기 목록 조회
-- `GET /api/v1/diaries?from=2026-03-01&to=2026-03-31&emotion=CALM`
+- `GET /api/v1/diaries?from=2026-03-01&to=2026-03-31&emotion=CALM&query=산책&tag=회고`
+
+query parameters:
+- `from`, `to`: 선택 날짜 범위
+- `emotion`: 선택 감정 코드
+- `query`: 선택 검색어. 제목, 본문, 태그를 대상으로 한다.
+- `tag`: 선택 태그. `#` prefix는 서버에서 제거한다.
 
 응답:
 - `ApiResponse<List<DiarySummary>>`
+
+### 지난 오늘 조회
+- `GET /api/v1/diaries/memories?month=5&day=21`
+
+응답:
+- `ApiResponse<List<DiarySummary>>`
+- 현재 연도보다 이전 연도의 같은 월/일 일기만 반환한다.
 
 ### 일기 상세 조회
 - `GET /api/v1/diaries/{diaryId}`
@@ -209,7 +224,8 @@
   "title": "오늘의 기록",
   "content": "몽토리와 함께 산책을 했다.",
   "emotionCode": "CALM",
-  "imageUrls": []
+  "imageUrls": [],
+  "tags": ["산책", "회고"]
 }
 ```
 
@@ -222,10 +238,12 @@
 요청:
 ```json
 {
+  "entryDate": "2026-03-19",
   "title": "수정된 제목",
   "content": "수정된 내용",
   "emotionCode": "HAPPY",
-  "imageUrls": []
+  "imageUrls": [],
+  "tags": ["수정", "회고"]
 }
 ```
 

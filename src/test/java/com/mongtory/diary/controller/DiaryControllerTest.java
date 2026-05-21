@@ -1,6 +1,7 @@
 package com.mongtory.diary.controller;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,6 +66,81 @@ class DiaryControllerTest {
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.message").value("Diary entry not found"))
 			.andExpect(jsonPath("$.data").value(nullValue()));
+	}
+
+	@Test
+	void diaryCreateAndListSupportTagsAndSearchQuery() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+		final String uniqueText = "검색태그-" + UUID.randomUUID();
+		final long diaryId = createDiary(
+			accessToken,
+			"2025-05-21",
+			uniqueText,
+			"태그 필터가 %s 내용을 찾는다.".formatted(uniqueText),
+			"""
+				["회고", "#산책", "회고"]
+				"""
+		);
+
+		mockMvc.perform(
+				get("/api/v1/diaries")
+					.param("query", uniqueText)
+					.param("tag", "산책")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data", hasSize(1)))
+			.andExpect(jsonPath("$.data[0].id").value(diaryId))
+			.andExpect(jsonPath("$.data[0].tags", hasSize(2)))
+			.andExpect(jsonPath("$.data[0].tags[0]").value("회고"))
+			.andExpect(jsonPath("$.data[0].tags[1]").value("산책"));
+
+		mockMvc.perform(
+				get("/api/v1/diaries/{diaryId}", diaryId)
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.tags", hasSize(2)))
+			.andExpect(jsonPath("$.data.tags[0]").value("회고"))
+			.andExpect(jsonPath("$.data.tags[1]").value("산책"));
+	}
+
+	@Test
+	void diaryMemoriesReturnsSameMonthDayFromPreviousYearsOnly() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+		final int currentYear = java.time.LocalDate.now().getYear();
+		final String uniqueText = "지난오늘-" + UUID.randomUUID();
+		final long memoryDiaryId = createDiary(
+			accessToken,
+			(currentYear - 1) + "-04-28",
+			uniqueText,
+			"작년 같은 날 기록",
+			"""
+				["지난오늘"]
+				"""
+		);
+		createDiary(
+			accessToken,
+			currentYear + "-04-28",
+			uniqueText + "-올해",
+			"올해 기록은 지난 오늘에서 제외한다.",
+			"""
+				["지난오늘"]
+				"""
+		);
+
+		mockMvc.perform(
+				get("/api/v1/diaries/memories")
+					.param("month", "4")
+					.param("day", "28")
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data", hasSize(1)))
+			.andExpect(jsonPath("$.data[0].id").value(memoryDiaryId))
+			.andExpect(jsonPath("$.data[0].title").value(uniqueText));
 	}
 
 	@Test
@@ -182,19 +258,36 @@ class DiaryControllerTest {
 	}
 
 	private long createDiary(String accessToken) throws Exception {
+		return createDiary(
+			accessToken,
+			"2026-04-28",
+			"소유권 검증 일기",
+			"다른 사용자가 볼 수 없어야 한다.",
+			"[]"
+		);
+	}
+
+	private long createDiary(
+		String accessToken,
+		String entryDate,
+		String title,
+		String content,
+		String tagsJson
+	) throws Exception {
 		final MvcResult createResult = mockMvc.perform(
 				post("/api/v1/diaries")
 					.header("Authorization", "Bearer " + accessToken)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("""
 						{
-						  "entryDate": "2026-04-28",
-						  "title": "소유권 검증 일기",
-						  "content": "다른 사용자가 볼 수 없어야 한다.",
+						  "entryDate": "%s",
+						  "title": "%s",
+						  "content": "%s",
 						  "emotionCode": "CALM",
-						  "imageUrls": []
+						  "imageUrls": [],
+						  "tags": %s
 						}
-						""")
+						""".formatted(entryDate, title, content, tagsJson))
 			)
 			.andExpect(status().isOk())
 			.andReturn();

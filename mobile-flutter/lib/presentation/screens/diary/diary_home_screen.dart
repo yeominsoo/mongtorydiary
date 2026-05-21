@@ -12,6 +12,8 @@ class DiaryHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final diaryList = ref.watch(diaryListProvider);
+    final homeDiaryList = ref.watch(diaryHomeListProvider);
+    final memoryList = ref.watch(diaryTodayMemoriesProvider);
     final dataSourceModeLabel = ref.watch(dataSourceModeLabelProvider);
 
     return Scaffold(
@@ -27,9 +29,21 @@ class DiaryHomeScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           _ContentWidth(
             child: diaryList.when(
-              data: (items) => _DiaryInsightSection(
-                items: items,
-                dataSourceModeLabel: dataSourceModeLabel,
+              data: (allItems) => homeDiaryList.when(
+                data: (items) => _DiaryInsightSection(
+                  allItems: allItems,
+                  items: items,
+                  memoryItems: memoryList,
+                  dataSourceModeLabel: dataSourceModeLabel,
+                ),
+                loading: () => const SectionCard(
+                  title: '최근 일기',
+                  description: '일기 목록을 불러오는 중입니다.',
+                ),
+                error: (error, _) => SectionCard(
+                  title: '최근 일기',
+                  description: '일기 목록을 불러오지 못했습니다. $error',
+                ),
               ),
               loading: () => const SectionCard(
                 title: '최근 일기',
@@ -58,6 +72,8 @@ class DiaryHomeScreen extends ConsumerWidget {
 
     if (didSave == true) {
       ref.invalidate(diaryListProvider);
+      ref.invalidate(diaryHomeListProvider);
+      ref.invalidate(diaryTodayMemoriesProvider);
     }
   }
 }
@@ -164,34 +180,36 @@ class _PromptChip extends StatelessWidget {
 
 class _DiaryInsightSection extends StatelessWidget {
   const _DiaryInsightSection({
+    required this.allItems,
     required this.items,
+    required this.memoryItems,
     required this.dataSourceModeLabel,
   });
 
+  final List<DiarySummary> allItems;
   final List<DiarySummary> items;
+  final AsyncValue<List<DiarySummary>> memoryItems;
   final String dataSourceModeLabel;
 
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final thisMonthCount = items.where((item) {
+    final thisMonthCount = allItems.where((item) {
       return item.entryDate.year == today.year &&
           item.entryDate.month == today.month;
     }).length;
-    final emotionCount = items.map((item) => item.emotionCode).toSet().length;
-    final latestDate = items.isEmpty ? null : items.first.entryDate;
-    final memoryItems = items.where((item) {
-      return item.entryDate.month == today.month &&
-          item.entryDate.day == today.day &&
-          item.entryDate.year != today.year;
-    }).toList();
+    final emotionCount = allItems
+        .map((item) => item.emotionCode)
+        .toSet()
+        .length;
+    final latestDate = allItems.isEmpty ? null : allItems.first.entryDate;
 
     return Column(
       children: [
         SectionCard(
           title: '기록 흐름',
           description:
-              '$dataSourceModeLabel 데이터 소스 기준 ${items.length}건이 로드된 상태입니다.',
+              '$dataSourceModeLabel 데이터 소스 기준 ${allItems.length}건이 로드된 상태입니다.',
           child: Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -220,19 +238,29 @@ class _DiaryInsightSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+        _DiaryFilterSection(allItems: allItems),
+        const SizedBox(height: 16),
         SectionCard(
           title: '지난 오늘',
-          description: memoryItems.isEmpty
-              ? '같은 날짜의 기록이 쌓이면 다시 보여줍니다.'
-              : '${memoryItems.length}개의 과거 기록',
-          child: memoryItems.isEmpty
-              ? const Text('오늘 남기는 기록이 내년의 돌아보기가 됩니다.')
-              : Column(
-                  children: memoryItems
-                      .take(3)
-                      .map((item) => _DiarySummaryTile(item: item))
-                      .toList(),
-                ),
+          description: memoryItems.maybeWhen(
+            data: (items) => items.isEmpty
+                ? '같은 날짜의 기록이 쌓이면 다시 보여줍니다.'
+                : '${items.length}개의 과거 기록',
+            loading: () => '과거 기록을 확인하는 중입니다.',
+            orElse: () => '과거 기록을 불러오지 못했습니다.',
+          ),
+          child: memoryItems.when(
+            data: (items) => items.isEmpty
+                ? const Text('오늘 남기는 기록이 내년의 돌아보기가 됩니다.')
+                : Column(
+                    children: items
+                        .take(3)
+                        .map((item) => _DiarySummaryTile(item: item))
+                        .toList(),
+                  ),
+            loading: () => const LinearProgressIndicator(),
+            error: (error, _) => Text('지난 오늘을 불러오지 못했습니다. $error'),
+          ),
         ),
         const SizedBox(height: 16),
         SectionCard(
@@ -248,6 +276,93 @@ class _DiaryInsightSection extends StatelessWidget {
                 ),
         ),
       ],
+    );
+  }
+}
+
+class _DiaryFilterSection extends ConsumerStatefulWidget {
+  const _DiaryFilterSection({required this.allItems});
+
+  final List<DiarySummary> allItems;
+
+  @override
+  ConsumerState<_DiaryFilterSection> createState() =>
+      _DiaryFilterSectionState();
+}
+
+class _DiaryFilterSectionState extends ConsumerState<_DiaryFilterSection> {
+  late final TextEditingController _queryController;
+
+  @override
+  void initState() {
+    super.initState();
+    _queryController = TextEditingController(
+      text: ref.read(diarySearchQueryProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _queryController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final query = ref.watch(diarySearchQueryProvider);
+    final selectedTag = ref.watch(diarySelectedTagProvider);
+    final tags = _uniqueTags(widget.allItems);
+
+    return SectionCard(
+      title: '일기 찾기',
+      description: selectedTag == null && query.trim().isEmpty
+          ? '최근 기록 탐색'
+          : '선택한 조건으로 보는 중',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            controller: _queryController,
+            decoration: InputDecoration(
+              labelText: '검색',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: query.trim().isEmpty
+                  ? null
+                  : IconButton(
+                      tooltip: '검색어 지우기',
+                      onPressed: () {
+                        _queryController.clear();
+                        ref.read(diarySearchQueryProvider.notifier).state = '';
+                      },
+                      icon: const Icon(Icons.close),
+                    ),
+            ),
+            textInputAction: TextInputAction.search,
+            onChanged: (value) {
+              ref.read(diarySearchQueryProvider.notifier).state = value;
+            },
+          ),
+          if (tags.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final tag in tags)
+                  FilterChip(
+                    avatar: const Icon(Icons.tag_outlined, size: 16),
+                    label: Text(tag),
+                    selected: selectedTag == tag,
+                    onSelected: (selected) {
+                      ref.read(diarySelectedTagProvider.notifier).state =
+                          selected ? tag : null;
+                    },
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -346,6 +461,20 @@ class _DiarySummaryTile extends StatelessWidget {
                         '${_formatDate(item.entryDate)} · ${item.emotionCode}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
+                      if (item.tags.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: [
+                            for (final tag in item.tags.take(3))
+                              Chip(
+                                label: Text(tag),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -369,6 +498,15 @@ String _formatDate(DateTime value) {
 String _formatKoreanDate(DateTime value) {
   final weekday = ['월', '화', '수', '목', '금', '토', '일'][value.weekday - 1];
   return '${value.year}년 ${value.month}월 ${value.day}일 $weekday요일';
+}
+
+List<String> _uniqueTags(List<DiarySummary> items) {
+  final tags = <String>{};
+  for (final item in items) {
+    tags.addAll(item.tags);
+  }
+
+  return tags.toList()..sort();
 }
 
 String _promptForToday(DateTime value) {

@@ -161,6 +161,28 @@ final diaryListProvider = FutureProvider.autoDispose<List<DiarySummary>>((
   return repository.getDiarySummaries();
 });
 
+final diarySearchQueryProvider = StateProvider.autoDispose<String>((ref) => '');
+
+final diarySelectedTagProvider = StateProvider.autoDispose<String?>(
+  (ref) => null,
+);
+
+final diaryHomeListProvider = FutureProvider.autoDispose<List<DiarySummary>>((
+  ref,
+) async {
+  final repository = ref.read(diaryRepositoryProvider);
+  final query = ref.watch(diarySearchQueryProvider);
+  final tag = ref.watch(diarySelectedTagProvider);
+  return repository.getDiarySummaries(query: query, tag: tag);
+});
+
+final diaryTodayMemoriesProvider =
+    FutureProvider.autoDispose<List<DiarySummary>>((ref) async {
+      final repository = ref.read(diaryRepositoryProvider);
+      final today = DateTime.now();
+      return repository.getDiaryMemories(month: today.month, day: today.day);
+    });
+
 final diaryDetailProvider = FutureProvider.autoDispose.family<DiaryDetail, int>(
   (ref, diaryId) async {
     final repository = ref.read(diaryRepositoryProvider);

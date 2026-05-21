@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,10 +38,22 @@ public class DiaryController {
 		@RequestHeader("Authorization") String authorizationHeader,
 		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
 		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-		@RequestParam(required = false) String emotion
+		@RequestParam(required = false) String emotion,
+		@RequestParam(required = false) String query,
+		@RequestParam(required = false) String tag
 	) {
 		final UserAccount currentUser = authenticatedUserService.getRequiredUser(authorizationHeader);
-		return ApiResponse.ok(diaryService.getDiaries(currentUser, from, to, emotion));
+		return ApiResponse.ok(diaryService.getDiaries(currentUser, from, to, emotion, query, tag));
+	}
+
+	@GetMapping("/memories")
+	public ApiResponse<List<DiarySummaryResponse>> getMemories(
+		@RequestHeader("Authorization") String authorizationHeader,
+		@RequestParam int month,
+		@RequestParam int day
+	) {
+		final UserAccount currentUser = authenticatedUserService.getRequiredUser(authorizationHeader);
+		return ApiResponse.ok(diaryService.getMemoriesOnDate(currentUser, month, day));
 	}
 
 	@GetMapping("/{diaryId}")

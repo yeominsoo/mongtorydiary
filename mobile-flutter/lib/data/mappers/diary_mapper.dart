@@ -15,6 +15,7 @@ class DiaryMapper {
       title: dto.title,
       emotionCode: dto.emotionCode,
       thumbnailUrl: dto.thumbnailUrl,
+      tags: dto.tags,
       createdAt: DateTime.parse(dto.createdAt),
       updatedAt: DateTime.parse(dto.updatedAt),
     );
@@ -28,6 +29,7 @@ class DiaryMapper {
       content: dto.content,
       emotionCode: dto.emotionCode,
       imageUrls: dto.imageUrls,
+      tags: dto.tags,
       createdAt: DateTime.parse(dto.createdAt),
       updatedAt: DateTime.parse(dto.updatedAt),
     );
@@ -40,6 +42,7 @@ class DiaryMapper {
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
+      tags: input.tags,
     );
   }
 

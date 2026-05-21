@@ -17,6 +17,7 @@ public class DiaryDetailResponse {
 	private final String content;
 	private final String emotionCode;
 	private final List<String> imageUrls;
+	private final List<String> tags;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 }

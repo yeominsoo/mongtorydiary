@@ -17,8 +17,20 @@ class ApiDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<List<DiarySummary>> getDiarySummaries() async {
-    final dtos = await _dataSource.getDiarySummaries();
+  Future<List<DiarySummary>> getDiarySummaries({
+    String? query,
+    String? tag,
+  }) async {
+    final dtos = await _dataSource.getDiarySummaries(query: query, tag: tag);
+    return dtos.map(DiaryMapper.toSummary).toList();
+  }
+
+  @override
+  Future<List<DiarySummary>> getDiaryMemories({
+    required int month,
+    required int day,
+  }) async {
+    final dtos = await _dataSource.getDiaryMemories(month: month, day: day);
     return dtos.map(DiaryMapper.toSummary).toList();
   }
 
