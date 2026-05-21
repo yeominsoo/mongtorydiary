@@ -26,6 +26,7 @@
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | Flutter SDK 설치, `mobile-flutter`의 pub get/analyze/test 결과 기록 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 30080/30081 서비스 실행, IP 기준 응답 확인, 접속 주소 안내 |
 | REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 캘린더 TODO API/UI, 몽토리 메뉴 구체화, 검증, handoff, 사용가이드/커밋/푸시/서버 재시작 |
+| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 로딩 UI, PostgreSQL 기본 설정/검증, 유명 다이어리 앱 참고 기능 반영 |
 
 ## 권장 처리 순서
 1. `REQ-20260428-37`로 today-summary API를 실제 서버에서 먼저 검증한다. 완료.
@@ -36,6 +37,27 @@
 6. `SINGLE-20260521-OPS`로 문서와 Git 상태를 정리한다.
 
 ## 작업별 참고 메모
+### REQ-20260521-05
+- 목표:
+  - Flutter web 초기화 단계에서 진행 상태를 보여준다.
+  - 백엔드 기본 DB를 PostgreSQL로 전환하고 테스트는 H2로 분리한다.
+  - Day One, Penzu, Daylio, Apple Journal, Journey의 공통 기능을 참고해 Mongtory의 우선 기능을 정리한다.
+  - 이번 1차 구현은 일기 홈의 작성 프롬프트, 기록 흐름, 지난 오늘 카드까지 포함한다.
+- 진행:
+  - 작업 시작 룰 확인 기록 완료.
+  - PostgreSQL 16.13 서비스 active 확인.
+  - `mongtorydiary` DB와 `mongtory` 사용자를 생성하고, 프로젝트 DB 사용자에 한정해 localhost `scram-sha-256` 인증을 허용했다.
+  - Maven 테스트는 H2 인메모리 DB로 24건 통과.
+  - Flutter analyze 통과, Flutter test 12건 통과.
+  - Flutter web release build 통과.
+  - 30080 백엔드는 PostgreSQL 기준, 30081은 release build 정적 서버 기준으로 재시작하고 smoke 검증했다.
+- 남은 마무리:
+  - 검색/태그 API와 Flutter 필터 UI.
+  - 사진 URL 입력을 실제 업로드/첨부로 전환.
+  - `지난 오늘` 전용 API.
+  - 위치/날씨 메타데이터와 작성 리마인더.
+  - 문서/handoff/응답 갱신과 커밋/push.
+
 ### REQ-20260521-04
 - 1페이즈 구현 완료:
   - 백엔드 TODO API와 월간 캘린더 TODO 요약 확장.

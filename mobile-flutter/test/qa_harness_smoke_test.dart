@@ -12,6 +12,8 @@ void main() {
     await qaSignInWithSeedAccount(tester);
 
     expect(find.text('오늘의 일기'), findsOneWidget);
+    expect(find.text('오늘의 회고'), findsOneWidget);
+    expect(find.text('기록 흐름'), findsOneWidget);
     expect(find.text('QA 자동화 일기'), findsOneWidget);
     expect(find.textContaining('mock 데이터 소스 기준 1건'), findsOneWidget);
   });
@@ -20,7 +22,7 @@ void main() {
     await pumpQaApp(tester);
     await qaSignInWithSeedAccount(tester);
 
-    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.tap(find.text('캘린더'));
     await tester.pumpAndSettle();
 
     expect(find.text('2026년 3월'), findsOneWidget);
@@ -104,7 +106,7 @@ void main() {
     );
     await qaSignInWithSeedAccount(tester);
 
-    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.tap(find.text('캘린더'));
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('22'));
@@ -131,7 +133,7 @@ void main() {
     await pumpQaApp(tester);
     await qaSignInWithSeedAccount(tester);
 
-    await tester.tap(find.byIcon(Icons.calendar_month_outlined));
+    await tester.tap(find.text('캘린더'));
     await tester.pumpAndSettle();
 
     await tester.drag(find.byType(ListView), const Offset(0, -520));
@@ -172,6 +174,8 @@ void main() {
 
     expect(find.text('CRUD 작성 일기'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('CRUD 작성 일기'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('CRUD 작성 일기'));
     await tester.pumpAndSettle();
 

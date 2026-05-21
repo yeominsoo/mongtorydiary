@@ -48,6 +48,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('오늘의 기록'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('오늘의 기록'));
     await tester.pumpAndSettle();
 

@@ -14,9 +14,9 @@
 - 루트 `docs/`: 사용하지 않음
 
 ## 현재 작업
-- 작업 ID: `REQ-20260521-04`
-- 상태: 완료
-- 목적: 출품 수준을 목표로 캘린더 TODO와 몽토리 메뉴 완성도 개선
+- 작업 ID: `REQ-20260521-05`
+- 상태: 진행중, 1차 구현/검증 완료
+- 목적: 초기 로딩 진행 UI, PostgreSQL 전환 기반, 유명 다이어리 앱 기능 참조 기반 완성도 개선
 - 담당: 단일 세션
 
 ## 룰 확인 기록
@@ -26,6 +26,7 @@
 - 2026-05-21 02:00: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-02
 - 2026-05-21 02:15: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-03
 - 2026-05-21 02:33: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-04
+- 2026-05-21 19:30: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05
 
 ## 이관된 대기 작업
 | 순서 | 기존 요청 ID | 우선순위 | 이전 담당 | 현재 담당 | 상태 | 다음 액션 |
@@ -48,6 +49,7 @@
 | REQ-20260521-02 | 완료 | Flutter SDK 3.41.7 설치 및 `mobile-flutter` analyze/test/web-server 30081 검증 통과 |
 | REQ-20260521-03 | 완료 | systemd 임시 서비스로 백엔드 30080, Flutter web 30081 실행, CORS 허용 및 IP 기준 응답 확인 |
 | REQ-20260521-04 | 완료 | 캘린더 TODO API/UI와 몽토리 메뉴 대시보드 구현, Flutter/Maven 검증, Git push, 30080/30081 재시작과 실제 서버 smoke 통과 |
+| REQ-20260521-05 | 진행중 | 초기 로딩 진행 UI, PostgreSQL 기본 설정, 일기 홈 회고 카드 1차 구현과 실제 서버 재시작/검증 완료. 검색/태그/업로드 등 완성형 기능은 후속 |
 | REQ-20260428-23 | 보류 | REQ-20260428-09 Flutter CRUD 구현에 흡수 |
 
 ## 다음 작업 순서

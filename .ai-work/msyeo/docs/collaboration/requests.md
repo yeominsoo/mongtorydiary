@@ -54,8 +54,38 @@
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | 2026-05-21 | Flutter SDK, `mobile-flutter`, 실행 환경 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 2026-05-21 | systemd 임시 서비스, 30080/30081 |
 | REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 2026-05-21 | `src/main/java`, `src/test/java`, `mobile-flutter/lib`, `mobile-flutter/test`, 사용가이드 |
+| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 2026-05-21 | `mobile-flutter/web`, `mobile-flutter/lib`, `src/main/resources`, `pom.xml`, 문서 |
 
 ## 요청 상세
+### REQ-20260521-05
+- 우선순위: P1
+- 요청자: 사용자
+- 대상: 단일 세션
+- 상태: 진행중
+- 요청 내용:
+  - Flutter web 초기 로딩 구간에 로딩/인스톨 중임을 알 수 있는 진행 UI를 제공한다.
+  - 데이터 저장 방식을 PostgreSQL 중심으로 전환한다.
+  - 유명 다이어리 앱 기능을 참고해 더 완성형의 다이어리 앱으로 개선한다.
+- 1차 완료 기준:
+  - Flutter web 부트 로딩 UI와 release build 검증.
+  - Spring Boot 기본 PostgreSQL 설정, 테스트 DB 분리, 실제 PostgreSQL 접속 검증.
+  - 유명 다이어리 앱 기능 참고 문서 작성.
+  - 일기 홈에 작성 프롬프트/기록 흐름/지난 오늘 같은 회고형 기능 반영.
+  - Flutter analyze/test, Maven test 통과.
+- 1차 결과:
+  - `web/index.html`과 `web/flutter_bootstrap.js`로 앱 파일 다운로드, 엔진 초기화, 데이터 연결 확인 단계의 진행 UI를 추가했다.
+  - 기본 DB를 PostgreSQL로 전환하고 `sqlite` 레거시 프로필과 H2 테스트 설정을 분리했다.
+  - 실제 PostgreSQL 16.13 서비스에 `mongtorydiary` DB와 `mongtory` 사용자를 준비했고, 프로젝트 DB 사용자에 한정해 localhost password 인증을 허용했다.
+  - Day One, Penzu, Daylio, Apple Journal, Journey 참고 기능을 `.ai-work/msyeo/docs/diary-app-feature-benchmark.md`에 정리했다.
+  - 일기 홈에 `오늘의 회고`, `기록 흐름`, `지난 오늘`, `최근 일기` 구조를 반영했다.
+  - `flutter analyze`, `flutter test`, `flutter build web --release`, Maven test가 통과했다.
+  - 30080 백엔드는 PostgreSQL 기준, 30081은 release build 정적 서버 기준으로 재시작하고 smoke 검증했다.
+- 후속 완료 기준:
+  - 검색/태그 API와 Flutter 필터 UI.
+  - 사진 URL 입력을 실제 업로드/첨부로 전환.
+  - `지난 오늘` 전용 API.
+  - 위치/날씨 메타데이터와 작성 리마인더.
+
 ### REQ-20260521-04
 - 우선순위: P1
 - 요청자: 사용자

@@ -46,8 +46,48 @@
 | RES-REQ-20260521-02 | REQ-20260521-02 | 단일 세션 | 완료 | Flutter SDK 3.41.7 설치 및 Flutter 검증 복구 | 2026-05-21 |
 | RES-REQ-20260521-03 | REQ-20260521-03 | 단일 세션 | 완료 | 백엔드 30080과 Flutter web 30081 실행, CORS 허용 및 브라우저 접속 준비 | 2026-05-21 |
 | RES-REQ-20260521-04 | REQ-20260521-04 | 단일 세션 | 완료 | 캘린더 TODO와 몽토리 메뉴 대시보드 구현, 검증, Git push, 서버 재시작 완료 | 2026-05-21 |
+| RES-REQ-20260521-05 | REQ-20260521-05 | 단일 세션 | 1차 완료 | 초기 로딩 진행 UI, PostgreSQL 기본 전환, 일기 홈 회고 카드 구현과 서버 재시작 완료 | 2026-05-21 |
 
 ## 응답 상세
+### RES-REQ-20260521-05
+- 요청 ID: REQ-20260521-05
+- 담당: 단일 세션
+- 상태: 1차 완료, 후속 진행중
+- 요약:
+  - Flutter web 초기화 중 빈 화면 대신 `앱 파일 다운로드 -> 화면 엔진 초기화 -> 데이터 연결 확인` 단계의 진행 UI를 표시하도록 `web/index.html`과 `web/flutter_bootstrap.js`를 추가/수정했다.
+  - Spring Boot 기본 DB를 PostgreSQL로 전환하고, SQLite는 `sqlite` 프로필로 분리했다.
+  - 테스트는 H2 인메모리 DB 설정으로 분리했다.
+  - 실제 PostgreSQL 16.13 서비스에 `mongtorydiary` DB와 `mongtory` 사용자를 준비했고, 프로젝트 DB 사용자에 한정해 localhost `scram-sha-256` 인증을 허용했다.
+  - 유명 다이어리 앱 기능 참고 문서와 PostgreSQL 운영 메모를 추가했다.
+  - 일기 홈을 `오늘의 회고`, `기록 흐름`, `지난 오늘`, `최근 일기` 구조로 개편했다.
+  - 30080 백엔드는 PostgreSQL 기준, 30081은 Flutter release build 정적 서버 기준으로 재시작했다.
+- 주요 변경 파일:
+  - `mobile-flutter/web/index.html`
+  - `mobile-flutter/web/flutter_bootstrap.js`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_home_screen.dart`
+  - `mobile-flutter/test/widget_test.dart`
+  - `mobile-flutter/test/qa_harness_smoke_test.dart`
+  - `pom.xml`
+  - `src/main/resources/application.properties`
+  - `src/main/resources/application-sqlite.properties`
+  - `src/test/resources/application.properties`
+  - `.ai-work/msyeo/docs/diary-app-feature-benchmark.md`
+  - `.ai-work/msyeo/docs/postgresql-local-runbook.md`
+- 검증:
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 24건.
+  - `cd mobile-flutter && flutter analyze`: 통과.
+  - `cd mobile-flutter && flutter test`: 통과, 12건.
+  - `cd mobile-flutter && flutter build web --release --dart-define=DATA_SOURCE_MODE=remote --dart-define=API_BASE_URL=http://192.168.75.194:30080`: 통과.
+  - `GET http://127.0.0.1:30080/api/v1/emotions`: 200 응답 확인.
+  - `GET http://192.168.75.194:30081/`: release build HTML과 부트 로딩 DOM 확인.
+  - 로그인 후 `GET /api/v1/todos?from=2026-05-01&to=2026-05-31`: 200, TODO 1건 확인.
+  - PostgreSQL `user_accounts`, `diary_entries`, `todo_items` 시드 각 1건 확인.
+  - `Origin: http://192.168.75.194:30081` 기준 CORS preflight 200 응답 확인.
+- 남은 이슈:
+  - 검색/태그, 실제 이미지 업로드, `지난 오늘` 전용 API, 위치/날씨 메타데이터, 리마인더는 후속 구현이다.
+  - PostgreSQL은 현재 `ddl-auto=update` 개발 설정이라 운영 전 Flyway/Liquibase 전환이 필요하다.
+  - `/run/mongtorydiary-db.env`는 재부팅 후 사라질 수 있으므로 정식 systemd unit에서는 별도 secret/env 관리가 필요하다.
+
 ### RES-REQ-20260521-04
 - 요청 ID: REQ-20260521-04
 - 담당: 단일 세션

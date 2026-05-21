@@ -19,28 +19,17 @@ class DiaryHomeScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          const _ContentWidth(
-            child: SectionCard(
-              title: '빠른 작성',
-              description: '오늘 감정과 기록을 바로 남깁니다.',
-              child: _WritePreparationNotice(),
+          _ContentWidth(
+            child: _DailyPromptCard(
+              onStartWriting: () => _openCreateDiary(context, ref),
             ),
           ),
           const SizedBox(height: 16),
           _ContentWidth(
             child: diaryList.when(
-              data: (items) => SectionCard(
-                title: '최근 일기',
-                description:
-                    '$dataSourceModeLabel 데이터 소스 기준 ${items.length}건이 로드된 상태입니다.',
-                child: items.isEmpty
-                    ? const Text('표시할 일기가 아직 없습니다.')
-                    : Column(
-                        children: items
-                            .take(3)
-                            .map((item) => _DiarySummaryTile(item: item))
-                            .toList(),
-                      ),
+              data: (items) => _DiaryInsightSection(
+                items: items,
+                dataSourceModeLabel: dataSourceModeLabel,
               ),
               loading: () => const SectionCard(
                 title: '최근 일기',
@@ -52,29 +41,24 @@ class DiaryHomeScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const _ContentWidth(
-            child: SectionCard(
-              title: '사진 첨부',
-              description: '사진 업로드와 메타데이터 표시는 작성 플로우와 함께 연결됩니다.',
-            ),
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: '일기 작성',
-        onPressed: () async {
-          final didSave = await Navigator.of(context).push<bool>(
-            MaterialPageRoute(builder: (context) => const DiaryEditScreen()),
-          );
-
-          if (didSave == true) {
-            ref.invalidate(diaryListProvider);
-          }
-        },
+        onPressed: () => _openCreateDiary(context, ref),
         child: const Icon(Icons.edit_note),
       ),
     );
+  }
+
+  Future<void> _openCreateDiary(BuildContext context, WidgetRef ref) async {
+    final didSave = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (context) => const DiaryEditScreen()),
+    );
+
+    if (didSave == true) {
+      ref.invalidate(diaryListProvider);
+    }
   }
 }
 
@@ -95,29 +79,220 @@ class _ContentWidth extends StatelessWidget {
   }
 }
 
-class _WritePreparationNotice extends StatelessWidget {
-  const _WritePreparationNotice();
+class _DailyPromptCard extends StatelessWidget {
+  const _DailyPromptCard({required this.onStartWriting});
+
+  final VoidCallback onStartWriting;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final prompt = _promptForToday(DateTime.now());
+
+    return SectionCard(
+      title: '오늘의 회고',
+      description: _formatKoreanDate(DateTime.now()),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.auto_stories_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    prompt,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: const [
+              _PromptChip(icon: Icons.mood_outlined, label: '감정'),
+              _PromptChip(icon: Icons.photo_camera_outlined, label: '사진'),
+              _PromptChip(icon: Icons.place_outlined, label: '장소'),
+              _PromptChip(icon: Icons.lock_outline, label: '비공개'),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.icon(
+              onPressed: onStartWriting,
+              icon: const Icon(Icons.edit_note),
+              label: const Text('작성 시작'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PromptChip extends StatelessWidget {
+  const _PromptChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(icon, size: 18),
+      label: Text(label),
+      visualDensity: VisualDensity.compact,
+    );
+  }
+}
+
+class _DiaryInsightSection extends StatelessWidget {
+  const _DiaryInsightSection({
+    required this.items,
+    required this.dataSourceModeLabel,
+  });
+
+  final List<DiarySummary> items;
+  final String dataSourceModeLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final today = DateTime.now();
+    final thisMonthCount = items.where((item) {
+      return item.entryDate.year == today.year &&
+          item.entryDate.month == today.month;
+    }).length;
+    final emotionCount = items.map((item) => item.emotionCode).toSet().length;
+    final latestDate = items.isEmpty ? null : items.first.entryDate;
+    final memoryItems = items.where((item) {
+      return item.entryDate.month == today.month &&
+          item.entryDate.day == today.day &&
+          item.entryDate.year != today.year;
+    }).toList();
+
+    return Column(
+      children: [
+        SectionCard(
+          title: '기록 흐름',
+          description:
+              '$dataSourceModeLabel 데이터 소스 기준 ${items.length}건이 로드된 상태입니다.',
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _InsightTile(
+                icon: Icons.menu_book_outlined,
+                label: '전체 기록',
+                value: '${items.length}건',
+              ),
+              _InsightTile(
+                icon: Icons.calendar_month_outlined,
+                label: '이번 달',
+                value: '$thisMonthCount건',
+              ),
+              _InsightTile(
+                icon: Icons.palette_outlined,
+                label: '감정 폭',
+                value: '$emotionCount종',
+              ),
+              _InsightTile(
+                icon: Icons.history_outlined,
+                label: '최근 기록',
+                value: latestDate == null ? '-' : _formatDate(latestDate),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        SectionCard(
+          title: '지난 오늘',
+          description: memoryItems.isEmpty
+              ? '같은 날짜의 기록이 쌓이면 다시 보여줍니다.'
+              : '${memoryItems.length}개의 과거 기록',
+          child: memoryItems.isEmpty
+              ? const Text('오늘 남기는 기록이 내년의 돌아보기가 됩니다.')
+              : Column(
+                  children: memoryItems
+                      .take(3)
+                      .map((item) => _DiarySummaryTile(item: item))
+                      .toList(),
+                ),
+        ),
+        const SizedBox(height: 16),
+        SectionCard(
+          title: '최근 일기',
+          description: items.isEmpty ? '아직 작성된 기록이 없습니다.' : '최근 작성한 기록입니다.',
+          child: items.isEmpty
+              ? const Text('표시할 일기가 아직 없습니다.')
+              : Column(
+                  children: items
+                      .take(3)
+                      .map((item) => _DiarySummaryTile(item: item))
+                      .toList(),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InsightTile extends StatelessWidget {
+  const _InsightTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      width: 145,
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lock_clock_outlined, color: theme.colorScheme.primary),
-          const SizedBox(width: 12),
+          Icon(icon, color: theme.colorScheme.primary),
+          const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              '작성한 일기는 저장 후 최근 일기 목록에 반영됩니다.',
-              style: theme.textTheme.bodyMedium,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: theme.textTheme.labelMedium),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -189,4 +364,23 @@ String _formatDate(DateTime value) {
   final month = value.month.toString().padLeft(2, '0');
   final day = value.day.toString().padLeft(2, '0');
   return '${value.year}-$month-$day';
+}
+
+String _formatKoreanDate(DateTime value) {
+  final weekday = ['월', '화', '수', '목', '금', '토', '일'][value.weekday - 1];
+  return '${value.year}년 ${value.month}월 ${value.day}일 $weekday요일';
+}
+
+String _promptForToday(DateTime value) {
+  const prompts = [
+    '오늘 가장 오래 마음에 남은 장면은 무엇이었나요?',
+    '오늘의 감정을 한 단어로 고르면 무엇인가요?',
+    '내일의 나에게 꼭 남기고 싶은 한 문장은 무엇인가요?',
+    '오늘 고마웠던 사람이나 순간을 적어보세요.',
+    '오늘의 루틴 중 계속 가져가고 싶은 것은 무엇인가요?',
+    '사진으로 남기고 싶은 순간이 있었다면 어떤 장면인가요?',
+    '이번 주의 나에게 필요한 휴식은 무엇인가요?',
+  ];
+
+  return prompts[value.weekday - 1];
 }
