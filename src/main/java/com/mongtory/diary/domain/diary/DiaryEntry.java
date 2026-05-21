@@ -51,6 +51,12 @@ public class DiaryEntry {
 	@Column(nullable = false, length = 32)
 	private String emotionCode;
 
+	@Column(length = 120)
+	private String locationName;
+
+	@Column(length = 120)
+	private String weatherSummary;
+
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "owner_id", nullable = false)
 	private UserAccount owner;
@@ -80,6 +86,8 @@ public class DiaryEntry {
 		String title,
 		String content,
 		String emotionCode,
+		String locationName,
+		String weatherSummary,
 		List<String> imageUrls,
 		List<String> tags
 	) {
@@ -87,6 +95,8 @@ public class DiaryEntry {
 		this.title = title;
 		this.content = content;
 		this.emotionCode = emotionCode;
+		this.locationName = locationName;
+		this.weatherSummary = weatherSummary;
 		this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
 		this.tags = tags == null ? new ArrayList<>() : new ArrayList<>(tags);
 	}

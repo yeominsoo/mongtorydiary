@@ -23,12 +23,16 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   late final TextEditingController _contentController;
   late final TextEditingController _emotionCodeController;
   late final TextEditingController _tagController;
+  late final TextEditingController _locationNameController;
+  late final TextEditingController _weatherSummaryController;
   late final TextEditingController _pendingImageUrlController;
   late final String _initialEntryDate;
   late final String _initialTitle;
   late final String _initialContent;
   late final String _initialEmotionCode;
   late final String _initialTagsText;
+  late final String _initialLocationName;
+  late final String _initialWeatherSummary;
   late final List<String> _initialImageUrls;
   late final List<String> _imageUrls;
   bool _isSaving = false;
@@ -49,6 +53,8 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     _initialContent = initial?.content ?? '';
     _initialEmotionCode = (initial?.emotionCode ?? 'CALM').toUpperCase();
     _initialTagsText = (initial?.tags ?? []).join(', ');
+    _initialLocationName = initial?.locationName ?? '';
+    _initialWeatherSummary = initial?.weatherSummary ?? '';
     _initialImageUrls = List.unmodifiable(initial?.imageUrls ?? []);
     _imageUrls = [..._initialImageUrls];
     _entryDateController = TextEditingController(text: entryDate);
@@ -56,6 +62,10 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     _contentController = TextEditingController(text: _initialContent);
     _emotionCodeController = TextEditingController(text: _initialEmotionCode);
     _tagController = TextEditingController(text: _initialTagsText);
+    _locationNameController = TextEditingController(text: _initialLocationName);
+    _weatherSummaryController = TextEditingController(
+      text: _initialWeatherSummary,
+    );
     _pendingImageUrlController = TextEditingController();
   }
 
@@ -66,6 +76,8 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
     _contentController.dispose();
     _emotionCodeController.dispose();
     _tagController.dispose();
+    _locationNameController.dispose();
+    _weatherSummaryController.dispose();
     _pendingImageUrlController.dispose();
     super.dispose();
   }
@@ -131,6 +143,26 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                         labelText: '태그',
                         hintText: '산책, 회고',
                         prefixIcon: Icon(Icons.tag_outlined),
+                      ),
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _locationNameController,
+                      decoration: const InputDecoration(
+                        labelText: '장소',
+                        hintText: '동네 공원',
+                        prefixIcon: Icon(Icons.place_outlined),
+                      ),
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _weatherSummaryController,
+                      decoration: const InputDecoration(
+                        labelText: '날씨',
+                        hintText: '맑음',
+                        prefixIcon: Icon(Icons.wb_sunny_outlined),
                       ),
                       textInputAction: TextInputAction.next,
                     ),
@@ -248,6 +280,8 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         content: _contentController.text.trim(),
         emotionCode: _emotionCodeController.text.trim().toUpperCase(),
         imageUrls: _imageUrls,
+        locationName: _optionalText(_locationNameController.text),
+        weatherSummary: _optionalText(_weatherSummaryController.text),
         tags: _parseTags(_tagController.text),
       );
       final initial = widget.initial;
@@ -362,6 +396,8 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         _emotionCodeController.text.trim().toUpperCase() !=
             _initialEmotionCode ||
         _tagController.text.trim() != _initialTagsText ||
+        _locationNameController.text.trim() != _initialLocationName ||
+        _weatherSummaryController.text.trim() != _initialWeatherSummary ||
         _pendingImageUrlController.text.trim().isNotEmpty ||
         !_listEquals(_imageUrls, _initialImageUrls);
   }
@@ -607,6 +643,11 @@ List<String> _parseTags(String value) {
     tags.add(tag);
   }
   return tags;
+}
+
+String? _optionalText(String value) {
+  final normalizedValue = value.trim();
+  return normalizedValue.isEmpty ? null : normalizedValue;
 }
 
 String _formatDate(DateTime value) {

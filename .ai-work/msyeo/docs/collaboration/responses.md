@@ -46,13 +46,13 @@
 | RES-REQ-20260521-02 | REQ-20260521-02 | 단일 세션 | 완료 | Flutter SDK 3.41.7 설치 및 Flutter 검증 복구 | 2026-05-21 |
 | RES-REQ-20260521-03 | REQ-20260521-03 | 단일 세션 | 완료 | 백엔드 30080과 Flutter web 30081 실행, CORS 허용 및 브라우저 접속 준비 | 2026-05-21 |
 | RES-REQ-20260521-04 | REQ-20260521-04 | 단일 세션 | 완료 | 캘린더 TODO와 몽토리 메뉴 대시보드 구현, 검증, Git push, 서버 재시작 완료 | 2026-05-21 |
-| RES-REQ-20260521-05 | REQ-20260521-05 | 단일 세션 | 3차 완료, 후속 진행중 | 초기 로딩/PostgreSQL/홈 회고 카드, 검색/태그/지난 오늘, 사진 업로드/첨부 구현 | 2026-05-21 |
+| RES-REQ-20260521-05 | REQ-20260521-05 | 단일 세션 | 4차 완료, 후속 진행중 | 초기 로딩/PostgreSQL/홈 회고 카드, 검색/태그/지난 오늘, 사진 업로드/첨부, 위치/날씨/앱 내 리마인더 구현 | 2026-05-21 |
 
 ## 응답 상세
 ### RES-REQ-20260521-05
 - 요청 ID: REQ-20260521-05
 - 담당: 단일 세션
-- 상태: 3차 완료, 후속 진행중
+- 상태: 4차 완료, 후속 진행중
 - 요약:
   - Flutter web 초기화 중 빈 화면 대신 `앱 파일 다운로드 -> 화면 엔진 초기화 -> 데이터 연결 확인` 단계의 진행 UI를 표시하도록 `web/index.html`과 `web/flutter_bootstrap.js`를 추가/수정했다.
   - Spring Boot 기본 DB를 PostgreSQL로 전환하고, SQLite는 `sqlite` 프로필로 분리했다.
@@ -65,11 +65,18 @@
   - 3차로 백엔드 `POST /api/v1/diary-images` multipart 업로드 API와 `/uploads/**` 정적 제공을 추가했다.
   - Flutter 작성/수정 화면은 `사진 선택`으로 이미지 파일을 업로드하고 반환 URL을 일기 `imageUrls`에 첨부한다.
   - 기존 사진 URL 직접 입력은 외부 URL fallback으로 유지했다.
+  - 4차로 백엔드 일기 `locationName`, `weatherSummary` 저장/응답/검색을 추가했다.
+  - Flutter 작성/수정 화면은 장소/날씨 입력을 제공하고, 홈 목록과 상세 화면은 장소/날씨 칩을 표시한다.
+  - 몽토리 프로필 화면에 앱 내 작성 리마인더 설정과 시간 선택 UI를 추가했다.
   - 30080 백엔드는 PostgreSQL 기준, 30081은 Flutter release build 정적 서버 기준으로 재시작했다.
 - 주요 변경 파일:
   - `mobile-flutter/web/index.html`
   - `mobile-flutter/web/flutter_bootstrap.js`
   - `mobile-flutter/lib/presentation/screens/diary/diary_home_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_detail_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/diary/diary_edit_screen.dart`
+  - `mobile-flutter/lib/presentation/screens/profile/profile_screen.dart`
+  - `mobile-flutter/lib/application/reminder/writing_reminder_controller.dart`
   - `mobile-flutter/test/widget_test.dart`
   - `mobile-flutter/test/qa_harness_smoke_test.dart`
   - `mobile-flutter/test/support/qa_app_harness.dart`
@@ -87,14 +94,18 @@
   - `src/main/java/com/mongtory/diary/config/WebConfig.java`
   - `src/main/java/com/mongtory/diary/common/GlobalExceptionHandler.java`
   - `src/main/java/com/mongtory/diary/domain/diary/DiaryEntry.java`
+  - `src/main/java/com/mongtory/diary/dto/diary/DiarySummaryResponse.java`
+  - `src/main/java/com/mongtory/diary/dto/diary/DiaryDetailResponse.java`
+  - `src/main/java/com/mongtory/diary/dto/diary/DiaryUpsertRequest.java`
   - `src/main/java/com/mongtory/diary/service/DiaryService.java`
   - `src/main/java/com/mongtory/diary/controller/DiaryController.java`
+  - `src/main/java/com/mongtory/diary/config/DiaryDataInitializer.java`
   - `src/test/java/com/mongtory/diary/controller/DiaryControllerTest.java`
   - `.ai-work/msyeo/docs/api-spec.md`
   - `.ai-work/msyeo/docs/diary-app-feature-benchmark.md`
   - `.ai-work/msyeo/docs/postgresql-local-runbook.md`
 - 검증:
-  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 28건.
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 29건.
   - `/home/msyeo/.local/share/flutter/bin/flutter analyze`: 통과.
   - `/home/msyeo/.local/share/flutter/bin/flutter test`: 통과, 13건.
   - `/home/msyeo/.local/share/flutter/bin/flutter build web --release --dart-define=DATA_SOURCE_MODE=remote --dart-define=API_BASE_URL=http://192.168.75.194:30080`: 통과.
@@ -102,11 +113,12 @@
   - `GET http://192.168.75.194:30081/`: release build HTML과 부트 로딩 DOM 확인.
   - 실제 30080 API에서 테스트 일기를 생성/삭제하며 `GET /api/v1/diaries?query=&tag=` 검색/태그 결과 1건, `GET /api/v1/diaries/memories?month=&day=` 지난 오늘 매칭 1건을 확인.
   - 실제 30080 API에서 테스트 PNG를 `POST /api/v1/diary-images`로 업로드하고 반환 URL GET 200, 원본 비교, 업로드 CORS preflight 200을 확인한 뒤 테스트 파일을 삭제.
+  - 실제 30080 API에서 장소/날씨 포함 테스트 일기를 생성하고, 장소 검색 1건, 상세 `locationName` 일치, 삭제 200을 확인했다.
   - 로그인 후 `GET /api/v1/todos?from=2026-05-01&to=2026-05-31`: 200, TODO 1건 확인.
   - PostgreSQL `user_accounts`, `diary_entries`, `todo_items` 시드 각 1건 확인.
   - `Origin: http://192.168.75.194:30081` 기준 CORS preflight 200 응답 확인.
 - 남은 이슈:
-  - 위치/날씨 메타데이터, 리마인더는 후속 구현이다.
+  - 현재 작성 리마인더는 앱 내부 설정 상태다. OS 알림 예약은 Android/iOS 권한과 네이티브 스케줄링이 필요하다.
   - 업로드 파일은 현재 로컬 파일 시스템에 저장되므로 운영 전 영구 볼륨, 백업, 삭제 정책이 필요하다.
   - PostgreSQL은 현재 `ddl-auto=update` 개발 설정이라 운영 전 Flyway/Liquibase 전환이 필요하다.
   - `/run/mongtorydiary-db.env`는 재부팅 후 사라질 수 있으므로 정식 systemd unit에서는 별도 secret/env 관리가 필요하다.

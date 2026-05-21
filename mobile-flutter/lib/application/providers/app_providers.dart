@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mongtory_diary/application/navigation/home_tab.dart';
 import 'package:mongtory_diary/application/navigation/home_tab_controller.dart';
+import 'package:mongtory_diary/application/reminder/writing_reminder_controller.dart';
 import 'package:mongtory_diary/application/session/session_controller.dart';
 import 'package:mongtory_diary/application/session/session_state.dart';
 import 'package:mongtory_diary/core/config/app_config.dart';
@@ -152,6 +153,11 @@ final sessionControllerProvider =
 final homeTabControllerProvider =
     StateNotifierProvider<HomeTabController, HomeTab>(
       (ref) => HomeTabController(),
+    );
+
+final writingReminderControllerProvider =
+    StateNotifierProvider<WritingReminderController, WritingReminderSettings>(
+      (ref) => WritingReminderController(),
     );
 
 final diaryListProvider = FutureProvider.autoDispose<List<DiarySummary>>((

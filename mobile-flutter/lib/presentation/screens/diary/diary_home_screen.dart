@@ -423,6 +423,9 @@ class _DiarySummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locationName = item.locationName?.trim();
+    final weatherSummary = item.weatherSummary?.trim();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -461,6 +464,27 @@ class _DiarySummaryTile extends StatelessWidget {
                         '${_formatDate(item.entryDate)} · ${item.emotionCode}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
+                      if ((locationName?.isNotEmpty ?? false) ||
+                          (weatherSummary?.isNotEmpty ?? false)) ...[
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: [
+                            if (locationName != null && locationName.isNotEmpty)
+                              _MiniMetaChip(
+                                icon: Icons.place_outlined,
+                                label: locationName,
+                              ),
+                            if (weatherSummary != null &&
+                                weatherSummary.isNotEmpty)
+                              _MiniMetaChip(
+                                icon: Icons.wb_sunny_outlined,
+                                label: weatherSummary,
+                              ),
+                          ],
+                        ),
+                      ],
                       if (item.tags.isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Wrap(
@@ -485,6 +509,22 @@ class _DiarySummaryTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MiniMetaChip extends StatelessWidget {
+  const _MiniMetaChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(icon, size: 16),
+      label: Text(label),
+      visualDensity: VisualDensity.compact,
     );
   }
 }

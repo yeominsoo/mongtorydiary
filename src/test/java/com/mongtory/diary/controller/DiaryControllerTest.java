@@ -97,6 +97,8 @@ class DiaryControllerTest {
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.data", hasSize(1)))
 			.andExpect(jsonPath("$.data[0].id").value(diaryId))
+			.andExpect(jsonPath("$.data[0].locationName").value("동네 공원"))
+			.andExpect(jsonPath("$.data[0].weatherSummary").value("맑음"))
 			.andExpect(jsonPath("$.data[0].tags", hasSize(2)))
 			.andExpect(jsonPath("$.data[0].tags[0]").value("회고"))
 			.andExpect(jsonPath("$.data[0].tags[1]").value("산책"));
@@ -106,6 +108,8 @@ class DiaryControllerTest {
 					.header("Authorization", "Bearer " + accessToken)
 			)
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.locationName").value("동네 공원"))
+			.andExpect(jsonPath("$.data.weatherSummary").value("맑음"))
 			.andExpect(jsonPath("$.data.tags", hasSize(2)))
 			.andExpect(jsonPath("$.data.tags[0]").value("회고"))
 			.andExpect(jsonPath("$.data.tags[1]").value("산책"));
@@ -181,6 +185,33 @@ class DiaryControllerTest {
 		mockMvc.perform(get(uploadPath))
 			.andExpect(status().isOk())
 			.andExpect(content().bytes(imageBytes));
+	}
+
+	@Test
+	void diaryListSearchIncludesLocationAndWeather() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+		final String location = "기억장소-" + UUID.randomUUID();
+		final long diaryId = createDiary(
+			accessToken,
+			"2025-05-20",
+			"위치 날씨 검색 일기",
+			"본문 검색어 없이 위치로 찾는다.",
+			"""
+				["메타"]
+				""",
+			location,
+			"비 온 뒤 맑음"
+		);
+
+		mockMvc.perform(
+				get("/api/v1/diaries")
+					.param("query", location)
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data", hasSize(1)))
+			.andExpect(jsonPath("$.data[0].id").value(diaryId));
 	}
 
 	@Test
@@ -335,6 +366,18 @@ class DiaryControllerTest {
 		String content,
 		String tagsJson
 	) throws Exception {
+		return createDiary(accessToken, entryDate, title, content, tagsJson, "동네 공원", "맑음");
+	}
+
+	private long createDiary(
+		String accessToken,
+		String entryDate,
+		String title,
+		String content,
+		String tagsJson,
+		String locationName,
+		String weatherSummary
+	) throws Exception {
 		final MvcResult createResult = mockMvc.perform(
 				post("/api/v1/diaries")
 					.header("Authorization", "Bearer " + accessToken)
@@ -345,10 +388,12 @@ class DiaryControllerTest {
 						  "title": "%s",
 						  "content": "%s",
 						  "emotionCode": "CALM",
+						  "locationName": "%s",
+						  "weatherSummary": "%s",
 						  "imageUrls": [],
 						  "tags": %s
 						}
-						""".formatted(entryDate, title, content, tagsJson))
+						""".formatted(entryDate, title, content, locationName, weatherSummary, tagsJson))
 			)
 			.andExpect(status().isOk())
 			.andReturn();

@@ -13,6 +13,8 @@ class MockDiaryDataSource {
       content: '몽토리와 함께 산책을 했다.',
       emotionCode: 'CALM',
       imageUrls: [],
+      locationName: '동네 공원',
+      weatherSummary: '맑음',
       tags: ['산책', '회고'],
       createdAt: '2026-03-19T09:00:00',
       updatedAt: '2026-03-19T09:10:00',
@@ -24,6 +26,8 @@ class MockDiaryDataSource {
       content: '공원에서 천천히 걸으며 하루를 정리했다.',
       emotionCode: 'HAPPY',
       imageUrls: [],
+      locationName: '한강 공원',
+      weatherSummary: '흐림',
       tags: ['산책', '정리'],
       createdAt: '2026-03-18T20:10:00',
       updatedAt: '2026-03-18T20:30:00',
@@ -45,6 +49,8 @@ class MockDiaryDataSource {
 
           return item.title.toLowerCase().contains(normalizedQuery) ||
               item.content.toLowerCase().contains(normalizedQuery) ||
+              _containsOptionalText(item.locationName, normalizedQuery) ||
+              _containsOptionalText(item.weatherSummary, normalizedQuery) ||
               item.tags.any(
                 (tag) => tag.toLowerCase().contains(normalizedQuery),
               );
@@ -65,6 +71,8 @@ class MockDiaryDataSource {
             title: item.title,
             emotionCode: item.emotionCode,
             thumbnailUrl: item.imageUrls.isEmpty ? null : item.imageUrls.first,
+            locationName: item.locationName,
+            weatherSummary: item.weatherSummary,
             tags: item.tags,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
@@ -92,6 +100,8 @@ class MockDiaryDataSource {
             title: item.title,
             emotionCode: item.emotionCode,
             thumbnailUrl: item.imageUrls.isEmpty ? null : item.imageUrls.first,
+            locationName: item.locationName,
+            weatherSummary: item.weatherSummary,
             tags: item.tags,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
@@ -123,6 +133,8 @@ class MockDiaryDataSource {
       content: request.content,
       emotionCode: request.emotionCode,
       imageUrls: request.imageUrls,
+      locationName: request.locationName,
+      weatherSummary: request.weatherSummary,
       tags: request.tags,
       createdAt: _formatDateTime(now),
       updatedAt: _formatDateTime(now),
@@ -148,6 +160,8 @@ class MockDiaryDataSource {
       content: request.content,
       emotionCode: request.emotionCode,
       imageUrls: request.imageUrls,
+      locationName: request.locationName,
+      weatherSummary: request.weatherSummary,
       tags: request.tags,
       createdAt: current.createdAt,
       updatedAt: _formatDateTime(DateTime.now()),
@@ -170,6 +184,8 @@ class MockDiaryDataSource {
         content: '몽토리와 함께 산책을 했다.',
         emotionCode: 'CALM',
         imageUrls: const [],
+        locationName: '동네 공원',
+        weatherSummary: '맑음',
         tags: const ['산책', '회고'],
         createdAt: '2026-03-19T09:00:00',
         updatedAt: '2026-03-19T09:10:00',
@@ -192,5 +208,9 @@ class MockDiaryDataSource {
     final minute = value.minute.toString().padLeft(2, '0');
     final second = value.second.toString().padLeft(2, '0');
     return '${value.year}-$month-${day}T$hour:$minute:$second';
+  }
+
+  bool _containsOptionalText(String? value, String normalizedQuery) {
+    return value != null && value.toLowerCase().contains(normalizedQuery);
   }
 }

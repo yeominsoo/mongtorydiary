@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mongtory_diary/application/providers/app_providers.dart';
+import 'package:mongtory_diary/application/reminder/writing_reminder_controller.dart';
 import 'package:mongtory_diary/application/session/session_state.dart';
 import 'package:mongtory_diary/domain/models/diary_summary.dart';
 import 'package:mongtory_diary/domain/models/emotion_type.dart';
@@ -16,6 +17,7 @@ class ProfileScreen extends ConsumerWidget {
     final emotions = ref.watch(emotionListProvider);
     final diaries = ref.watch(diaryListProvider);
     final todos = ref.watch(visibleMonthTodoListProvider);
+    final reminder = ref.watch(writingReminderControllerProvider);
     final dataSourceModeLabel = ref.watch(dataSourceModeLabelProvider);
     final userName = session.status == SessionStatus.signedIn
         ? session.session?.user.nickname ?? '몽토리 사용자'
@@ -47,6 +49,34 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           _ContentWidth(
+            child: _WritingReminderCard(
+              settings: reminder,
+              onEnabledChanged: (value) {
+                ref
+                    .read(writingReminderControllerProvider.notifier)
+                    .setEnabled(value);
+              },
+              onPickTime: () async {
+                final picked = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay(
+                    hour: reminder.hour,
+                    minute: reminder.minute,
+                  ),
+                );
+
+                if (picked == null) {
+                  return;
+                }
+
+                ref
+                    .read(writingReminderControllerProvider.notifier)
+                    .setTime(hour: picked.hour, minute: picked.minute);
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          _ContentWidth(
             child: emotions.when(
               data: (items) => _EmotionPaletteCard(items: items),
               loading: () => const SectionCard(
@@ -64,6 +94,46 @@ class ProfileScreen extends ConsumerWidget {
             child: _WidgetPreviewCard(
               diaries: diaries.valueOrNull ?? const [],
               todos: todos.valueOrNull ?? const [],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WritingReminderCard extends StatelessWidget {
+  const _WritingReminderCard({
+    required this.settings,
+    required this.onEnabledChanged,
+    required this.onPickTime,
+  });
+
+  final WritingReminderSettings settings;
+  final ValueChanged<bool> onEnabledChanged;
+  final VoidCallback onPickTime;
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      title: '작성 리마인더',
+      description: settings.enabled ? '매일 ${settings.timeLabel}' : '꺼짐',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SwitchListTile(
+            value: settings.enabled,
+            onChanged: onEnabledChanged,
+            contentPadding: EdgeInsets.zero,
+            title: const Text('사용'),
+            secondary: const Icon(Icons.notifications_active_outlined),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton.icon(
+              onPressed: settings.enabled ? onPickTime : null,
+              icon: const Icon(Icons.schedule_outlined),
+              label: const Text('시간 변경'),
             ),
           ),
         ],

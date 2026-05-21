@@ -131,6 +131,18 @@ class _DiaryDetailContent extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Chip(label: Text(item.emotionCode)),
+                    if (_hasText(item.locationName))
+                      Chip(
+                        avatar: const Icon(Icons.place_outlined, size: 16),
+                        label: Text(item.locationName!.trim()),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    if (_hasText(item.weatherSummary))
+                      Chip(
+                        avatar: const Icon(Icons.wb_sunny_outlined, size: 16),
+                        label: Text(item.weatherSummary!.trim()),
+                        visualDensity: VisualDensity.compact,
+                      ),
                     for (final tag in item.tags)
                       Chip(
                         avatar: const Icon(Icons.tag_outlined, size: 16),
@@ -343,6 +355,10 @@ String _formatDate(DateTime value) {
   final month = value.month.toString().padLeft(2, '0');
   final day = value.day.toString().padLeft(2, '0');
   return '${value.year}-$month-$day';
+}
+
+bool _hasText(String? value) {
+  return value != null && value.trim().isNotEmpty;
 }
 
 String _formatDateTime(DateTime value) {

@@ -14,6 +14,8 @@ public class DiaryUpsertRequest {
 	private String title;
 	private String content;
 	private String emotionCode;
+	private String locationName;
+	private String weatherSummary;
 	private List<String> imageUrls;
 	private List<String> tags;
 }

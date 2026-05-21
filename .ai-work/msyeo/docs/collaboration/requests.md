@@ -54,14 +54,14 @@
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | 2026-05-21 | Flutter SDK, `mobile-flutter`, 실행 환경 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 2026-05-21 | systemd 임시 서비스, 30080/30081 |
 | REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 2026-05-21 | `src/main/java`, `src/test/java`, `mobile-flutter/lib`, `mobile-flutter/test`, 사용가이드 |
-| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 3차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 2026-05-21 | `mobile-flutter/web`, `mobile-flutter/lib`, `src/main/java`, `src/main/resources`, `pom.xml`, 문서 |
+| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 4차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 2026-05-21 | `mobile-flutter/web`, `mobile-flutter/lib`, `src/main/java`, `src/main/resources`, `pom.xml`, 문서 |
 
 ## 요청 상세
 ### REQ-20260521-05
 - 우선순위: P1
 - 요청자: 사용자
 - 대상: 단일 세션
-- 상태: 진행중, 3차 완료
+- 상태: 진행중, 4차 완료
 - 요청 내용:
   - Flutter web 초기 로딩 구간에 로딩/인스톨 중임을 알 수 있는 진행 UI를 제공한다.
   - 데이터 저장 방식을 PostgreSQL 중심으로 전환한다.
@@ -98,8 +98,14 @@
   - Flutter 작성/수정 화면에 `사진 선택` 버튼을 추가해 파일 선택 후 업로드 URL을 `imageUrls`에 반영한다.
   - 기존 사진 URL 직접 입력은 외부 URL fallback으로 유지했다.
   - Maven test 28건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 업로드 smoke가 통과했다.
+- 4차 결과:
+  - 백엔드 일기 엔티티와 DTO에 `locationName`, `weatherSummary`를 추가했다.
+  - 일기 생성/수정에서 장소/날씨를 저장하고, 목록 `query` 검색은 제목/본문/태그/장소/날씨를 대상으로 한다.
+  - Flutter 작성/수정 화면에 장소/날씨 입력을 추가했고, 홈 목록과 상세 화면은 장소/날씨 칩을 표시한다.
+  - 몽토리 프로필 화면에 앱 내 작성 리마인더 설정과 시간 선택 UI를 추가했다.
+  - Maven test 29건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 위치/날씨 smoke와 CORS preflight가 통과했다.
 - 남은 후속 완료 기준:
-  - 위치/날씨 메타데이터와 작성 리마인더.
+  - OS 알림 기반 작성 리마인더가 필요하면 Android/iOS 알림 권한, 스케줄링, 저장 경계를 별도 구현한다.
 
 ### REQ-20260521-04
 - 우선순위: P1

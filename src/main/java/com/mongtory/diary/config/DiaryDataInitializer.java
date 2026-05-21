@@ -41,6 +41,8 @@ public class DiaryDataInitializer implements CommandLineRunner {
 				.title("오늘의 기록")
 				.content("몽토리와 함께 산책을 했다.")
 				.emotionCode("CALM")
+				.locationName("동네 공원")
+				.weatherSummary("맑음")
 				.owner(owner)
 				.imageUrls(List.of())
 				.tags(List.of("산책", "회고"))

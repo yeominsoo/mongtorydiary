@@ -5,6 +5,8 @@ class DiaryUpsert {
     required this.content,
     required this.emotionCode,
     required this.imageUrls,
+    this.locationName,
+    this.weatherSummary,
     required this.tags,
   });
 
@@ -13,5 +15,7 @@ class DiaryUpsert {
   final String content;
   final String emotionCode;
   final List<String> imageUrls;
+  final String? locationName;
+  final String? weatherSummary;
   final List<String> tags;
 }

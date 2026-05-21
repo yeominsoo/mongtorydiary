@@ -78,12 +78,16 @@ public class DiaryService {
 		final String title = requireText(request.getTitle(), "Diary title is required");
 		final String content = requireText(request.getContent(), "Diary content is required");
 		final String emotionCode = requireText(request.getEmotionCode(), "Diary emotion code is required");
+		final String locationName = normalizeOptionalText(request.getLocationName(), 120, "Diary location must be 120 characters or less");
+		final String weatherSummary = normalizeOptionalText(request.getWeatherSummary(), 120, "Diary weather must be 120 characters or less");
 
 		final DiaryEntry diaryEntry = DiaryEntry.builder()
 			.entryDate(entryDate)
 			.title(title)
 			.content(content)
 			.emotionCode(normalizeEmotionCode(emotionCode))
+			.locationName(locationName)
+			.weatherSummary(weatherSummary)
 			.owner(currentUser)
 			.imageUrls(copyImageUrls(request.getImageUrls()))
 			.tags(normalizeTags(request.getTags()))
@@ -98,12 +102,16 @@ public class DiaryService {
 		final String title = requireText(request.getTitle(), "Diary title is required");
 		final String content = requireText(request.getContent(), "Diary content is required");
 		final String emotionCode = requireText(request.getEmotionCode(), "Diary emotion code is required");
+		final String locationName = normalizeOptionalText(request.getLocationName(), 120, "Diary location must be 120 characters or less");
+		final String weatherSummary = normalizeOptionalText(request.getWeatherSummary(), 120, "Diary weather must be 120 characters or less");
 
 		diaryEntry.update(
 			entryDate,
 			title,
 			content,
 			normalizeEmotionCode(emotionCode),
+			locationName,
+			weatherSummary,
 			copyImageUrls(request.getImageUrls()),
 			normalizeTags(request.getTags())
 		);
@@ -133,6 +141,8 @@ public class DiaryService {
 			.title(diaryEntry.getTitle())
 			.emotionCode(diaryEntry.getEmotionCode())
 			.thumbnailUrl(thumbnailUrl)
+			.locationName(diaryEntry.getLocationName())
+			.weatherSummary(diaryEntry.getWeatherSummary())
 			.tags(List.copyOf(diaryEntry.getTags()))
 			.createdAt(diaryEntry.getCreatedAt())
 			.updatedAt(diaryEntry.getUpdatedAt())
@@ -146,6 +156,8 @@ public class DiaryService {
 			.title(diaryEntry.getTitle())
 			.content(diaryEntry.getContent())
 			.emotionCode(diaryEntry.getEmotionCode())
+			.locationName(diaryEntry.getLocationName())
+			.weatherSummary(diaryEntry.getWeatherSummary())
 			.imageUrls(List.copyOf(diaryEntry.getImageUrls()))
 			.tags(List.copyOf(diaryEntry.getTags()))
 			.createdAt(diaryEntry.getCreatedAt())
@@ -186,9 +198,15 @@ public class DiaryService {
 	private boolean containsQuery(DiaryEntry diaryEntry, String normalizedQuery) {
 		return diaryEntry.getTitle().toLowerCase(Locale.ROOT).contains(normalizedQuery)
 			|| diaryEntry.getContent().toLowerCase(Locale.ROOT).contains(normalizedQuery)
+			|| containsOptionalText(diaryEntry.getLocationName(), normalizedQuery)
+			|| containsOptionalText(diaryEntry.getWeatherSummary(), normalizedQuery)
 			|| diaryEntry.getTags().stream()
 				.map(tag -> tag.toLowerCase(Locale.ROOT))
 				.anyMatch(tag -> tag.contains(normalizedQuery));
+	}
+
+	private boolean containsOptionalText(String value, String normalizedQuery) {
+		return value != null && value.toLowerCase(Locale.ROOT).contains(normalizedQuery);
 	}
 
 	private String normalizeTagForFilter(String value) {
@@ -231,6 +249,19 @@ public class DiaryService {
 		}
 
 		return new ArrayList<>(normalizedTags);
+	}
+
+	private String normalizeOptionalText(String value, int maxLength, String message) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+
+		final String normalizedValue = value.trim();
+		if (normalizedValue.length() > maxLength) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+		}
+
+		return normalizedValue;
 	}
 
 	private String stripLeadingHash(String value) {

@@ -16,6 +16,8 @@ public class DiarySummaryResponse {
 	private final String title;
 	private final String emotionCode;
 	private final String thumbnailUrl;
+	private final String locationName;
+	private final String weatherSummary;
 	private final List<String> tags;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;

@@ -55,6 +55,8 @@ void main() {
 
     expect(find.text('일기 상세'), findsOneWidget);
     expect(find.text('몽토리와 함께 산책을 했다.'), findsOneWidget);
+    expect(find.text('동네 공원'), findsOneWidget);
+    expect(find.text('맑음'), findsOneWidget);
     expect(find.text('산책'), findsWidgets);
     expect(find.text('첨부된 사진이 없습니다.'), findsOneWidget);
     expect(find.text('작성일'), findsOneWidget);
@@ -72,7 +74,7 @@ void main() {
     expect(find.text('오늘의 기록'), findsOneWidget);
     expect(find.text('산책한 날'), findsOneWidget);
 
-    await tester.enterText(find.widgetWithText(TextField, '검색'), '공원');
+    await tester.enterText(find.widgetWithText(TextField, '검색'), '한강');
     await tester.pumpAndSettle();
 
     expect(find.text('오늘의 기록'), findsNothing);
@@ -94,6 +96,8 @@ void main() {
     expect(find.byIcon(Icons.calendar_today_outlined), findsOneWidget);
     expect(find.text('차분 (CALM)'), findsOneWidget);
     expect(find.widgetWithText(TextFormField, '태그'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, '장소'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, '날씨'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.calendar_today_outlined));
     await tester.pumpAndSettle();

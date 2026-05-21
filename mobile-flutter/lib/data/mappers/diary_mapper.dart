@@ -15,6 +15,8 @@ class DiaryMapper {
       title: dto.title,
       emotionCode: dto.emotionCode,
       thumbnailUrl: dto.thumbnailUrl,
+      locationName: dto.locationName,
+      weatherSummary: dto.weatherSummary,
       tags: dto.tags,
       createdAt: DateTime.parse(dto.createdAt),
       updatedAt: DateTime.parse(dto.updatedAt),
@@ -29,6 +31,8 @@ class DiaryMapper {
       content: dto.content,
       emotionCode: dto.emotionCode,
       imageUrls: dto.imageUrls,
+      locationName: dto.locationName,
+      weatherSummary: dto.weatherSummary,
       tags: dto.tags,
       createdAt: DateTime.parse(dto.createdAt),
       updatedAt: DateTime.parse(dto.updatedAt),
@@ -42,6 +46,8 @@ class DiaryMapper {
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
+      locationName: input.locationName,
+      weatherSummary: input.weatherSummary,
       tags: input.tags,
     );
   }

@@ -119,6 +119,8 @@ class QaDiaryRepository implements DiaryRepository {
           entryDate: DateTime(2026, 3, 20),
           title: 'QA 자동화 일기',
           emotionCode: 'HAPPY',
+          locationName: 'QA 연구실',
+          weatherSummary: '맑음',
           tags: const ['QA', '회고'],
           createdAt: now,
           updatedAt: now,
@@ -131,6 +133,8 @@ class QaDiaryRepository implements DiaryRepository {
         content: '하네스 검증용 일기입니다.',
         emotionCode: 'HAPPY',
         imageUrls: const [],
+        locationName: 'QA 연구실',
+        weatherSummary: '맑음',
         tags: const ['QA', '회고'],
         createdAt: now,
         updatedAt: now,
@@ -157,6 +161,8 @@ class QaDiaryRepository implements DiaryRepository {
       final matchesQuery = normalizedQuery == null || normalizedQuery.isEmpty
           ? true
           : item.title.toLowerCase().contains(normalizedQuery) ||
+                _containsOptionalText(item.locationName, normalizedQuery) ||
+                _containsOptionalText(item.weatherSummary, normalizedQuery) ||
                 item.tags.any(
                   (tag) => tag.toLowerCase().contains(normalizedQuery),
                 );
@@ -199,6 +205,8 @@ class QaDiaryRepository implements DiaryRepository {
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
+      locationName: input.locationName,
+      weatherSummary: input.weatherSummary,
       tags: input.tags,
       createdAt: now,
       updatedAt: now,
@@ -219,6 +227,8 @@ class QaDiaryRepository implements DiaryRepository {
       content: input.content,
       emotionCode: input.emotionCode,
       imageUrls: input.imageUrls,
+      locationName: input.locationName,
+      weatherSummary: input.weatherSummary,
       tags: input.tags,
       createdAt: current.createdAt,
       updatedAt: DateTime(2026, 3, 21, 12),
@@ -245,10 +255,16 @@ class QaDiaryRepository implements DiaryRepository {
       entryDate: detail.entryDate,
       title: detail.title,
       emotionCode: detail.emotionCode,
+      locationName: detail.locationName,
+      weatherSummary: detail.weatherSummary,
       tags: detail.tags,
       createdAt: detail.createdAt,
       updatedAt: detail.updatedAt,
     );
+  }
+
+  bool _containsOptionalText(String? value, String normalizedQuery) {
+    return value != null && value.toLowerCase().contains(normalizedQuery);
   }
 }
 

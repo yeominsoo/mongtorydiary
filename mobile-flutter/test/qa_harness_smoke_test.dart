@@ -171,6 +171,8 @@ void main() {
     expect(find.text('평온 (CALM)'), findsOneWidget);
     await tester.drag(find.byType(ListView), const Offset(0, -500));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('저장'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('저장'));
     await tester.pumpAndSettle();
 
@@ -193,6 +195,8 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(2), '수정 회귀 검증 본문입니다.');
     await tester.enterText(find.widgetWithText(TextFormField, '태그'), 'QA, 수정');
     await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('저장'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('저장'));
     await tester.pumpAndSettle();

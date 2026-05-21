@@ -15,7 +15,7 @@
 
 ## 현재 작업
 - 작업 ID: `REQ-20260521-05`
-- 상태: 진행중, 1차 구현/검증 완료, 2차 검색/태그/지난 오늘 구현/검증 완료, 3차 사진 업로드 구현/검증 완료
+- 상태: 진행중, 1차 구현/검증 완료, 2차 검색/태그/지난 오늘 구현/검증 완료, 3차 사진 업로드 구현/검증 완료, 4차 위치/날씨/앱 내 리마인더 구현/검증 완료
 - 목적: 초기 로딩 진행 UI, PostgreSQL 전환 기반, 유명 다이어리 앱 기능 참조 기반 완성도 개선
 - 담당: 단일 세션
 
@@ -29,6 +29,7 @@
 - 2026-05-21 19:30: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05
 - 2026-05-21 19:42: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05 검색/태그/지난오늘 후속
 - 2026-05-21 19:56: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05 사진 업로드 후속
+- 2026-05-21 20:09: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05 위치/날씨/리마인더 후속
 
 ## 이관된 대기 작업
 | 순서 | 기존 요청 ID | 우선순위 | 이전 담당 | 현재 담당 | 상태 | 다음 액션 |
@@ -51,23 +52,23 @@
 | REQ-20260521-02 | 완료 | Flutter SDK 3.41.7 설치 및 `mobile-flutter` analyze/test/web-server 30081 검증 통과 |
 | REQ-20260521-03 | 완료 | systemd 임시 서비스로 백엔드 30080, Flutter web 30081 실행, CORS 허용 및 IP 기준 응답 확인 |
 | REQ-20260521-04 | 완료 | 캘린더 TODO API/UI와 몽토리 메뉴 대시보드 구현, Flutter/Maven 검증, Git push, 30080/30081 재시작과 실제 서버 smoke 통과 |
-| REQ-20260521-05 | 진행중, 3차 완료 | 초기 로딩 진행 UI, PostgreSQL 기본 설정, 일기 홈 회고 카드 1차 구현 완료. 2차로 검색/태그 API, Flutter 필터 UI, 지난 오늘 전용 API 구현과 실제 서버 smoke 완료. 3차로 사진 업로드 API와 Flutter 파일 선택 첨부 구현 및 실제 서버 smoke 완료. 위치/날씨/리마인더는 후속 |
+| REQ-20260521-05 | 진행중, 4차 완료 | 초기 로딩 진행 UI, PostgreSQL 기본 설정, 일기 홈 회고 카드 1차 구현 완료. 2차로 검색/태그 API, Flutter 필터 UI, 지난 오늘 전용 API 구현과 실제 서버 smoke 완료. 3차로 사진 업로드 API와 Flutter 파일 선택 첨부 구현 및 실제 서버 smoke 완료. 4차로 위치/날씨 메타데이터와 앱 내 작성 리마인더 구현 및 실제 서버 smoke 완료 |
 | REQ-20260428-23 | 보류 | REQ-20260428-09 Flutter CRUD 구현에 흡수 |
 
 ## 다음 작업 순서
-1. `REQ-20260521-05` 후속: 위치/날씨 메타데이터와 작성 리마인더 범위 결정 및 구현
-2. `REQ-20260428-38` Flutter 딥링크 라우터 1차 구현
-3. `REQ-20260428-39` 위젯 요약 데이터 앱 연동 경계 구현
-4. `REQ-20260428-40` 네이티브 위젯 shell 범위 결정
-5. `REQ-20260428-35` MVP 릴리스 회귀 체크리스트와 신규 개선 검증 계획
+1. `REQ-20260428-38` Flutter 딥링크 라우터 1차 구현
+2. `REQ-20260428-39` 위젯 요약 데이터 앱 연동 경계 구현
+3. `REQ-20260428-40` 네이티브 위젯 shell 범위 결정
+4. `REQ-20260428-35` MVP 릴리스 회귀 체크리스트와 신규 개선 검증 계획
+5. OS 알림 기반 작성 리마인더가 필요하면 Android/iOS 권한, 스케줄링, 저장 경계 구현
 6. `SINGLE-20260521-OPS` 문서/커밋 정합성 정리
 
 ## 파일 충돌 및 Git 상태 메모
 | 경로 | 상태 | 메모 |
 | --- | --- | --- |
 | `.ai-work/msyeo/docs/` | 진행중 | 단일 세션 운영, 검증 결과, 포트 기준 문서 정리 중 |
-| `mobile-flutter/lib`, `mobile-flutter/test` | 진행중 | REQ-20260521-05 3차 사진 업로드 UI/API 연동 변경 적용, 후속 메타데이터 또는 REQ-38/39에서 수정 가능 |
-| `src/main/java`, `src/test/java`, `src/main/resources` | 진행중 | REQ-20260521-05 3차 사진 업로드 API/정적 제공 변경 적용 |
+| `mobile-flutter/lib`, `mobile-flutter/test` | 진행중 | REQ-20260521-05 4차 위치/날씨 UI/API 연동과 앱 내 작성 리마인더 변경 적용, 후속 REQ-38/39에서 수정 가능 |
+| `src/main/java`, `src/test/java`, `src/main/resources` | 진행중 | REQ-20260521-05 4차 위치/날씨 API/검색 변경 적용 |
 | `.codex` | 미추적 | 이번 작업과 무관하면 건드리지 않음 |
 | `node_modules/`, `package-lock.json`, `package.json` | 미추적 | 이번 작업과 무관하면 건드리지 않음 |
 
