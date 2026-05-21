@@ -3,11 +3,15 @@ package com.mongtory.diary.controller;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.URI;
 import java.util.UUID;
 
 import com.jayway.jsonpath.JsonPath;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -141,6 +146,62 @@ class DiaryControllerTest {
 			.andExpect(jsonPath("$.data", hasSize(1)))
 			.andExpect(jsonPath("$.data[0].id").value(memoryDiaryId))
 			.andExpect(jsonPath("$.data[0].title").value(uniqueText));
+	}
+
+	@Test
+	void diaryImageUploadStoresFileAndServesStaticUrl() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+		final byte[] imageBytes = new byte[] {(byte)0x89, 'P', 'N', 'G'};
+		final MockMultipartFile file = new MockMultipartFile(
+			"file",
+			"walk.png",
+			"image/png",
+			imageBytes
+		);
+
+		final MvcResult uploadResult = mockMvc.perform(
+				multipart("/api/v1/diary-images")
+					.file(file)
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data.url").value(startsWith("http://localhost/uploads/diary/")))
+			.andExpect(jsonPath("$.data.originalFilename").value("walk.png"))
+			.andExpect(jsonPath("$.data.contentType").value("image/png"))
+			.andExpect(jsonPath("$.data.size").value(4))
+			.andReturn();
+
+		final String uploadUrl = JsonPath.read(
+			uploadResult.getResponse().getContentAsString(),
+			"$.data.url"
+		);
+		final String uploadPath = URI.create(uploadUrl).getPath();
+
+		mockMvc.perform(get(uploadPath))
+			.andExpect(status().isOk())
+			.andExpect(content().bytes(imageBytes));
+	}
+
+	@Test
+	void diaryImageUploadRejectsNonImageFile() throws Exception {
+		final String accessToken = login("user@example.com", "password123!");
+		final MockMultipartFile file = new MockMultipartFile(
+			"file",
+			"note.txt",
+			"text/plain",
+			"not image".getBytes()
+		);
+
+		mockMvc.perform(
+				multipart("/api/v1/diary-images")
+					.file(file)
+					.header("Authorization", "Bearer " + accessToken)
+			)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("Only image files can be uploaded"))
+			.andExpect(jsonPath("$.data").value(nullValue()));
 	}
 
 	@Test

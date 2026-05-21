@@ -40,6 +40,28 @@ class ApiClient {
     return _parseResponse(response, parser);
   }
 
+  Future<ApiResponseDto<T>> uploadFile<T>(
+    String path, {
+    required T Function(Object? json) parser,
+    required String fieldName,
+    required String fileName,
+    required List<int> bytes,
+    Map<String, String>? headers,
+  }) async {
+    final request = http.MultipartRequest('POST', _buildUri(path));
+    final requestHeaders = _mergeHeaders(headers);
+    requestHeaders.remove('Content-Type');
+    request.headers.addAll(requestHeaders);
+    request.files.add(
+      http.MultipartFile.fromBytes(fieldName, bytes, filename: fileName),
+    );
+
+    final streamedResponse = await _httpClient.send(request);
+    final response = await http.Response.fromStream(streamedResponse);
+
+    return _parseResponse(response, parser);
+  }
+
   Future<ApiResponseDto<T>> put<T>(
     String path, {
     required T Function(Object? json) parser,

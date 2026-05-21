@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:mongtory_diary/application/providers/app_providers.dart';
 import 'package:mongtory_diary/domain/models/diary_detail.dart';
 import 'package:mongtory_diary/domain/models/diary_upsert.dart';
@@ -31,6 +32,7 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   late final List<String> _initialImageUrls;
   late final List<String> _imageUrls;
   bool _isSaving = false;
+  bool _isUploadingImages = false;
   String? _errorMessage;
 
   bool get _isEditing => widget.initial != null;
@@ -133,9 +135,11 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
-                    _ImageUrlEditor(
+                    _ImageAttachmentEditor(
                       controller: _pendingImageUrlController,
                       imageUrls: _imageUrls,
+                      isUploading: _isUploadingImages,
+                      onPickImages: _pickAndUploadImages,
                       onAdd: _addImageUrls,
                       onRemove: _removeImageUrl,
                     ),
@@ -145,7 +149,9 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
                     ],
                     const SizedBox(height: 24),
                     FilledButton.icon(
-                      onPressed: _isSaving ? null : _submit,
+                      onPressed: _isSaving || _isUploadingImages
+                          ? null
+                          : _submit,
                       icon: _isSaving
                           ? const SizedBox.square(
                               dimension: 18,
@@ -162,6 +168,64 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _pickAndUploadImages() async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.image,
+      allowMultiple: true,
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _isUploadingImages = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final repository = ref.read(diaryRepositoryProvider);
+      final uploadedUrls = <String>[];
+      for (final file in result.files) {
+        final bytes = file.bytes;
+        if (bytes == null) {
+          throw StateError('선택한 사진 데이터를 읽지 못했습니다.');
+        }
+
+        final url = await repository.uploadDiaryImage(
+          fileName: file.name,
+          bytes: bytes,
+        );
+        uploadedUrls.add(url);
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        for (final url in uploadedUrls) {
+          if (!_imageUrls.contains(url)) {
+            _imageUrls.add(url);
+          }
+        }
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = error.toString();
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploadingImages = false;
+        });
+      }
+    }
   }
 
   Future<void> _submit() async {
@@ -303,16 +367,20 @@ class _DiaryEditScreenState extends ConsumerState<DiaryEditScreen> {
   }
 }
 
-class _ImageUrlEditor extends StatelessWidget {
-  const _ImageUrlEditor({
+class _ImageAttachmentEditor extends StatelessWidget {
+  const _ImageAttachmentEditor({
     required this.controller,
     required this.imageUrls,
+    required this.isUploading,
+    required this.onPickImages,
     required this.onAdd,
     required this.onRemove,
   });
 
   final TextEditingController controller;
   final List<String> imageUrls;
+  final bool isUploading;
+  final VoidCallback onPickImages;
   final VoidCallback onAdd;
   final ValueChanged<String> onRemove;
 
@@ -321,6 +389,17 @@ class _ImageUrlEditor extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        OutlinedButton.icon(
+          onPressed: isUploading ? null : onPickImages,
+          icon: isUploading
+              ? const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.add_photo_alternate_outlined),
+          label: Text(isUploading ? '사진 업로드 중' : '사진 선택'),
+        ),
+        const SizedBox(height: 12),
         TextFormField(
           controller: controller,
           decoration: InputDecoration(
@@ -338,10 +417,7 @@ class _ImageUrlEditor extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         if (imageUrls.isEmpty)
-          Text(
-            '추가된 사진 URL이 없습니다.',
-            style: Theme.of(context).textTheme.bodySmall,
-          )
+          Text('첨부된 사진이 없습니다.', style: Theme.of(context).textTheme.bodySmall)
         else
           Wrap(
             spacing: 8,

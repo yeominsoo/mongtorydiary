@@ -208,6 +208,26 @@ query parameters:
 - `ApiResponse<List<DiarySummary>>`
 - 현재 연도보다 이전 연도의 같은 월/일 일기만 반환한다.
 
+### 일기 이미지 업로드
+- `POST /api/v1/diary-images`
+- `Content-Type: multipart/form-data`
+- `Authorization: Bearer <accessToken>`
+
+요청:
+- form field `file`: 이미지 파일. 현재 허용 확장자는 `jpg`, `jpeg`, `png`, `webp`, `gif`이며 최대 5MB다.
+
+응답:
+```json
+{
+  "url": "http://localhost:30080/uploads/diary/1/uuid.png",
+  "originalFilename": "walk.png",
+  "contentType": "image/png",
+  "size": 102400
+}
+```
+
+업로드 응답의 `url`을 일기 생성/수정 요청의 `imageUrls`에 포함해 사진 첨부로 사용한다. 로컬 개발 저장 경로는 `mongtory.upload.root-dir` 설정을 따른다.
+
 ### 일기 상세 조회
 - `GET /api/v1/diaries/{diaryId}`
 

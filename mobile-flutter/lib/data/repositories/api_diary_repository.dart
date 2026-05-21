@@ -35,6 +35,18 @@ class ApiDiaryRepository implements DiaryRepository {
   }
 
   @override
+  Future<String> uploadDiaryImage({
+    required String fileName,
+    required List<int> bytes,
+  }) async {
+    final dto = await _dataSource.uploadDiaryImage(
+      fileName: fileName,
+      bytes: bytes,
+    );
+    return dto.url;
+  }
+
+  @override
   Future<DiaryDetail> createDiary(DiaryUpsert input) async {
     final dto = await _dataSource.createDiary(
       DiaryMapper.toUpsertRequest(input),

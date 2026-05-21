@@ -8,6 +8,10 @@ abstract class DiaryRepository {
     required int month,
     required int day,
   });
+  Future<String> uploadDiaryImage({
+    required String fileName,
+    required List<int> bytes,
+  });
   Future<DiaryDetail> getDiaryDetail(int diaryId);
   Future<DiaryDetail> createDiary(DiaryUpsert input);
   Future<DiaryDetail> updateDiary(int diaryId, DiaryUpsert input);

@@ -54,14 +54,14 @@
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | 2026-05-21 | Flutter SDK, `mobile-flutter`, 실행 환경 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 2026-05-21 | systemd 임시 서비스, 30080/30081 |
 | REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 2026-05-21 | `src/main/java`, `src/test/java`, `mobile-flutter/lib`, `mobile-flutter/test`, 사용가이드 |
-| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 2차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 2026-05-21 | `mobile-flutter/web`, `mobile-flutter/lib`, `src/main/java`, `src/main/resources`, `pom.xml`, 문서 |
+| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 3차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 2026-05-21 | `mobile-flutter/web`, `mobile-flutter/lib`, `src/main/java`, `src/main/resources`, `pom.xml`, 문서 |
 
 ## 요청 상세
 ### REQ-20260521-05
 - 우선순위: P1
 - 요청자: 사용자
 - 대상: 단일 세션
-- 상태: 진행중, 2차 완료
+- 상태: 진행중, 3차 완료
 - 요청 내용:
   - Flutter web 초기 로딩 구간에 로딩/인스톨 중임을 알 수 있는 진행 UI를 제공한다.
   - 데이터 저장 방식을 PostgreSQL 중심으로 전환한다.
@@ -92,8 +92,13 @@
   - Flutter 홈에 검색 필드와 태그 필터 칩을 추가하고, 상세/작성 화면에 태그 표시와 입력을 연결했다.
   - Flutter repository/datasource/mock/QA 하네스와 API 문서를 태그/검색/지난 오늘 계약으로 갱신했다.
   - Maven test 26건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 smoke가 통과했다.
+- 3차 결과:
+  - `POST /api/v1/diary-images` multipart 업로드 API를 추가하고 `/uploads/**` 정적 제공을 연결했다.
+  - 업로드 저장 위치와 최대 크기 설정을 `mongtory.upload.*`와 Spring multipart 설정으로 분리했다.
+  - Flutter 작성/수정 화면에 `사진 선택` 버튼을 추가해 파일 선택 후 업로드 URL을 `imageUrls`에 반영한다.
+  - 기존 사진 URL 직접 입력은 외부 URL fallback으로 유지했다.
+  - Maven test 28건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 업로드 smoke가 통과했다.
 - 남은 후속 완료 기준:
-  - 사진 URL 입력을 실제 업로드/첨부로 전환.
   - 위치/날씨 메타데이터와 작성 리마인더.
 
 ### REQ-20260521-04

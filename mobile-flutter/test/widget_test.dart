@@ -123,10 +123,14 @@ void main() {
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
+    expect(find.text('사진 선택'), findsOneWidget);
+
     await tester.enterText(
       find.widgetWithText(TextFormField, '사진 URL 추가'),
       'https://example.com/photo.jpg',
     );
+    await tester.ensureVisible(find.byTooltip('사진 URL 추가'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('사진 URL 추가'));
     await tester.pump();
 

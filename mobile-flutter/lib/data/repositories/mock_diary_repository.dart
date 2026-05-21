@@ -35,6 +35,14 @@ class MockDiaryRepository implements DiaryRepository {
   }
 
   @override
+  Future<String> uploadDiaryImage({
+    required String fileName,
+    required List<int> bytes,
+  }) {
+    return _dataSource.uploadDiaryImage(fileName: fileName, bytes: bytes);
+  }
+
+  @override
   Future<DiaryDetail> createDiary(DiaryUpsert input) async {
     final dto = await _dataSource.createDiary(
       DiaryMapper.toUpsertRequest(input),

@@ -1,6 +1,7 @@
 import 'package:mongtory_diary/core/network/api_client.dart';
 import 'package:mongtory_diary/core/network/api_exception.dart';
 import 'package:mongtory_diary/data/dto/diary_detail_response_dto.dart';
+import 'package:mongtory_diary/data/dto/diary_image_upload_response_dto.dart';
 import 'package:mongtory_diary/data/dto/diary_summary_response_dto.dart';
 import 'package:mongtory_diary/data/dto/diary_upsert_request_dto.dart';
 
@@ -53,6 +54,23 @@ class RemoteDiaryDataSource {
       '/api/v1/diaries/$diaryId',
       parser: (json) =>
           DiaryDetailResponseDto.fromJson(json as Map<String, dynamic>),
+      headers: _authorizationHeaders,
+    );
+
+    return response.data;
+  }
+
+  Future<DiaryImageUploadResponseDto> uploadDiaryImage({
+    required String fileName,
+    required List<int> bytes,
+  }) async {
+    final response = await _apiClient.uploadFile<DiaryImageUploadResponseDto>(
+      '/api/v1/diary-images',
+      parser: (json) =>
+          DiaryImageUploadResponseDto.fromJson(json as Map<String, dynamic>),
+      fieldName: 'file',
+      fileName: fileName,
+      bytes: bytes,
       headers: _authorizationHeaders,
     );
 

@@ -26,7 +26,7 @@
 | REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | Flutter SDK 설치, `mobile-flutter`의 pub get/analyze/test 결과 기록 |
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 30080/30081 서비스 실행, IP 기준 응답 확인, 접속 주소 안내 |
 | REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 캘린더 TODO API/UI, 몽토리 메뉴 구체화, 검증, handoff, 사용가이드/커밋/푸시/서버 재시작 |
-| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 2차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 로딩 UI, PostgreSQL 기본 설정/검증, 유명 다이어리 앱 참고 기능 반영, 검색/태그/지난 오늘 API/UI 검증 |
+| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 3차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 로딩 UI, PostgreSQL 기본 설정/검증, 유명 다이어리 앱 참고 기능 반영, 검색/태그/지난 오늘 API/UI 검증, 사진 업로드/첨부 검증 |
 
 ## 권장 처리 순서
 1. `REQ-20260428-37`로 today-summary API를 실제 서버에서 먼저 검증한다. 완료.
@@ -54,8 +54,9 @@
   - 2차로 백엔드 일기 태그 저장, 목록 `query`/`tag` 필터, `GET /api/v1/diaries/memories`를 구현했다.
   - Flutter 홈 검색 필드와 태그 필터 칩, 상세 태그 표시, 작성/수정 태그 입력을 연결했다.
   - Maven 테스트 26건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 smoke가 통과했다.
+  - 3차로 `POST /api/v1/diary-images` multipart 업로드 API, `/uploads/**` 정적 제공, Flutter 파일 선택 업로드 버튼을 구현했다.
+  - Maven 테스트 28건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 업로드 smoke가 통과했다.
 - 남은 마무리:
-  - 사진 URL 입력을 실제 업로드/첨부로 전환.
   - 위치/날씨 메타데이터와 작성 리마인더.
   - 문서/handoff/응답 갱신과 커밋/push.
 

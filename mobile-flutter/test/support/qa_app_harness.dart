@@ -182,6 +182,14 @@ class QaDiaryRepository implements DiaryRepository {
   }
 
   @override
+  Future<String> uploadDiaryImage({
+    required String fileName,
+    required List<int> bytes,
+  }) async {
+    return 'https://example.com/qa-uploads/$fileName';
+  }
+
+  @override
   Future<DiaryDetail> createDiary(DiaryUpsert input) async {
     final now = DateTime(2026, 3, 21, 12);
     final detail = DiaryDetail(

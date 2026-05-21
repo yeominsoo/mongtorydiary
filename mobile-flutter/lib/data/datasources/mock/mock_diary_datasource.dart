@@ -104,6 +104,14 @@ class MockDiaryDataSource {
     return _findDiary(diaryId);
   }
 
+  Future<String> uploadDiaryImage({
+    required String fileName,
+    required List<int> bytes,
+  }) async {
+    final safeFileName = Uri.encodeComponent(fileName);
+    return 'https://example.com/mock-uploads/$safeFileName';
+  }
+
   Future<DiaryDetailResponseDto> createDiary(
     DiaryUpsertRequestDto request,
   ) async {
