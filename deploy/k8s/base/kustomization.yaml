@@ -1,0 +1,8 @@
+resources:
+  - postgres-service.yaml
+  - postgres-statefulset.yaml
+  - uploads-pvc.yaml
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
