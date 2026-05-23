@@ -13,6 +13,8 @@ public interface DiaryEntryRepository extends JpaRepository<DiaryEntry, Long> {
 
 	List<DiaryEntry> findAllByOwner(UserAccount owner);
 
+	List<DiaryEntry> findAllByOwnerAndEntryDate(UserAccount owner, LocalDate entryDate);
+
 	List<DiaryEntry> findAllByOwnerAndEntryDateBetween(UserAccount owner, LocalDate from, LocalDate to);
 
 	Optional<DiaryEntry> findByIdAndOwner(Long id, UserAccount owner);

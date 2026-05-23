@@ -1,0 +1,142 @@
+# 단일 세션 작업 목록
+
+## 목적
+역할별 분배를 철회한 뒤 남은 업무를 하나의 세션에서 순서대로 처리하기 위한 중앙 작업 목록이다. 기존 요청 ID는 추적을 위해 유지하되, 현재 담당은 모두 `단일 세션`이다.
+
+## 이관 기준
+- 이관일: 2026-05-21
+- 기존 운영: PM, QA, FE 개발자, BE 개발자 4역할 비동기 협업
+- 현재 운영: 단일 세션 순차 처리
+- 과거 역할별 문서: 이력 확인용
+
+## 남은 작업 목록
+| 순서 | 기존 요청 ID | 우선순위 | 이전 담당 | 현재 담당 | 상태 | 작업 | 완료 기준 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | REQ-20260428-37 | P1 | QA | 단일 세션 | 완료 | 오늘/위젯 요약 API 실제 서버 회귀 검증 | 백엔드 서버 기동, 로그인, `GET /api/v1/widgets/today-summary?date=YYYY-MM-DD` 성공/오류 케이스 검증 기록 |
+| 2 | REQ-20260428-38 | P1 | FE | 단일 세션 | 대기 | Flutter 딥링크 라우터 1차 구현 | 홈, 날짜 기본값 작성, 일기 상세, 캘린더 날짜 진입 route 처리와 Flutter 테스트 |
+| 3 | REQ-20260428-39 | P1 | FE | 단일 세션 | 대기 | 위젯 요약 데이터 앱 연동 경계 구현 | today-summary DTO/model/repository, remote 호출, 갱신 트리거, 저장 adapter 경계와 테스트 |
+| 4 | REQ-20260428-40 | P2 | PM | 단일 세션 | 대기 | 네이티브 위젯 shell 범위 결정 | Android/iOS 위젯 shell 구현 방식과 변경 파일 범위 결정 문서화 |
+| 5 | REQ-20260428-35 | P1 | QA | 단일 세션 | 대기 | MVP 릴리스 회귀 체크리스트와 신규 개선 검증 계획 | 인증, 일기 CRUD, 캘린더, today-summary, 딥링크, 위젯 요약 경계, 빌드/검증 명령 체크리스트 작성 |
+| 6 | SINGLE-20260521-OPS | P2 | PM | 단일 세션 | 대기 | 문서/커밋 정합성 정리 | 완료된 요청과 진행 중 작업을 분리하고, 관련 없는 미추적 파일을 제외한 커밋 후보 범위 정리 |
+
+## 즉시 처리 완료 작업
+| 요청 ID | 우선순위 | 요청자 | 현재 담당 | 상태 | 작업 | 완료 기준 |
+| --- | --- | --- | --- | --- | --- | --- |
+| REQ-20260521-01 | P1 | 사용자 | 단일 세션 | 완료 | 백엔드 30080, Flutter web 30081 포트 기준 반영 | 백엔드 기본 포트, Flutter remote API 주소, Flutter web 실행 문서 갱신 |
+| REQ-20260521-02 | P0 | 사용자 | 단일 세션 | 완료 | Rocky 10.1 미니 PC Flutter SDK 설치와 검증 복구 | Flutter SDK 설치, `mobile-flutter`의 pub get/analyze/test 결과 기록 |
+| REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 30080/30081 서비스 실행, IP 기준 응답 확인, 접속 주소 안내 |
+| REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 캘린더 TODO API/UI, 몽토리 메뉴 구체화, 검증, handoff, 사용가이드/커밋/푸시/서버 재시작 |
+| REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 4차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 로딩 UI, PostgreSQL 기본 설정/검증, 유명 다이어리 앱 참고 기능 반영, 검색/태그/지난 오늘 API/UI 검증, 사진 업로드/첨부 검증, 위치/날씨/앱 내 리마인더 검증 |
+
+## 권장 처리 순서
+1. `REQ-20260428-37`로 today-summary API를 실제 서버에서 먼저 검증한다. 완료.
+2. `REQ-20260428-38`로 Flutter 내부 딥링크 route를 고정한다.
+3. `REQ-20260428-39`로 앱 내부 today-summary 연동 경계와 갱신 책임을 구현한다.
+4. `REQ-20260428-40`으로 네이티브 위젯 shell을 지금 구현할지, 별도 후속으로 미룰지 결정한다.
+5. `REQ-20260428-35`로 릴리스 전 회귀 체크리스트를 최신 구현 기준으로 정리한다.
+6. `SINGLE-20260521-OPS`로 문서와 Git 상태를 정리한다.
+
+## 작업별 참고 메모
+### REQ-20260521-05
+- 목표:
+  - Flutter web 초기화 단계에서 진행 상태를 보여준다.
+  - 백엔드 기본 DB를 PostgreSQL로 전환하고 테스트는 H2로 분리한다.
+  - Day One, Penzu, Daylio, Apple Journal, Journey의 공통 기능을 참고해 Mongtory의 우선 기능을 정리한다.
+  - 이번 1차 구현은 일기 홈의 작성 프롬프트, 기록 흐름, 지난 오늘 카드까지 포함한다.
+- 진행:
+  - 작업 시작 룰 확인 기록 완료.
+  - PostgreSQL 16.13 서비스 active 확인.
+  - `mongtorydiary` DB와 `mongtory` 사용자를 생성하고, 프로젝트 DB 사용자에 한정해 localhost `scram-sha-256` 인증을 허용했다.
+  - Maven 테스트는 H2 인메모리 DB로 24건 통과.
+  - Flutter analyze 통과, Flutter test 12건 통과.
+  - Flutter web release build 통과.
+  - 30080 백엔드는 PostgreSQL 기준, 30081은 release build 정적 서버 기준으로 재시작하고 smoke 검증했다.
+  - 2차로 백엔드 일기 태그 저장, 목록 `query`/`tag` 필터, `GET /api/v1/diaries/memories`를 구현했다.
+  - Flutter 홈 검색 필드와 태그 필터 칩, 상세 태그 표시, 작성/수정 태그 입력을 연결했다.
+  - Maven 테스트 26건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 smoke가 통과했다.
+  - 3차로 `POST /api/v1/diary-images` multipart 업로드 API, `/uploads/**` 정적 제공, Flutter 파일 선택 업로드 버튼을 구현했다.
+  - Maven 테스트 28건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 업로드 smoke가 통과했다.
+  - 4차로 일기 위치/날씨 메타데이터를 백엔드 API와 Flutter 작성/상세/목록 화면에 연결했다.
+  - Flutter 몽토리 프로필에 앱 내 작성 리마인더 설정 카드와 시간 선택 UI를 추가했다.
+  - Maven 테스트 29건, Flutter analyze, Flutter test 13건, Flutter release build, 실제 30080/30081 위치/날씨 smoke와 CORS preflight가 통과했다.
+- 남은 마무리:
+  - OS 알림 기반 작성 리마인더는 네이티브 권한/스케줄링이 필요하므로 별도 후속 범위로 둔다.
+  - 문서/handoff/응답 갱신과 커밋/push.
+
+### REQ-20260521-04
+- 1페이즈 구현 완료:
+  - 백엔드 TODO API와 월간 캘린더 TODO 요약 확장.
+  - Flutter 캘린더 큰 월간 UI, 날짜별 TODO 추가/완료/삭제.
+  - 몽토리 메뉴 대시보드 구체화.
+  - 제품 범위 문서와 사용가이드 문서 작성.
+- 검증:
+  - `flutter analyze`: 통과.
+  - `flutter test`: 통과, 12건.
+  - `JAVA_HOME=/usr/lib/jvm/java-21-openjdk bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test`: 통과, 24건.
+- 남은 마무리:
+  - 없음. 관련 파일 선별 커밋, 원격 push, 백엔드 30080과 Flutter web 30081 서비스 재시작, 실제 서버 smoke를 완료했다.
+
+### REQ-20260428-37
+- 선행 조건: `REQ-20260428-34` 완료
+- 검증 후보:
+  - 유효한 access token으로 오늘 요약 조회
+  - 지정일 일기 없음
+  - 지정일 1건
+  - 지정일 다건 대표 일기 선택
+  - streakDays와 lastEntryDate
+  - invalid token 401
+  - 잘못된 date query 400 계열 오류
+
+### REQ-20260428-38
+- 선행 조건: `REQ-20260428-34` 완료
+- 범위:
+  - `mongtory://home`
+  - `mongtory://diaries/new?date=YYYY-MM-DD`
+  - `mongtory://diaries/{diaryId}`
+  - `mongtory://calendar?year=YYYY&month=MM&date=YYYY-MM-DD`
+- 네이티브 Android/iOS link 설정은 이 작업에 포함하지 않는다.
+
+### REQ-20260428-39
+- 선행 조건: `REQ-20260428-34` 완료, `REQ-20260428-38` 착수 또는 완료
+- 범위:
+  - BE `WidgetTodaySummaryResponse`에 대응하는 Flutter DTO/model
+  - remote datasource와 repository 계약
+  - 홈 진입, 일기 CRUD 성공, 캘린더 새로고침 이후 갱신 책임
+  - Android/iOS 공유 저장소 쓰기는 adapter 경계까지만 둔다.
+
+### REQ-20260428-40
+- 선행 조건: `REQ-20260428-37`, `REQ-20260428-38`, `REQ-20260428-39` 결과 확인
+- 결정 대상:
+  - Android App Widget 직접 구현 또는 Glance 사용 여부
+  - iOS WidgetKit/App Group 적용 시점
+  - Flutter 플러그인 또는 platform channel 필요 여부
+  - MVP에 포함할 최소 위젯 화면과 보류 범위
+
+### REQ-20260428-35
+- 선행 조건: 가능한 한 `REQ-20260428-37~40` 결과 확인
+- 체크리스트 범위:
+  - 백엔드 테스트
+  - Flutter analyze/test
+  - 실제 서버 API smoke
+  - Flutter mock/remote smoke
+  - 신규 딥링크 route
+  - today-summary 앱 연동 경계
+  - 릴리스 전 남은 위험
+
+## 공통 검증 명령
+백엔드:
+
+```bash
+bash ./mvnw -Dmaven.repo.local=/home/msyeo/workspace/mongtorydiary/.m2 test
+```
+
+Flutter:
+
+```bash
+cd mobile-flutter
+HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter analyze
+HOME=/tmp/mongtory-flutter-home /tmp/flutter/bin/flutter test
+```
+
+## Git 주의
+2026-05-21 현재 기존 미추적 항목으로 `.codex`, `node_modules/`, `package-lock.json`, `package.json`가 보인다. 단일 세션 작업과 직접 관련이 없으면 수정하거나 커밋하지 않는다.

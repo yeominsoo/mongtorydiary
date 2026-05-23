@@ -16,7 +16,10 @@ public class DiaryDetailResponse {
 	private final String title;
 	private final String content;
 	private final String emotionCode;
+	private final String locationName;
+	private final String weatherSummary;
 	private final List<String> imageUrls;
+	private final List<String> tags;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 }

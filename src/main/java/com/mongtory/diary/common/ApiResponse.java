@@ -18,4 +18,12 @@ public class ApiResponse<T> {
 			.data(data)
 			.build();
 	}
+
+	public static <T> ApiResponse<T> error(String message) {
+		return ApiResponse.<T>builder()
+			.success(false)
+			.message(message)
+			.data(null)
+			.build();
+	}
 }

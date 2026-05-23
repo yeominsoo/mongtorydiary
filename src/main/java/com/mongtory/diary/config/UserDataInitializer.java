@@ -1,6 +1,7 @@
 package com.mongtory.diary.config;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.mongtory.diary.domain.user.UserAccount;
@@ -10,6 +11,7 @@ import com.mongtory.diary.service.PasswordHashService;
 import lombok.RequiredArgsConstructor;
 
 @Component
+@Order(1)
 @RequiredArgsConstructor
 public class UserDataInitializer implements CommandLineRunner {
 

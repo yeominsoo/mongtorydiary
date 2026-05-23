@@ -15,15 +15,13 @@ class AppConfig {
 
   static const String defaultApiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8080',
+    defaultValue: 'http://10.0.2.2:30080',
   );
 
   static const DataSourceMode defaultDataSourceMode = DataSourceMode.mock;
 
-  static final DataSourceMode configuredDataSourceMode = DataSourceMode.fromValue(
-    const String.fromEnvironment(
-      'DATA_SOURCE_MODE',
-      defaultValue: 'mock',
-    ),
-  );
+  static final DataSourceMode configuredDataSourceMode =
+      DataSourceMode.fromValue(
+        const String.fromEnvironment('DATA_SOURCE_MODE', defaultValue: 'mock'),
+      );
 }

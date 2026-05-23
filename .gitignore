@@ -37,3 +37,4 @@ build/
 .tmp_flutter_home/
 .tooling/
 mongtory.db
+data/uploads/

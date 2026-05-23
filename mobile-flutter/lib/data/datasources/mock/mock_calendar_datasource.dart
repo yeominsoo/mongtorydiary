@@ -16,12 +16,16 @@ class MockCalendarDataSource {
           hasEntry: true,
           emotionCode: 'CALM',
           entryCount: 1,
+          todoCount: 2,
+          completedTodoCount: 1,
         ),
         CalendarDayResponseDto(
           date: '2026-03-18',
           hasEntry: true,
           emotionCode: 'HAPPY',
           entryCount: 1,
+          todoCount: 0,
+          completedTodoCount: 0,
         ),
       ],
     );

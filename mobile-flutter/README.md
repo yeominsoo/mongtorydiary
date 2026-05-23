@@ -61,8 +61,29 @@
 ```bash
 /home/msyeo/mongtorydiary/.tooling/flutter-sdk/bin/flutter run \
   --dart-define=DATA_SOURCE_MODE=remote \
-  --dart-define=API_BASE_URL=http://10.0.2.2:8080
+  --dart-define=API_BASE_URL=http://10.0.2.2:30080
 ```
 
-- Android Emulator 기준 기본 API 주소는 `http://10.0.2.2:8080`
-- iOS Simulator 또는 macOS 환경에서는 필요 시 `http://localhost:8080`로 바꿔서 실행
+- Android Emulator 기준 기본 API 주소는 `http://10.0.2.2:30080`
+- iOS Simulator 또는 macOS 환경에서는 필요 시 `http://localhost:30080`로 바꿔서 실행
+
+## 웹 초기 로딩
+`web/index.html`과 `web/flutter_bootstrap.js`는 Flutter web 초기화 중 사용자에게 진행 상태를 보여준다. 상태는 앱 파일 다운로드, 화면 엔진 초기화, 데이터 연결 확인 단계로 나뉜다.
+
+개발 서버:
+
+```bash
+flutter run -d web-server \
+  --web-hostname 0.0.0.0 \
+  --web-port 30081 \
+  --dart-define=DATA_SOURCE_MODE=remote \
+  --dart-define=API_BASE_URL=http://192.168.75.194:30080
+```
+
+시연용 release build:
+
+```bash
+flutter build web --release \
+  --dart-define=DATA_SOURCE_MODE=remote \
+  --dart-define=API_BASE_URL=http://192.168.75.194:30080
+```
