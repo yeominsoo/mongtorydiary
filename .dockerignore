@@ -1,7 +1,8 @@
 node_modules
 frontend/node_modules
 frontend/dist
-mobile-flutter
+mobile-flutter/build
+mobile-flutter/.dart_tool
 target
 .git
 .env
