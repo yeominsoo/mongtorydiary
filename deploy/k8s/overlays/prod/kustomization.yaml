@@ -1,0 +1,13 @@
+namespace: mongtorydiary
+
+resources:
+  - namespace.yaml
+  - ../../base
+
+images:
+  - name: ghcr.io/yeominsoo/mongtorydiary-backend
+    newName: ghcr.io/yeominsoo/mongtorydiary-backend
+    newTag: master
+  - name: ghcr.io/yeominsoo/mongtorydiary-frontend
+    newName: ghcr.io/yeominsoo/mongtorydiary-frontend
+    newTag: master

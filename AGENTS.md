@@ -62,6 +62,15 @@ Flutter 앱은 `presentation`, `application`, `domain`, `data`, `core` 계층을
 
 작업을 마치고 handoff를 미기록 상태로 종료하지 않는다.
 
+## 컨텍스트 컴팩트 복구 규칙
+컨텍스트 컴팩트 또는 세션 재개 후에는 구현, 커밋, 푸시, 배포를 이어가기 전에 반드시 아래 문서를 먼저 확인한다.
+
+- `/root/.codex/memories/context-compaction-handoff.md`
+- `/home/msyeo/workspace/home-lab-gitops/docs/handoff/2026-05-24-gitops-automation.md`
+- 현재 저장소의 `git status --short`
+
+이 확인 없이 추가 작업을 진행하지 않는다.
+
 ## 권한 위임 규칙
 사용자는 관리자 권한이 필요한 작업을 수행할 수 있도록 포괄적인 실행 승인을 부여했다. 앞으로 시스템 설정, 패키지 설치, SDK 설치, 빌드 도구 설정 등 작업 목적에 필요한 경우 관리자 권한 사용을 허용된 것으로 간주하고 진행한다.
 

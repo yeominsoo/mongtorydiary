@@ -1,0 +1,9 @@
+node_modules
+frontend/node_modules
+frontend/dist
+mobile-flutter
+target
+.git
+.env
+.DS_Store
+*.log
