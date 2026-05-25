@@ -7,9 +7,9 @@ resources:
 images:
 - name: ghcr.io/yeominsoo/mongtorydiary-backend
   newName: ghcr.io/yeominsoo/mongtorydiary-backend
-  newTag: b93536305a09a79a1a3a34e38bf6593107ca292d
+  newTag: 509c6b3e0d9d7e644dae505bc9c24ff6093542c2
 - name: ghcr.io/yeominsoo/mongtorydiary-frontend
   newName: ghcr.io/yeominsoo/mongtorydiary-frontend
-  newTag: b93536305a09a79a1a3a34e38bf6593107ca292d
+  newTag: 509c6b3e0d9d7e644dae505bc9c24ff6093542c2
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
