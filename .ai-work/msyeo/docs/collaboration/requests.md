@@ -55,8 +55,22 @@
 | REQ-20260521-03 | P0 | 사용자 | 단일 세션 | 완료 | 웹 브라우저 확인용 백엔드/Flutter web 실행 | 2026-05-21 | systemd 임시 서비스, 30080/30081 |
 | REQ-20260521-04 | P1 | 사용자 | 단일 세션 | 완료 | 출품 수준 캘린더 TODO와 몽토리 메뉴 완성도 개선 | 2026-05-21 | `src/main/java`, `src/test/java`, `mobile-flutter/lib`, `mobile-flutter/test`, 사용가이드 |
 | REQ-20260521-05 | P1 | 사용자 | 단일 세션 | 진행중, 4차 완료 | 초기 로딩 진행 UI, PostgreSQL 전환, 다이어리 앱 완성도 개선 | 2026-05-21 | `mobile-flutter/web`, `mobile-flutter/lib`, `src/main/java`, `src/main/resources`, `pom.xml`, 문서 |
+| REQ-20260526-01 | P1 | 사용자 | 단일 세션 | 완료 | 배포된 웹 화면과 소스 최신 상태 확인 | 2026-05-26 | Git 상태, k3s 배포, `frontend/`, `mobile-flutter/`, GitOps 문서 |
 
 ## 요청 상세
+### REQ-20260526-01
+- 우선순위: P1
+- 요청자: 사용자
+- 대상: 단일 세션
+- 상태: 완료
+- 요청 내용:
+  - 현재 로컬 소스와 원격 브랜치 최신 상태를 확인한다.
+  - 배포된 서버 웹 접속 시 실제 앱 화면이 보이지 않고 README 같은 안내 화면처럼 보이는 이유를 확인한다.
+- 완료 기준:
+  - `git fetch` 후 현재 브랜치와 배포 브랜치 관계 확인
+  - k3s `mongtorydiary` pod/service와 30080/30081 응답 확인
+  - 현재 배포된 웹 화면이 Flutter 앱인지 React 프로토타입인지 판단
+
 ### REQ-20260521-05
 - 우선순위: P1
 - 요청자: 사용자

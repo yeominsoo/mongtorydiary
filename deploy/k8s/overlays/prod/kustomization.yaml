@@ -1,6 +1,7 @@
 namespace: mongtorydiary
 
 resources:
+<<<<<<< HEAD
   - namespace.yaml
   - ../../base
 
@@ -11,3 +12,17 @@ images:
   - name: ghcr.io/yeominsoo/mongtorydiary-frontend
     newName: ghcr.io/yeominsoo/mongtorydiary-frontend
     newTag: master
+=======
+- namespace.yaml
+- ../../base
+
+images:
+- name: ghcr.io/yeominsoo/mongtorydiary-backend
+  newName: ghcr.io/yeominsoo/mongtorydiary-backend
+  newTag: c6a90bbb6e189e24c2fdc58b8ea7a399950a7f37
+- name: ghcr.io/yeominsoo/mongtorydiary-frontend
+  newName: ghcr.io/yeominsoo/mongtorydiary-frontend
+  newTag: c6a90bbb6e189e24c2fdc58b8ea7a399950a7f37
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+>>>>>>> master
