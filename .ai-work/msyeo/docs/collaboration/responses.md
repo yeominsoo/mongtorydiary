@@ -47,8 +47,36 @@
 | RES-REQ-20260521-03 | REQ-20260521-03 | 단일 세션 | 완료 | 백엔드 30080과 Flutter web 30081 실행, CORS 허용 및 브라우저 접속 준비 | 2026-05-21 |
 | RES-REQ-20260521-04 | REQ-20260521-04 | 단일 세션 | 완료 | 캘린더 TODO와 몽토리 메뉴 대시보드 구현, 검증, Git push, 서버 재시작 완료 | 2026-05-21 |
 | RES-REQ-20260521-05 | REQ-20260521-05 | 단일 세션 | 4차 완료, 후속 진행중 | 초기 로딩/PostgreSQL/홈 회고 카드, 검색/태그/지난 오늘, 사진 업로드/첨부, 위치/날씨/앱 내 리마인더 구현 | 2026-05-21 |
+| RES-REQ-20260526-01 | REQ-20260526-01 | 단일 세션 | 완료 | 배포된 웹은 현재 Flutter 앱이 아니라 초기 React 프로토타입이며, k3s FE/BE는 정상 응답 | 2026-05-26 |
 
 ## 응답 상세
+### RES-REQ-20260526-01
+- 요청 ID: REQ-20260526-01
+- 담당: 단일 세션
+- 상태: 완료
+- 요약:
+  - `git fetch --all --prune` 후 현재 로컬 `feature/ai-workspace-docs`는 `origin/feature/ai-workspace-docs`와 일치한다.
+  - 실제 GitOps/k3s 배포는 `origin/master`를 감시하며, 현재 배포 이미지는 `ghcr.io/yeominsoo/mongtorydiary-{backend,frontend}:c6a90bbb6e189e24c2fdc58b8ea7a399950a7f37`이다.
+  - `feature/ai-workspace-docs`와 `origin/master`는 같지 않다. `origin/master`에는 `909fa73`, `c6a90bb`, `86ee0ea`가 있고, 현재 feature 쪽에는 `cb4a0a3`가 있다.
+  - k3s `mongtorydiary` namespace의 `frontend`, `backend`, `db` pod는 모두 `Running`이다.
+  - `GET http://127.0.0.1:30080/`는 nginx HTML 200을 반환하고, 번들 내용은 `frontend/src/App.tsx`의 초기 React 화면인 `Mongtory Diary`, `React + TypeScript + Redux + Spring Boot 3`이다.
+  - `GET http://127.0.0.1:30081/api/v1/emotions`는 Spring Boot API 200을 반환한다.
+- 변경 파일:
+  - `.ai-work/msyeo/docs/collaboration/requests.md`
+  - `.ai-work/msyeo/docs/collaboration/status.md`
+  - `.ai-work/msyeo/docs/collaboration/responses.md`
+  - `.ai-work/msyeo/docs/project-status.md`
+  - `.ai-work/msyeo/docs/handoff/2026-05-26.md`
+- 검증:
+  - `git status --short --branch`: `feature/ai-workspace-docs...origin/feature/ai-workspace-docs`, 작업 시작 전 깨끗한 상태 확인.
+  - `git fetch --all --prune`: 통과.
+  - `kubectl get pods,svc -n mongtorydiary -o wide`: FE/BE/DB pod Running, FE NodePort 30080, BE NodePort 30081 확인.
+  - `curl http://127.0.0.1:30080/`: HTML 200 확인.
+  - `curl http://127.0.0.1:30081/api/v1/emotions`: JSON 200 확인.
+- 남은 이슈:
+  - 현재 운영 웹은 Flutter 앱 화면이 아니라 `frontend/` React 프로토타입을 배포한다.
+  - Flutter 앱의 실제 화면을 웹으로 배포하려면 `Dockerfile.frontend`를 `mobile-flutter` release build 산출물을 nginx로 서빙하도록 바꾸거나, 별도 Flutter web 배포 서비스를 만들어야 한다.
+
 ### RES-REQ-20260521-05
 - 요청 ID: REQ-20260521-05
 - 담당: 단일 세션

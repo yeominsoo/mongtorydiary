@@ -31,6 +31,7 @@
 - 2026-05-21 19:56: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05 사진 업로드 후속
 - 2026-05-21 20:09: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260521-05 위치/날씨/리마인더 후속
 - 2026-05-22 07:42: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: HANDOFF-20260522-01
+- 2026-05-26 01:44: 작업 시작 전 AGENTS/master-flow/project-status/single-session-worklist/handoff 및 GitOps handoff 확인, 변경 룰 반영 여부: 예, 작업 ID: REQ-20260526-01
 
 ## 이관된 대기 작업
 | 순서 | 기존 요청 ID | 우선순위 | 이전 담당 | 현재 담당 | 상태 | 다음 액션 |
@@ -54,6 +55,7 @@
 | REQ-20260521-03 | 완료 | systemd 임시 서비스로 백엔드 30080, Flutter web 30081 실행, CORS 허용 및 IP 기준 응답 확인 |
 | REQ-20260521-04 | 완료 | 캘린더 TODO API/UI와 몽토리 메뉴 대시보드 구현, Flutter/Maven 검증, Git push, 30080/30081 재시작과 실제 서버 smoke 통과 |
 | REQ-20260521-05 | 진행중, 4차 완료 | 초기 로딩 진행 UI, PostgreSQL 기본 설정, 일기 홈 회고 카드 1차 구현 완료. 2차로 검색/태그 API, Flutter 필터 UI, 지난 오늘 전용 API 구현과 실제 서버 smoke 완료. 3차로 사진 업로드 API와 Flutter 파일 선택 첨부 구현 및 실제 서버 smoke 완료. 4차로 위치/날씨 메타데이터와 앱 내 작성 리마인더 구현 및 실제 서버 smoke 완료 |
+| REQ-20260526-01 | 완료 | GitOps/k3s 배포 상태와 웹 접속 화면 확인. 현재 배포는 `master`의 `c6a90bbb6e189e24c2fdc58b8ea7a399950a7f37` 이미지이고, `30080`은 초기 React 프로토타입 FE, `30081`은 Spring Boot API로 동작 |
 | REQ-20260428-23 | 보류 | REQ-20260428-09 Flutter CRUD 구현에 흡수 |
 
 ## 다음 작업 순서

@@ -38,3 +38,7 @@ build/
 .tooling/
 mongtory.db
 data/uploads/
+node_modules/
+/.codex
+/package.json
+/package-lock.json
