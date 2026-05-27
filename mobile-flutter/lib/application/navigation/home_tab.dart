@@ -1,5 +1,1 @@
-enum HomeTab {
-  diary,
-  calendar,
-  profile,
-}
+enum HomeTab { calendar, diary, profile }

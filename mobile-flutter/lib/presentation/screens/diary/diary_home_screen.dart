@@ -14,7 +14,6 @@ class DiaryHomeScreen extends ConsumerWidget {
     final diaryList = ref.watch(diaryListProvider);
     final homeDiaryList = ref.watch(diaryHomeListProvider);
     final memoryList = ref.watch(diaryTodayMemoriesProvider);
-    final dataSourceModeLabel = ref.watch(dataSourceModeLabelProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('오늘의 일기')),
@@ -34,7 +33,6 @@ class DiaryHomeScreen extends ConsumerWidget {
                   allItems: allItems,
                   items: items,
                   memoryItems: memoryList,
-                  dataSourceModeLabel: dataSourceModeLabel,
                 ),
                 loading: () => const SectionCard(
                   title: '최근 일기',
@@ -183,13 +181,11 @@ class _DiaryInsightSection extends StatelessWidget {
     required this.allItems,
     required this.items,
     required this.memoryItems,
-    required this.dataSourceModeLabel,
   });
 
   final List<DiarySummary> allItems;
   final List<DiarySummary> items;
   final AsyncValue<List<DiarySummary>> memoryItems;
-  final String dataSourceModeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -207,9 +203,10 @@ class _DiaryInsightSection extends StatelessWidget {
     return Column(
       children: [
         SectionCard(
-          title: '기록 흐름',
-          description:
-              '$dataSourceModeLabel 데이터 소스 기준 ${allItems.length}건이 로드된 상태입니다.',
+          title: '기록 요약',
+          description: items.isEmpty
+              ? '아직 표시할 일기가 없습니다.'
+              : '${allItems.length}개의 일기 중 ${items.length}개 표시',
           child: Wrap(
             spacing: 10,
             runSpacing: 10,

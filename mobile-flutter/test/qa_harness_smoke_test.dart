@@ -6,34 +6,33 @@ import 'package:mongtory_diary/domain/models/calendar_month.dart';
 import 'support/qa_app_harness.dart';
 
 void main() {
-  testWidgets('QA harness signs in and renders diary summary', (tester) async {
+  testWidgets('QA harness signs in and renders calendar command center', (
+    tester,
+  ) async {
     await pumpQaApp(tester);
 
     await qaSignInWithSeedAccount(tester);
 
-    expect(find.text('오늘의 일기'), findsOneWidget);
-    expect(find.text('오늘의 회고'), findsOneWidget);
-    expect(find.text('기록 흐름'), findsOneWidget);
-    expect(find.text('일기 찾기'), findsOneWidget);
-    expect(find.text('QA 자동화 일기'), findsOneWidget);
-    expect(find.text('QA'), findsWidgets);
-    expect(find.textContaining('mock 데이터 소스 기준 1건'), findsOneWidget);
+    expect(find.text('몽토리 캘린더'), findsOneWidget);
+    expect(find.text('오늘의 일정판'), findsOneWidget);
+    expect(find.text('2026년 3월'), findsWidgets);
+    expect(find.text('월'), findsWidgets);
+    expect(find.text('주'), findsOneWidget);
+    expect(find.text('일정'), findsOneWidget);
   });
 
   testWidgets('QA harness renders calendar and profile tabs', (tester) async {
     await pumpQaApp(tester);
     await qaSignInWithSeedAccount(tester);
 
-    await tester.tap(find.text('캘린더'));
-    await tester.pumpAndSettle();
+    expect(find.text('몽토리 캘린더'), findsOneWidget);
+    expect(find.text('2026년 3월'), findsWidgets);
+    expect(find.text('TODO 완료'), findsOneWidget);
+    expect(find.text('20'), findsWidgets);
 
-    expect(find.text('2026년 3월'), findsOneWidget);
-    expect(find.text('일기 1건 · TODO 2건'), findsOneWidget);
-    expect(find.text('20'), findsOneWidget);
-
-    await tester.tap(find.text('20'));
+    await tester.ensureVisible(find.text('20').last);
     await tester.pumpAndSettle();
-    await tester.drag(find.byType(ListView), const Offset(0, -520));
+    await tester.tap(find.text('20').last);
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('QA TODO 확인'));
     await tester.pumpAndSettle();
@@ -111,9 +110,9 @@ void main() {
     await tester.tap(find.text('캘린더'));
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('22'));
+    await tester.ensureVisible(find.text('22').last);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('22'));
+    await tester.tap(find.text('22').last);
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('등록된 TODO가 없습니다.'));
     await tester.pumpAndSettle();
@@ -138,11 +137,12 @@ void main() {
     await tester.tap(find.text('캘린더'));
     await tester.pumpAndSettle();
 
-    await tester.drag(find.byType(ListView), const Offset(0, -520));
+    await tester.ensureVisible(find.widgetWithText(TextField, 'TODO 추가'));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byType(TextField));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), '새 QA TODO');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'TODO 추가'),
+      '새 QA TODO',
+    );
     await tester.tap(find.text('추가'));
     await tester.pumpAndSettle();
 
@@ -160,6 +160,9 @@ void main() {
   ) async {
     await pumpQaApp(tester);
     await qaSignInWithSeedAccount(tester);
+
+    await tester.tap(find.text('일기').last);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();

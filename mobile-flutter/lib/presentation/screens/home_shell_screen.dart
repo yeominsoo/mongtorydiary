@@ -9,11 +9,7 @@ import 'package:mongtory_diary/presentation/screens/profile/profile_screen.dart'
 class HomeShellScreen extends ConsumerWidget {
   const HomeShellScreen({super.key});
 
-  static const _pages = [
-    DiaryHomeScreen(),
-    CalendarScreen(),
-    ProfileScreen(),
-  ];
+  static const _pages = [CalendarScreen(), DiaryHomeScreen(), ProfileScreen()];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,14 +27,14 @@ class HomeShellScreen extends ConsumerWidget {
         },
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book),
-            label: '일기',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.calendar_month_outlined),
             selectedIcon: Icon(Icons.calendar_month),
             label: '캘린더',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.menu_book_outlined),
+            selectedIcon: Icon(Icons.menu_book),
+            label: '일기',
           ),
           NavigationDestination(
             icon: Icon(Icons.face_outlined),
