@@ -110,9 +110,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton.icon(
-                        onPressed: isLoading ? null : _fillSeedAccount,
+                        onPressed: isLoading
+                            ? null
+                            : () => _signInWithSeedAccount(isLoading),
                         icon: const Icon(Icons.account_circle_outlined),
-                        label: const Text('테스트 계정 입력'),
+                        label: const Text('테스트 계정으로 접속'),
                       ),
                     ),
                     const SizedBox(height: 18),
@@ -187,6 +189,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   void _fillSeedAccount() {
     _emailController.text = 'user@example.com';
     _passwordController.text = 'password123!';
+  }
+
+  Future<void> _signInWithSeedAccount(bool isLoading) async {
+    if (isLoading) {
+      return;
+    }
+
+    _fillSeedAccount();
+    await _submit(false);
   }
 
   Future<void> _submit(bool isLoading) async {

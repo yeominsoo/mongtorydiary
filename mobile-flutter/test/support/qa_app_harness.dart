@@ -65,10 +65,7 @@ Future<void> qaSignInWithSeedAccount(WidgetTester tester) async {
   await tester.tap(find.text('시작하기'));
   await tester.pumpAndSettle();
 
-  await tester.tap(find.text('테스트 계정 입력'));
-  await tester.pump();
-
-  await tester.tap(find.text('로그인'));
+  await tester.tap(find.text('테스트 계정으로 접속'));
   await tester.pumpAndSettle();
 }
 

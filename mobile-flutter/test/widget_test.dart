@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mongtory_diary/app.dart';
+import 'package:mongtory_diary/core/router/app_routes.dart';
 import 'package:mongtory_diary/presentation/screens/diary/diary_home_screen.dart';
 import 'package:mongtory_diary/presentation/screens/sign_in_screen.dart';
 
@@ -28,18 +29,22 @@ void main() {
     expect(find.text('비밀번호를 입력해주세요.'), findsOneWidget);
   });
 
-  testWidgets('sign in screen fills seed account', (WidgetTester tester) async {
+  testWidgets('sign in screen signs in with seed account', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: SignInScreen())),
+      ProviderScope(
+        child: MaterialApp(
+          home: const SignInScreen(),
+          routes: {AppRoutes.home: (_) => const Scaffold(body: Text('홈'))},
+        ),
+      ),
     );
 
-    await tester.tap(find.text('테스트 계정 입력'));
-    await tester.pump();
+    await tester.tap(find.text('테스트 계정으로 접속'));
+    await tester.pumpAndSettle();
 
-    final fields = tester.widgetList<TextFormField>(find.byType(TextFormField));
-
-    expect(fields.elementAt(0).controller?.text, 'user@example.com');
-    expect(fields.elementAt(1).controller?.text, 'password123!');
+    expect(find.text('홈'), findsOneWidget);
   });
 
   testWidgets('diary list opens detail screen', (WidgetTester tester) async {
