@@ -200,17 +200,24 @@ class _CalendarWorkspace extends StatelessWidget {
           );
         }
 
-        return Padding(
+        final minHeight = constraints.maxHeight > 32
+            ? constraints.maxHeight - 32
+            : 0.0;
+
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(width: 260, child: content[0]),
-              const SizedBox(width: 14),
-              Expanded(child: content[1]),
-              const SizedBox(width: 14),
-              SizedBox(width: 360, child: content[2]),
-            ],
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: minHeight),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: 260, child: content[0]),
+                const SizedBox(width: 14),
+                Expanded(child: content[1]),
+                const SizedBox(width: 14),
+                SizedBox(width: 360, child: content[2]),
+              ],
+            ),
           ),
         );
       },
@@ -593,18 +600,25 @@ class _BoardBody extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 760;
+        final spacing = compact ? 4.0 : 8.0;
+        final cellExtent = _calendarDayCellExtent(
+          boardWidth: constraints.maxWidth,
+          spacing: spacing,
+          compact: compact,
+        );
+
         return Column(
           children: [
-            const _WeekdayHeader(),
+            _WeekdayHeader(compact: compact),
             const SizedBox(height: 8),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
-                crossAxisSpacing: compact ? 4 : 8,
-                mainAxisSpacing: compact ? 4 : 8,
-                childAspectRatio: compact ? 0.68 : 0.82,
+                crossAxisSpacing: spacing,
+                mainAxisSpacing: spacing,
+                mainAxisExtent: cellExtent,
               ),
               itemCount: dates.length,
               itemBuilder: (context, index) {
@@ -1477,6 +1491,20 @@ class _ErrorSurface extends StatelessWidget {
       ),
     );
   }
+}
+
+double _calendarDayCellExtent({
+  required double boardWidth,
+  required double spacing,
+  required bool compact,
+}) {
+  final usableWidth = boardWidth - spacing * 6;
+  final columnWidth = usableWidth > 0 ? usableWidth / 7 : 0.0;
+  final lowerBound = compact ? 54.0 : 96.0;
+  final upperBound = compact ? 68.0 : 112.0;
+  final preferred = compact ? columnWidth * 0.72 : columnWidth * 0.64;
+
+  return preferred.clamp(lowerBound, upperBound).toDouble();
 }
 
 List<DateTime?> _buildMonthCells(DateTime visibleMonth) {

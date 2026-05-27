@@ -6,7 +6,6 @@ import 'package:mongtory_diary/application/session/session_state.dart';
 import 'package:mongtory_diary/domain/models/diary_summary.dart';
 import 'package:mongtory_diary/domain/models/emotion_type.dart';
 import 'package:mongtory_diary/domain/models/todo_item.dart';
-import 'package:mongtory_diary/presentation/widgets/section_card.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -24,114 +23,67 @@ class ProfileScreen extends ConsumerWidget {
     final userEmail = session.status == SessionStatus.signedIn
         ? session.session?.user.email ?? 'unknown'
         : 'guest';
+    final diaryItems = diaries.valueOrNull ?? const <DiarySummary>[];
+    final todoItems = todos.valueOrNull ?? const <TodoItem>[];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('몽토리')),
+      appBar: AppBar(title: const Text('몽토리 컬렉션')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           _ContentWidth(
-            child: _MongtoryStatusCard(
-              userName: userName,
-              userEmail: userEmail,
-              diaries: diaries.valueOrNull ?? const [],
-              todos: todos.valueOrNull ?? const [],
-            ),
-          ),
-          const SizedBox(height: 16),
-          _ContentWidth(
-            child: _MonthlyRhythmCard(
-              diaries: diaries.valueOrNull ?? const [],
-              todos: todos.valueOrNull ?? const [],
-            ),
-          ),
-          const SizedBox(height: 16),
-          _ContentWidth(
-            child: _WritingReminderCard(
-              settings: reminder,
-              onEnabledChanged: (value) {
-                ref
-                    .read(writingReminderControllerProvider.notifier)
-                    .setEnabled(value);
-              },
-              onPickTime: () async {
-                final picked = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay(
-                    hour: reminder.hour,
-                    minute: reminder.minute,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _MongtoryCollectionHeader(
+                  userName: userName,
+                  userEmail: userEmail,
+                  diaries: diaryItems,
+                  todos: todoItems,
+                ),
+                const SizedBox(height: 14),
+                _CollectionGrid(
+                  first: _MonthlyRhythmPanel(
+                    diaries: diaryItems,
+                    todos: todoItems,
                   ),
-                );
+                  second: _WritingReminderPanel(
+                    settings: reminder,
+                    onEnabledChanged: (value) {
+                      ref
+                          .read(writingReminderControllerProvider.notifier)
+                          .setEnabled(value);
+                    },
+                    onPickTime: () async {
+                      final picked = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay(
+                          hour: reminder.hour,
+                          minute: reminder.minute,
+                        ),
+                      );
 
-                if (picked == null) {
-                  return;
-                }
+                      if (picked == null) {
+                        return;
+                      }
 
-                ref
-                    .read(writingReminderControllerProvider.notifier)
-                    .setTime(hour: picked.hour, minute: picked.minute);
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          _ContentWidth(
-            child: emotions.when(
-              data: (items) => _EmotionPaletteCard(items: items),
-              loading: () => const SectionCard(
-                title: '감정 팔레트',
-                description: '감정 데이터를 불러오는 중입니다.',
-              ),
-              error: (error, _) => SectionCard(
-                title: '감정 팔레트',
-                description: '감정 데이터를 불러오지 못했습니다. $error',
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _ContentWidth(
-            child: _WidgetPreviewCard(
-              diaries: diaries.valueOrNull ?? const [],
-              todos: todos.valueOrNull ?? const [],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _WritingReminderCard extends StatelessWidget {
-  const _WritingReminderCard({
-    required this.settings,
-    required this.onEnabledChanged,
-    required this.onPickTime,
-  });
-
-  final WritingReminderSettings settings;
-  final ValueChanged<bool> onEnabledChanged;
-  final VoidCallback onPickTime;
-
-  @override
-  Widget build(BuildContext context) {
-    return SectionCard(
-      title: '작성 리마인더',
-      description: settings.enabled ? '매일 ${settings.timeLabel}' : '꺼짐',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SwitchListTile(
-            value: settings.enabled,
-            onChanged: onEnabledChanged,
-            contentPadding: EdgeInsets.zero,
-            title: const Text('사용'),
-            secondary: const Icon(Icons.notifications_active_outlined),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton.icon(
-              onPressed: settings.enabled ? onPickTime : null,
-              icon: const Icon(Icons.schedule_outlined),
-              label: const Text('시간 변경'),
+                      ref
+                          .read(writingReminderControllerProvider.notifier)
+                          .setTime(hour: picked.hour, minute: picked.minute);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 14),
+                emotions.when(
+                  data: (items) => _EmotionCollectionPanel(items: items),
+                  loading: () =>
+                      const _CollectionLoadingSurface(title: '감정 팔레트'),
+                  error: (error, _) => _CollectionErrorSurface(
+                    title: '감정 팔레트',
+                    message: '감정 데이터를 불러오지 못했습니다. $error',
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -140,8 +92,8 @@ class _WritingReminderCard extends StatelessWidget {
   }
 }
 
-class _MongtoryStatusCard extends StatelessWidget {
-  const _MongtoryStatusCard({
+class _MongtoryCollectionHeader extends StatelessWidget {
+  const _MongtoryCollectionHeader({
     required this.userName,
     required this.userEmail,
     required this.diaries,
@@ -155,6 +107,8 @@ class _MongtoryStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final today = DateTime.now();
     final todayDiaries = diaries
         .where((diary) => _isSameDate(diary.entryDate, today))
@@ -169,60 +123,139 @@ class _MongtoryStatusCard extends StatelessWidget {
         ? '오늘 TODO를 먼저 정리했습니다.'
         : '오늘의 기록을 기다리는 중입니다.';
 
-    return SectionCard(
-      title: '몽토리 컨디션',
-      description: '$userName님의 오늘 기록 상태',
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 34,
-            child: Text(
-              '몽',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  message,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
+    return _SurfaceFrame(
+      padding: const EdgeInsets.all(22),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final wide = constraints.maxWidth >= 760;
+          final identity = Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: scheme.primary.withValues(alpha: 0.2),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text('이메일: $userEmail'),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                child: SizedBox(
+                  width: 76,
+                  height: 76,
+                  child: Center(
+                    child: Text(
+                      '몽',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: scheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _MetricChip(
-                      icon: Icons.menu_book_outlined,
-                      label: '오늘 일기 $todayDiaries',
+                    Text(
+                      '몽토리 컨디션',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
-                    _MetricChip(
-                      icon: Icons.check_circle_outline,
-                      label: '오늘 TODO $completedTodos/${todayTodos.length}',
+                    const SizedBox(height: 6),
+                    Text(
+                      '$userName님의 컬렉션',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      message,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('이메일: $userEmail'),
                   ],
                 ),
+              ),
+            ],
+          );
+          final metrics = Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _HeaderMetric(
+                icon: Icons.menu_book_outlined,
+                label: '오늘 일기',
+                value: '$todayDiaries',
+              ),
+              _HeaderMetric(
+                icon: Icons.task_alt,
+                label: '오늘 TODO',
+                value: '$completedTodos/${todayTodos.length}',
+              ),
+            ],
+          );
+
+          if (wide) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: identity),
+                const SizedBox(width: 20),
+                SizedBox(width: 260, child: metrics),
               ],
-            ),
-          ),
-        ],
+            );
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [identity, const SizedBox(height: 18), metrics],
+          );
+        },
       ),
     );
   }
 }
 
-class _MonthlyRhythmCard extends StatelessWidget {
-  const _MonthlyRhythmCard({required this.diaries, required this.todos});
+class _CollectionGrid extends StatelessWidget {
+  const _CollectionGrid({required this.first, required this.second});
+
+  final Widget first;
+  final Widget second;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 760) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: first),
+              const SizedBox(width: 14),
+              Expanded(child: second),
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [first, const SizedBox(height: 14), second],
+        );
+      },
+    );
+  }
+}
+
+class _MonthlyRhythmPanel extends StatelessWidget {
+  const _MonthlyRhythmPanel({required this.diaries, required this.todos});
 
   final List<DiarySummary> diaries;
   final List<TodoItem> todos;
@@ -236,32 +269,37 @@ class _MonthlyRhythmCard extends StatelessWidget {
         .toSet()
         .length;
 
-    return SectionCard(
-      title: '성장 기록',
-      description: '연속 기록 $streak일 · TODO 완료 $completedTodos/${todos.length}',
-      child: Wrap(
-        spacing: 10,
-        runSpacing: 10,
+    return _SurfaceFrame(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _StatTile(
-            icon: Icons.local_fire_department_outlined,
-            label: '연속 기록',
-            value: '$streak일',
-          ),
-          _StatTile(
-            icon: Icons.auto_graph_outlined,
-            label: '누적 일기',
-            value: '${diaries.length}건',
-          ),
-          _StatTile(
-            icon: Icons.task_alt,
-            label: 'TODO 완료',
-            value: '$completedTodos/${todos.length}',
-          ),
-          _StatTile(
-            icon: Icons.palette_outlined,
-            label: '감정 폭',
-            value: '$emotionCount종',
+          const _PanelTitle(title: '성장 기록', subtitle: '이번 달 기록 리듬'),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _StatTile(
+                icon: Icons.local_fire_department_outlined,
+                label: '연속 기록',
+                value: '$streak일',
+              ),
+              _StatTile(
+                icon: Icons.auto_graph_outlined,
+                label: '누적 일기',
+                value: '${diaries.length}건',
+              ),
+              _StatTile(
+                icon: Icons.task_alt,
+                label: 'TODO 완료',
+                value: '$completedTodos/${todos.length}',
+              ),
+              _StatTile(
+                icon: Icons.palette_outlined,
+                label: '감정 폭',
+                value: '$emotionCount종',
+              ),
+            ],
           ),
         ],
       ),
@@ -269,81 +307,159 @@ class _MonthlyRhythmCard extends StatelessWidget {
   }
 }
 
-class _EmotionPaletteCard extends StatelessWidget {
-  const _EmotionPaletteCard({required this.items});
+class _WritingReminderPanel extends StatelessWidget {
+  const _WritingReminderPanel({
+    required this.settings,
+    required this.onEnabledChanged,
+    required this.onPickTime,
+  });
+
+  final WritingReminderSettings settings;
+  final ValueChanged<bool> onEnabledChanged;
+  final VoidCallback onPickTime;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return _SurfaceFrame(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _PanelTitle(
+            title: '작성 리마인더',
+            subtitle: settings.enabled ? '매일 ${settings.timeLabel}' : '꺼짐',
+          ),
+          const SizedBox(height: 14),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.42),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: SwitchListTile(
+              value: settings.enabled,
+              onChanged: onEnabledChanged,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              title: const Text('사용'),
+              secondary: const Icon(Icons.notifications_active_outlined),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton.icon(
+              onPressed: settings.enabled ? onPickTime : null,
+              icon: const Icon(Icons.schedule_outlined),
+              label: const Text('시간 변경'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmotionCollectionPanel extends StatelessWidget {
+  const _EmotionCollectionPanel({required this.items});
 
   final List<EmotionType> items;
 
   @override
   Widget build(BuildContext context) {
-    return SectionCard(
-      title: '감정 팔레트',
-      description: '사용 가능한 감정 ${items.length}종',
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: items.map((item) => _EmotionChip(item: item)).toList(),
+    return _SurfaceFrame(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _PanelTitle(title: '감정 팔레트', subtitle: '사용 가능한 감정 ${items.length}종'),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              for (final entry in items.asMap().entries)
+                _EmotionTile(item: entry.value, index: entry.key),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
 
-class _WidgetPreviewCard extends StatelessWidget {
-  const _WidgetPreviewCard({required this.diaries, required this.todos});
+class _PanelTitle extends StatelessWidget {
+  const _PanelTitle({required this.title, required this.subtitle});
 
-  final List<DiarySummary> diaries;
-  final List<TodoItem> todos;
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now();
-    final latestDiary = _firstDiaryOnDate(diaries, today);
-    final todayTodos = todos
-        .where((todo) => _isSameDate(todo.dueDate, today))
-        .toList();
-    final completedTodos = todayTodos.where((todo) => todo.completed).length;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
-    return SectionCard(
-      title: '홈 위젯 미리보기',
-      description: latestDiary == null
-          ? '오늘 일기 없음 · TODO $completedTodos/${todayTodos.length}'
-          : '${latestDiary.title} · TODO $completedTodos/${todayTodos.length}',
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        child: Row(
-          children: [
-            const Icon(Icons.widgets_outlined),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                latestDiary?.title ?? '오늘의 일기를 기다리는 중',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-              ),
-            ),
-            Text('$completedTodos/${todayTodos.length}'),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
         ),
-      ),
+      ],
     );
   }
 }
 
-class _MetricChip extends StatelessWidget {
-  const _MetricChip({required this.icon, required this.label});
+class _HeaderMetric extends StatelessWidget {
+  const _HeaderMetric({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   final IconData icon;
   final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
-    return Chip(avatar: Icon(icon, size: 16), label: Text(label));
+    final scheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: 125,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest.withValues(alpha: 0.48),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, color: scheme.primary),
+              const SizedBox(height: 10),
+              Text(label, style: Theme.of(context).textTheme.labelMedium),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -360,40 +476,197 @@ class _StatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 136,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+    final scheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: 142,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest.withValues(alpha: 0.46),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, color: scheme.primary),
+              const SizedBox(height: 10),
+              Text(label, style: Theme.of(context).textTheme.labelMedium),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class _EmotionTile extends StatelessWidget {
+  const _EmotionTile({required this.item, required this.index});
+
+  final EmotionType item;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _emotionColor(index);
+    final initial = item.label.isNotEmpty
+        ? item.label.substring(0, 1)
+        : item.code.isNotEmpty
+        ? item.code.substring(0, 1)
+        : '?';
+
+    return SizedBox(
+      width: 148,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.16),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SizedBox(
+                  width: 34,
+                  height: 34,
+                  child: Center(
+                    child: Text(
+                      initial,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      item.code,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SurfaceFrame extends StatelessWidget {
+  const _SurfaceFrame({
+    required this.child,
+    this.padding = const EdgeInsets.all(16),
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Padding(padding: padding, child: child),
+    );
+  }
+}
+
+class _CollectionLoadingSurface extends StatelessWidget {
+  const _CollectionLoadingSurface({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return _SurfaceFrame(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon),
-          const SizedBox(height: 10),
-          Text(label, style: Theme.of(context).textTheme.labelMedium),
-          const SizedBox(height: 4),
           Text(
-            value,
+            title,
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
           ),
+          const SizedBox(height: 12),
+          const LinearProgressIndicator(),
         ],
       ),
     );
   }
 }
 
-class _EmotionChip extends StatelessWidget {
-  const _EmotionChip({required this.item});
+class _CollectionErrorSurface extends StatelessWidget {
+  const _CollectionErrorSurface({required this.title, required this.message});
 
-  final EmotionType item;
+  final String title;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
-    return Chip(label: Text('${item.label} (${item.code})'));
+    final scheme = Theme.of(context).colorScheme;
+
+    return _SurfaceFrame(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: scheme.error),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(message),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -407,7 +680,7 @@ class _ContentWidth extends StatelessWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 840),
+        constraints: const BoxConstraints(maxWidth: 1000),
         child: child,
       ),
     );
@@ -441,12 +714,14 @@ bool _isSameDate(DateTime left, DateTime right) {
       left.day == right.day;
 }
 
-DiarySummary? _firstDiaryOnDate(List<DiarySummary> diaries, DateTime date) {
-  for (final diary in diaries) {
-    if (_isSameDate(diary.entryDate, date)) {
-      return diary;
-    }
-  }
+Color _emotionColor(int index) {
+  const colors = [
+    Color(0xFFE4947C),
+    Color(0xFF4F9D69),
+    Color(0xFF5A7DCE),
+    Color(0xFFB383D7),
+    Color(0xFFE0B14F),
+  ];
 
-  return null;
+  return colors[index % colors.length];
 }
