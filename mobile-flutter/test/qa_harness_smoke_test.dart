@@ -56,11 +56,9 @@ void main() {
     expect(find.text('몽토리 컨디션'), findsOneWidget);
     expect(find.text('이메일: user@example.com'), findsOneWidget);
 
-    await tester.drag(find.byType(ListView), const Offset(0, -420));
-    await tester.pumpAndSettle();
-
-    expect(find.text('감정 팔레트'), findsOneWidget);
-    expect(find.textContaining('사용 가능한 감정 2종'), findsOneWidget);
+    expect(find.text('성장 기록'), findsOneWidget);
+    expect(find.text('작성 리마인더'), findsOneWidget);
+    expect(find.text('감정 팔레트'), findsNothing);
   });
 
   testWidgets('QA harness surfaces sign in failures', (tester) async {

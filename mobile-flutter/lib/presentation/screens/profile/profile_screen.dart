@@ -4,7 +4,6 @@ import 'package:mongtory_diary/application/providers/app_providers.dart';
 import 'package:mongtory_diary/application/reminder/writing_reminder_controller.dart';
 import 'package:mongtory_diary/application/session/session_state.dart';
 import 'package:mongtory_diary/domain/models/diary_summary.dart';
-import 'package:mongtory_diary/domain/models/emotion_type.dart';
 import 'package:mongtory_diary/domain/models/todo_item.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -13,7 +12,6 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionControllerProvider);
-    final emotions = ref.watch(emotionListProvider);
     final diaries = ref.watch(diaryListProvider);
     final todos = ref.watch(visibleMonthTodoListProvider);
     final reminder = ref.watch(writingReminderControllerProvider);
@@ -71,16 +69,6 @@ class ProfileScreen extends ConsumerWidget {
                           .read(writingReminderControllerProvider.notifier)
                           .setTime(hour: picked.hour, minute: picked.minute);
                     },
-                  ),
-                ),
-                const SizedBox(height: 14),
-                emotions.when(
-                  data: (items) => _EmotionCollectionPanel(items: items),
-                  loading: () =>
-                      const _CollectionLoadingSurface(title: '감정 팔레트'),
-                  error: (error, _) => _CollectionErrorSurface(
-                    title: '감정 팔레트',
-                    message: '감정 데이터를 불러오지 못했습니다. $error',
                   ),
                 ),
               ],
@@ -264,10 +252,6 @@ class _MonthlyRhythmPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final streak = _calculateStreak(diaries);
     final completedTodos = todos.where((todo) => todo.completed).length;
-    final emotionCount = diaries
-        .map((diary) => diary.emotionCode)
-        .toSet()
-        .length;
 
     return _SurfaceFrame(
       child: Column(
@@ -293,11 +277,6 @@ class _MonthlyRhythmPanel extends StatelessWidget {
                 icon: Icons.task_alt,
                 label: 'TODO 완료',
                 value: '$completedTodos/${todos.length}',
-              ),
-              _StatTile(
-                icon: Icons.palette_outlined,
-                label: '감정 폭',
-                value: '$emotionCount종',
               ),
             ],
           ),
@@ -352,33 +331,6 @@ class _WritingReminderPanel extends StatelessWidget {
               icon: const Icon(Icons.schedule_outlined),
               label: const Text('시간 변경'),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmotionCollectionPanel extends StatelessWidget {
-  const _EmotionCollectionPanel({required this.items});
-
-  final List<EmotionType> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SurfaceFrame(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _PanelTitle(title: '감정 팔레트', subtitle: '사용 가능한 감정 ${items.length}종'),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              for (final entry in items.asMap().entries)
-                _EmotionTile(item: entry.value, index: entry.key),
-            ],
           ),
         ],
       ),
@@ -508,82 +460,6 @@ class _StatTile extends StatelessWidget {
   }
 }
 
-class _EmotionTile extends StatelessWidget {
-  const _EmotionTile({required this.item, required this.index});
-
-  final EmotionType item;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = _emotionColor(index);
-    final initial = item.label.isNotEmpty
-        ? item.label.substring(0, 1)
-        : item.code.isNotEmpty
-        ? item.code.substring(0, 1)
-        : '?';
-
-    return SizedBox(
-      width: 148,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.16),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: SizedBox(
-                  width: 34,
-                  height: 34,
-                  child: Center(
-                    child: Text(
-                      initial,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    Text(
-                      item.code,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _SurfaceFrame extends StatelessWidget {
   const _SurfaceFrame({
     required this.child,
@@ -604,68 +480,6 @@ class _SurfaceFrame extends StatelessWidget {
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Padding(padding: padding, child: child),
-    );
-  }
-}
-
-class _CollectionLoadingSurface extends StatelessWidget {
-  const _CollectionLoadingSurface({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SurfaceFrame(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 12),
-          const LinearProgressIndicator(),
-        ],
-      ),
-    );
-  }
-}
-
-class _CollectionErrorSurface extends StatelessWidget {
-  const _CollectionErrorSurface({required this.title, required this.message});
-
-  final String title;
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return _SurfaceFrame(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.error_outline, color: scheme.error),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(message),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -712,16 +526,4 @@ bool _isSameDate(DateTime left, DateTime right) {
   return left.year == right.year &&
       left.month == right.month &&
       left.day == right.day;
-}
-
-Color _emotionColor(int index) {
-  const colors = [
-    Color(0xFFE4947C),
-    Color(0xFF4F9D69),
-    Color(0xFF5A7DCE),
-    Color(0xFFB383D7),
-    Color(0xFFE0B14F),
-  ];
-
-  return colors[index % colors.length];
 }
