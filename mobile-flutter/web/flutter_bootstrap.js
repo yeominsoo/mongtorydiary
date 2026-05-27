@@ -38,7 +38,7 @@ window.addEventListener('flutter-first-frame', completeBoot, {once: true});
 
 _flutter.loader.load({
   onEntrypointLoaded: async function(engineInitializer) {
-    setBootProgress(58, '화면 엔진을 초기화하는 중입니다.', '달력, 일기, 몽토리 화면을 준비하고 있습니다.');
+    setBootProgress(58, '화면을 준비하는 중입니다.', '달력, 일기, 몽토리 화면을 준비하고 있습니다.');
     const appRunner = await engineInitializer.initializeEngine();
 
     setBootProgress(86, '데이터 연결을 확인하는 중입니다.', '저장된 일기와 TODO를 불러올 준비를 하고 있습니다.');

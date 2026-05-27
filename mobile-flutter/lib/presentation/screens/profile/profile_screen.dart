@@ -18,7 +18,6 @@ class ProfileScreen extends ConsumerWidget {
     final diaries = ref.watch(diaryListProvider);
     final todos = ref.watch(visibleMonthTodoListProvider);
     final reminder = ref.watch(writingReminderControllerProvider);
-    final dataSourceModeLabel = ref.watch(dataSourceModeLabelProvider);
     final userName = session.status == SessionStatus.signedIn
         ? session.session?.user.nickname ?? '몽토리 사용자'
         : '게스트';
@@ -35,7 +34,6 @@ class ProfileScreen extends ConsumerWidget {
             child: _MongtoryStatusCard(
               userName: userName,
               userEmail: userEmail,
-              dataSourceModeLabel: dataSourceModeLabel,
               diaries: diaries.valueOrNull ?? const [],
               todos: todos.valueOrNull ?? const [],
             ),
@@ -146,14 +144,12 @@ class _MongtoryStatusCard extends StatelessWidget {
   const _MongtoryStatusCard({
     required this.userName,
     required this.userEmail,
-    required this.dataSourceModeLabel,
     required this.diaries,
     required this.todos,
   });
 
   final String userName;
   final String userEmail;
-  final String dataSourceModeLabel;
   final List<DiarySummary> diaries;
   final List<TodoItem> todos;
 
@@ -175,7 +171,7 @@ class _MongtoryStatusCard extends StatelessWidget {
 
     return SectionCard(
       title: '몽토리 컨디션',
-      description: '$userName · $dataSourceModeLabel 데이터',
+      description: '$userName님의 오늘 기록 상태',
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

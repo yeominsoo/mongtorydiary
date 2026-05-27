@@ -27,9 +27,11 @@ class StartupScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Flutter 기반 모바일 앱 초기화가 완료되었습니다.\n다음 단계는 인증, 일기 CRUD, 캘린더 구조 설계입니다.',
+                '오늘의 일정, TODO, 감정 일기를 한 화면에서 정리하세요.',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(height: 1.5),
               ),
               const SizedBox(height: 24),
               FilledButton(

@@ -40,8 +40,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     });
 
     final sessionState = ref.watch(sessionControllerProvider);
-    final dataSourceModeLabel = ref.watch(dataSourceModeLabelProvider);
-    final apiBaseUrl = ref.watch(apiBaseUrlProvider);
     final isLoading = sessionState.status == SessionStatus.loading;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -57,12 +55,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _SignInHeader(
-                      modeLabel: dataSourceModeLabel,
-                      apiBaseUrl: dataSourceModeLabel == 'remote'
-                          ? apiBaseUrl
-                          : null,
-                    ),
+                    const _SignInHeader(),
                     const SizedBox(height: 28),
                     TextFormField(
                       controller: _emailController,
@@ -215,10 +208,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 }
 
 class _SignInHeader extends StatelessWidget {
-  const _SignInHeader({required this.modeLabel, this.apiBaseUrl});
-
-  final String modeLabel;
-  final String? apiBaseUrl;
+  const _SignInHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -228,23 +218,6 @@ class _SignInHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Text(
-              modeLabel,
-              style: textTheme.labelMedium?.copyWith(
-                color: colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 18),
         Text(
           'Mongtory Diary',
           style: textTheme.headlineMedium?.copyWith(
@@ -259,15 +232,6 @@ class _SignInHeader extends StatelessWidget {
             height: 1.4,
           ),
         ),
-        if (apiBaseUrl != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            apiBaseUrl!,
-            style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
       ],
     );
   }
