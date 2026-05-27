@@ -40,10 +40,15 @@ public class WebConfig implements WebMvcConfigurer {
 	private CorsRegistration applyDevCors(CorsRegistration registration) {
 		return registration
 			.allowedOriginPatterns(
+				"http://localhost:30080",
 				"http://localhost:30081",
+				"http://127.0.0.1:30080",
 				"http://127.0.0.1:30081",
+				"http://192.168.*.*:30080",
 				"http://192.168.*.*:30081",
+				"http://10.*.*.*:30080",
 				"http://10.*.*.*:30081",
+				"http://172.*.*.*:30080",
 				"http://172.*.*.*:30081"
 			)
 			.allowedHeaders("*")

@@ -38,6 +38,24 @@ class AuthControllerTest {
 	}
 
 	@Test
+	void loginAllowsDeployedFrontendOrigin() throws Exception {
+		mockMvc.perform(
+				post("/api/v1/auth/login")
+					.header("Origin", "http://192.168.75.194:30080")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("""
+						{
+						  "email": "user@example.com",
+						  "password": "password123!"
+						}
+						""")
+			)
+			.andExpect(status().isOk())
+			.andExpect(header().string("Access-Control-Allow-Origin", "http://192.168.75.194:30080"))
+			.andExpect(jsonPath("$.success").value(true));
+	}
+
+	@Test
 	void loginReturnsWrappedResponse() throws Exception {
 		mockMvc.perform(
 				post("/api/v1/auth/login")
